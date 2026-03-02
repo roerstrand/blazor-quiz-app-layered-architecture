@@ -1,43 +1,39 @@
-﻿using Cyberquiz.Shared.DTOs;
+﻿using Cyberquiz.DAL.Interface;
+using Cyberquiz.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cyberquiz.API.Controllers
 {
     [ApiController]
-    [Route("/api/categories")]
+    [Route("api/categories")]
     [Authorize]
-    public class CategoryController : Controller
+    public class CategoryController : ControllerBase
     {
-    
-    // Koppling till DummyRepo - Behöver ange "riktiga" repot
-        private readonly ICatRepo _categoryRepo;
-
-        [HttpGet]
-        public async Task<ActionResult> GetCategories()
+        private readonly IQuizRepository _quizRepo;
+        public CategoryController(IQuizRepository quizRepo)
         {
-            var categories = await _categoryRepo.GetAllAsync();
-            return Ok(categories);
+            _quizRepo = quizRepo;
         }
-
-        //GET: /api/categories
+        // GET-anrop för att hämta alla kategorier
         [HttpGet]
         public async Task<ActionResult<List<CategoryDto>>> GetCategories()
         {
-            var categories = await _categoryService.GetCategoriesAsync(User.Identity?.Name ?? "user");
-            return Ok(categories);
+            // TODO: Implementera när CategoryRepository finns
+            // var categories = await _categoryRepo.GetAllAsync();
+            // return Ok(categories.Select(c => MapToCategoryDto(c)));
 
+            return Ok(new List<CategoryDto>());
         }
-
-        //// GET api/categories/{categoryId}/subcategories
+        // GET-anrop för att hämta alla subkategorier för en specifik kategori
         [HttpGet("{categoryId}/subcategories")]
         public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategoriesByCategoryId(int categoryId)
         {
-            var subCategories = await _categoryService.GetSubCategoriesByCategoryIdAsync(categoryId, User.Identity?.Name ?? "user");
-            return Ok(subCategories);
+            // TODO: Implementera när SubCategoryRepository finns
+            // var subCategories = await _subCategoryRepo.GetByCategoryIdAsync(categoryId);
+            // return Ok(subCategories.Select(sc => MapToSubCategoryDto(sc)));
 
-
+            return Ok(new List<SubCategoryDto>());
         }
-
     }
 }
