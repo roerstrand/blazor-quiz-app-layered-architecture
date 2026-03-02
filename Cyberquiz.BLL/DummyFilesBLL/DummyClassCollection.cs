@@ -12,9 +12,12 @@ namespace Cyberquiz.BLL.DummyFilesBLL
         public class SubCategory { }
         public class Question
         {
-            public object AnswerOption { get; internal set; }
+            public AnswerOption AnswerOption { get; internal set; } = new();
         }
-        public class AnswerOption { }
+        public class AnswerOption
+        {
+            public int Id { get; set; }
+        }
         public class CorrectAnswer 
         {
             public bool IsCorrect;

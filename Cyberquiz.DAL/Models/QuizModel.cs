@@ -18,3 +18,5 @@ namespace Cyberquiz.DAL.Models
         public SubCategoryModel? SubCategory { get; set; }
     }
 }
+
+// Lägg t category prop

@@ -1,4 +1,5 @@
-﻿using Cyberquiz.BLL.Interfaces;
+﻿using Cyberquiz.BLL.DummyFilesBLL;
+using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,33 +11,22 @@ namespace Cyberquiz.API.Controllers
     [Authorize]
     public class CategoryController : Controller
     {
-        private readonly ICategoryService _categoryService;
-
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
-
+        // TODO: Injicera ICategoryService när den är implementerad
 
         //GET: /api/categories
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetCategories()
+        public ActionResult<List<CategoryDto>> GetCategories()
         {
-            var categories = await _categoryService.GetCategoriesAsync(User.Identity?.Name ?? "user");
-            return Ok(categories);
-
+            // TODO: return await _categoryService.GetCategoriesAsync(User.Identity?.Name ?? "user");
+            return Ok(new List<CategoryDto>());
         }
 
-        //// GET api/categories/{categoryId}/subcategories
+        // GET api/categories/{categoryId}/subcategories
         [HttpGet("{categoryId}/subcategories")]
-        public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategoriesByCategoryId(int categoryId)
+        public ActionResult<List<SubCategoryDto>> GetSubCategoriesByCategoryId(int categoryId)
         {
-            var subCategories = await _categoryService.GetSubCategoriesByCategoryIdAsync(categoryId, User.Identity?.Name ?? "user");
-            return Ok(subCategories);
-
-
+            // TODO: return await _categoryService.GetSubCategoriesByCategoryIdAsync(categoryId, User.Identity?.Name ?? "user");
+            return Ok(new List<SubCategoryDto>());
         }
-
     }
-
 }

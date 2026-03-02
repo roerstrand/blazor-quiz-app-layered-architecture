@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
-using Cyberquiz.DAL.Data;
+using Cyberquiz.UI.Data;
 
 namespace Cyberquiz.UI.Components.Account
 {

@@ -10,7 +10,7 @@ namespace Cyberquiz.BLL.DummyFilesBLL
         Task AddAsync(UserResult result);
         Task<UserResult?> GetLatestAsync(string userId, int subCategoryId);
         Task<List<UserResult>> GetByUserAsync(string userId);
-        Task GetResultsByUserIdAsync(string userId, int subCatId);
+        Task<List<UserResult>> GetResultsByUserIdAsync(string userId, int subCatId);
         Task SaveAsync(UserResult userResult);
     }
 }

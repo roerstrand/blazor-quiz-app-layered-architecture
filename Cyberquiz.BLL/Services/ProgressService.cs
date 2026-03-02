@@ -27,7 +27,7 @@ namespace Cyberquiz.BLL.Services
         }
 
         // Metod för att avgöra om en subkategori är upplåst - tar ID för användaren och underkategorin som argument
-        public async Task<bool> IsSubCatUnlockedAsync(string userId, int subCatId)
+        public async Task<bool> IsSubCategoryUnlockedAsync(string userId, int subCatId)
         {
             // Lokal variabel för att hämta frågor från underkategorin
             var questions = await _questionRepo.GetQsBySubCategoryIdAsync(subCatId);

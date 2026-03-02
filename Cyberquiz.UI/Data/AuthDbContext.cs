@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cyberquiz.DAL.Data
+namespace Cyberquiz.UI.Data
 {
     public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {

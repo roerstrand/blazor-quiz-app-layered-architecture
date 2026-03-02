@@ -20,29 +20,21 @@ namespace Cyberquiz.API.Controllers
 
         //GET api/quiz/subcategory/{subCategoryId}/next
         [HttpGet("subcategory/{subCategoryId:int}/next")]
-        public async Task<ActionResult<QuestionDto>> GetNextQuestion(int subCategoryId)
+        public ActionResult<QuestionDto> GetNextQuestion(int subCategoryId)
         {
-            var userName = User.Identity?.Name ?? "user";
-
-            var question = await _quizService.GetNextQuestionAsync(userName, subCategoryId);
-
-            if (question is null)
-                return NotFound();
-
-            return Ok(question);
+            // TODO: return await _quizService.GetNextQuestionAsync(User.Identity?.Name ?? "user", subCategoryId);
+            return NotFound();
         }
 
         //POST: api/quiz/answer
         [HttpPost("answer")]
-        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer(SubmitAnswerRequestDto request)
+        public ActionResult<SubmitResponseDto> SubmitAnswer(SubmitAnswerRequestDto request)
         {
             if (request is null)
                 return BadRequest();
-            
-            var userName = User.Identity?.Name ?? "user";
-            var response = await _quizService.SubmitAnswerAsync(userName, request);
 
-            return Ok(response);
+            // TODO: return await _quizService.SubmitAnswerAsync(User.Identity?.Name ?? "user", request);
+            return Ok(new SubmitResponseDto());
         }
 
 
