@@ -1,18 +1,15 @@
 ﻿using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.DAL.Models;
-using Cyberquiz.DAL.Repositories;
+using Cyberquiz.DAL.Interface;
 using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.Progress;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
-    // Beroende av fråge-repo och användarens tidigare resultat
     // Flödeslogik för att visa quiz för användaren
     // Starta quiz
     // Ta emot och validera svar
@@ -20,11 +17,12 @@ namespace Cyberquiz.BLL.Services
     // Säkerställa att quiz får startas
     public class QuizService : IQuizService
     {
-        private readonly QuestionRepository _questionRepo;
+        private readonly IQuestionRepository _questionRepo;
         private readonly IProgressService _progressService;
         private readonly IResultService _resultService;
-
-        public QuizService(QuestionRepository questionRepo, IProgressService progressService, IResultService resultService)
+        public QuizService(IQuestionRepository questionRepo, 
+            IProgressService progressService, 
+            IResultService resultService)
         {
             _questionRepo = questionRepo;
             _progressService = progressService;
@@ -48,9 +46,10 @@ namespace Cyberquiz.BLL.Services
             var shuffledQs = questions.OrderBy(q => Guid.NewGuid()).ToList();
 
             // Mappa till DTO
-            return MapToQuestionDtos(shuffledQs);
+            return MapToQuestionDtos(shuffledQs.ToList());
         }
 
+        // Mappa om till DTOs, exkludera IsCorrect
         private List<QuestionDto> MapToQuestionDtos(List<QuestionModel> questions)
         {
             return questions.Select(q => new QuestionDto
@@ -61,12 +60,12 @@ namespace Cyberquiz.BLL.Services
                 {
                     Id = qao.AnswerOptionId,
                     Answer = qao.AnswerOption.Answer
-                    // IsCorrect skickas INTE till frontend
+                    // OBS: IsCorrect skickas INTE till frontend
                 }).ToList()
             }).ToList();
         }
 
-        // Metod för att starta ett quiz - hämta frågor och svar via repository för att skicka till DTO
+        // Metod för att starta ett quiz
         public async Task<QuizDto> StartQuizAsync(int subCategoryId, string userId)
         {
             var questions = await GetQuestionsBySubCategoryAsync(subCategoryId, userId);
@@ -74,18 +73,16 @@ namespace Cyberquiz.BLL.Services
             return new QuizDto
             {
                 SubCategoryId = subCategoryId,
-                Questions = questions,
-                //TotalQuestions = questions.Count
+                Questions = questions
             };
         }
 
         // Metod för att skicka in ett svar
         public async Task<SubmitResponseDto> SubmitAnswerRequestAsync(string userId, int questionId, int selectedOptionId)
         {
-            // QuizService skickar vidare till ResultService 
+            // QuizService delegerar till ResultService
             var isCorrect = await _resultService.SubmitAnswerAsync(userId, questionId, selectedOptionId);
 
-            // Skicka med info om svaret är rätt
             return new SubmitResponseDto
             {
                 IsCorrect = isCorrect

@@ -2,6 +2,9 @@
 using Cyberquiz.Shared.DTOs.Progress;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.DAL.Interface;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
@@ -14,10 +17,8 @@ namespace Cyberquiz.BLL.Services
     public class ResultService : IResultService
     {
         private readonly IQuestionRepository _questionRepo;
-        // Ytterligare ett repo för resultat?
-        private readonly IResultRepository _resultRepo;
 
-        public ResultService(IQuestionRepository questionRepo, IResultRepository resultRepo) 
+        public ResultService(IQuestionRepository questionRepo)
         {
             _questionRepo = questionRepo;
         }
@@ -26,7 +27,7 @@ namespace Cyberquiz.BLL.Services
         public async Task<bool> SubmitAnswerAsync(string userId, int questionId, int selectedOptionId)
         {
             // Hämta frågan med alla svarsalternativ
-            var question = await _questionRepo.GetBySubCategoryAsync(questionId);
+            var question = await _questionRepo.GetByIdAsync(questionId);
 
             if (question == null)
             {
@@ -34,7 +35,8 @@ namespace Cyberquiz.BLL.Services
             }
 
             // Hitta rätt svar genom att kolla IsCorrect i QuestionAnswerOptions
-            var correctAnswer = question.QuestionAnswerOptions.FirstOrDefault(qao => qao.IsCorrect);
+            var correctAnswer = question.QuestionAnswerOptions
+                .FirstOrDefault(qao => qao.IsCorrect);
 
             if (correctAnswer == null)
             {
@@ -44,15 +46,9 @@ namespace Cyberquiz.BLL.Services
             // Validera om användarens svar är rätt
             bool isCorrect = correctAnswer.AnswerOptionId == selectedOptionId;
 
-            // Spara användarens svar i databasen genom att skicka det till repository
-            await _resultRepo.SaveAsync(new UserAnswerModel
-            {
-                UserName = userId,
-                QuestionId = questionId,
-                AnswerOptionId = selectedOptionId,
-                IsCorrect = isCorrect,
-                AnsweredAt = DateTime.UtcNow
-            });
+            // TODO: Spara användarens svar i databasen
+            // Detta bör göras via en UserAnswerRepository
+            // await _userAnswerRepo.SaveAsync(new UserAnswerModel { ... });
 
             return isCorrect;
         }
