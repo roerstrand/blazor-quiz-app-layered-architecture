@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Json;
-using Cyberquiz.DAL.Data;
+using Cyberquiz.UI.Data;
 
 namespace Microsoft.AspNetCore.Routing
 {

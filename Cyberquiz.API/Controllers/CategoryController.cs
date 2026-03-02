@@ -11,35 +11,22 @@ namespace Cyberquiz.API.Controllers
     [Authorize]
     public class CategoryController : Controller
     {
-    
-    // Koppling till DummyRepo - Behöver ange "riktiga" repot
-        private readonly ICatRepo _categoryRepo;
-
-        [HttpGet]
-        public async Task<ActionResult> GetCategories()
-        {
-            var categories = await _categoryRepo.GetAllAsync();
-            return Ok(categories);
-        }
+        // TODO: Injicera ICategoryService när den är implementerad
 
         //GET: /api/categories
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetCategories()
+        public ActionResult<List<CategoryDto>> GetCategories()
         {
-            var categories = await _categoryService.GetCategoriesAsync(User.Identity?.Name ?? "user");
-            return Ok(categories);
-
+            // TODO: return await _categoryService.GetCategoriesAsync(User.Identity?.Name ?? "user");
+            return Ok(new List<CategoryDto>());
         }
 
-        //// GET api/categories/{categoryId}/subcategories
+        // GET api/categories/{categoryId}/subcategories
         [HttpGet("{categoryId}/subcategories")]
-        public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategoriesByCategoryId(int categoryId)
+        public ActionResult<List<SubCategoryDto>> GetSubCategoriesByCategoryId(int categoryId)
         {
-            var subCategories = await _categoryService.GetSubCategoriesByCategoryIdAsync(categoryId, User.Identity?.Name ?? "user");
-            return Ok(subCategories);
-
-
+            // TODO: return await _categoryService.GetSubCategoriesByCategoryIdAsync(categoryId, User.Identity?.Name ?? "user");
+            return Ok(new List<SubCategoryDto>());
         }
-
     }
 }
