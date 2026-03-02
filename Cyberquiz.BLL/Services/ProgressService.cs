@@ -1,10 +1,5 @@
 ﻿using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.DAL.Interface;
-using Cyberquiz.DAL.Models;
-using Cyberquiz.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
@@ -13,34 +8,33 @@ namespace Cyberquiz.BLL.Services
     // Använder ResultsService för att hämta information om användarens resultat
     public class ProgressService : IProgressService
     {
-        private readonly IResultService _resultService;
-        private readonly IQuestionRepository _questionRepo;
         private readonly IQuizRepository _quizRepository;
 
-        public ProgressService(IResultService resultService, IQuestionRepository questionRepo, IQuizRepository quizRepository   )
+        public ProgressService(IQuizRepository quizRepository)
         {
-            _resultService = resultService;
-            _questionRepo = questionRepo;
             _quizRepository = quizRepository;
         }
 
         // Metod för att avgöra om en subkategori är upplåst
         public async Task<bool> IsSubCategoryUnlockedAsync(string userId, int subCatId)
         {
-            // Hämta frågor från underkategorin
-            var questions = await _questionRepo.GetBySubCategoryAsync(subCatId);
+            // Hämta användarens progress för underkategorin
+            var progress = await _quizRepository.GetUserProgressAsync(userId, subCatId);
 
-            // Hämta användarens resultat för underkategorin
-            var results = await _quizRepository.GetUserProgressAsync(userId, subCatId);
+            // Om ingen progress finns: subkategorin är inte upplåst
+            if (progress == null)
+            {
+                return false;
+            }
 
-            // Om inga frågor: returnera false
-            if (!questions.Any())
+            // Om inga frågor besvarats: returnera false
+            if (progress.TotalQuestions == 0)
             {
                 return false;
             }
 
             // Beräkna andel rätt svar
-            double resultsScore = results.Count(res => res.IsCorrect) / (double)questions.Count();
+            double resultsScore = (double)progress.Score / progress.TotalQuestions;
 
             // Subkategorin är upplåst om användaren har minst 80% rätt
             return resultsScore >= 0.80;
