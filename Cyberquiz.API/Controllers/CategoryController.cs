@@ -1,6 +1,4 @@
-﻿using Cyberquiz.BLL.DummyFilesBLL;
-using Cyberquiz.BLL.Interfaces;
-using Cyberquiz.Shared.DTOs;
+﻿using Cyberquiz.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

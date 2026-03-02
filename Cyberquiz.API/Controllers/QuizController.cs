@@ -9,7 +9,7 @@ namespace Cyberquiz.API.Controllers
     [ApiController]
     [Route("api/quiz")]
     [Authorize]
-    public class QuizController : Controller
+    public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
 
@@ -18,40 +18,39 @@ namespace Cyberquiz.API.Controllers
             _quizService = quizService;
         }
 
-        //GET api/quiz/subcategory/{subCategoryId}/next
+        // GET: api/quiz/subcategory/{subCategoryId}/next
         [HttpGet("subcategory/{subCategoryId:int}/next")]
         public async Task<ActionResult<QuestionDto>> GetNextQuestion(int subCategoryId)
         {
             var userName = User.Identity?.Name ?? "user";
 
-            var question = await _quizService.GetNextQuestionAsync(userName, subCategoryId);
+            // TODO: Implementera GetNextQuestionAsync i QuizService
+            // var question = await _quizService.GetNextQuestionAsync(userName, subCategoryId);
 
-            if (question is null)
-                return NotFound();
+            // if (question is null)
+            //     return NotFound();
 
-            return Ok(question);
+            // return Ok(question);
+
+            return NotFound("GetNextQuestionAsync not implemented yet");
         }
 
-        //POST: api/quiz/answer
+        // POST: api/quiz/answer
         [HttpPost("answer")]
-        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer(SubmitAnswerRequestDto request)
+        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer([FromBody] SubmitAnswerRequestDto request)
         {
             if (request is null)
-                return BadRequest();
-            
+                return BadRequest("Request cannot be null");
+
             var userName = User.Identity?.Name ?? "user";
-            var response = await _quizService.SubmitAnswerAsync(userName, request);
+
+            var response = await _quizService.SubmitAnswerRequestAsync(
+                userName, 
+                request.QuestionId, 
+                request.AnswerOptionId
+            );
 
             return Ok(response);
         }
-
-
-
-        //[HttpGet("/api/quizzes")]
-        //public async Task<ActionResult<List<QuizDto>>> GetQuizzes()
-        //{
-        //    var quizzes = await _quizService.GetAllAsync();
-        //    return Ok(quizzes);
-        //}
     }
 }
