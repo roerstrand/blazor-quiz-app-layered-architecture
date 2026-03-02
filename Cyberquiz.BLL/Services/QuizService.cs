@@ -1,15 +1,12 @@
-﻿using Cyberquiz.BLL.DummyFilesBLL;
-using Cyberquiz.BLL.Interfaces;
-using Cyberquiz.DAL.Repositories;
+﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.DAL.Models;
+using Cyberquiz.DAL.Interface;
 using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.Progress;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using static Cyberquiz.BLL.DummyFilesBLL.DummyClassCollection;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
@@ -20,11 +17,12 @@ namespace Cyberquiz.BLL.Services
     // Säkerställa att quiz får startas
     public class QuizService : IQuizService
     {
-        private readonly IQRepo _questionRepo;
+        private readonly IQuestionRepository _questionRepo;
         private readonly IProgressService _progressService;
         private readonly IResultService _resultService;
-
-        public QuizService(IQRepo questionRepo, IProgressService progressService, IResultService resultService)
+        public QuizService(IQuestionRepository questionRepo, 
+            IProgressService progressService, 
+            IResultService resultService)
         {
             _questionRepo = questionRepo;
             _progressService = progressService;
@@ -42,19 +40,29 @@ namespace Cyberquiz.BLL.Services
             }
 
             // Hämta frågor från repository
-            var questions = await _questionRepo.GetBySubCategoryIdAsync(subCategoryId);
+            var questions = await _questionRepo.GetBySubCategoryAsync(subCategoryId);
 
-            // Slumpa ordning (valfritt)
+            // Slumpa ordning
             var shuffledQs = questions.OrderBy(q => Guid.NewGuid()).ToList();
 
-            // Mappa till DTO (utan att visa rätt svar)
-            return MapToQuestionDtos(shuffledQs);
+            // Mappa till DTO
+            return MapToQuestionDtos(shuffledQs.ToList());
         }
 
-        private List<QuestionDto> MapToQuestionDtos(List<Question> questions)
+        // Mappa om till DTOs, exkludera IsCorrect
+        private List<QuestionDto> MapToQuestionDtos(List<QuestionModel> questions)
         {
-            // TODO: Implementera korrekt mappning när Question-modellen är klar
-            return new List<QuestionDto>();
+            return questions.Select(q => new QuestionDto
+            {
+                Id = q.Id,
+                Question = q.Question,
+                AnswerOptions = q.QuestionAnswerOptions.Select(qao => new AnswerOptionDto
+                {
+                    Id = qao.AnswerOptionId,
+                    Answer = qao.AnswerOption.Answer
+                    // OBS: IsCorrect skickas INTE till frontend
+                }).ToList()
+            }).ToList();
         }
 
         // Metod för att starta ett quiz
@@ -65,15 +73,14 @@ namespace Cyberquiz.BLL.Services
             return new QuizDto
             {
                 SubCategoryId = subCategoryId,
-                Questions = questions,
-                //TotalQuestions = questions.Count
+                Questions = questions
             };
         }
 
         // Metod för att skicka in ett svar
         public async Task<SubmitResponseDto> SubmitAnswerRequestAsync(string userId, int questionId, int selectedOptionId)
         {
-            // Spara via ResultService
+            // QuizService delegerar till ResultService
             var isCorrect = await _resultService.SubmitAnswerAsync(userId, questionId, selectedOptionId);
 
             return new SubmitResponseDto
