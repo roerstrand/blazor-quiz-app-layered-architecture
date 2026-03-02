@@ -8,7 +8,7 @@ namespace Cyberquiz.API.Controllers
     [ApiController]
     [Route("api/progress")]
     [Authorize]
-    public class ProgressController : ControllerBase
+    public class ProgressController : Controller
     {
         private readonly IProgressService _progressService;
 
@@ -17,17 +17,13 @@ namespace Cyberquiz.API.Controllers
             _progressService = progressService;
         }
 
-        // GET: api/progress/profile
+        //Get api/progress/profile
         [HttpGet("profile")]
         public async Task<ActionResult<List<UserProgressDto>>> GetUserProgress()
         {
             var username = User.Identity?.Name ?? "user";
-
-            // TODO: Implementera GetUserProgressAsync i ProgressService
-            // var progress = await _progressService.GetUserProgressAsync(username);
-            // return Ok(progress);
-
-            return Ok(new List<UserProgressDto>());
+            var progress = await _progressService.GetUserProgressAsync(username);
+            return Ok(progress);
         }
     }
 }
