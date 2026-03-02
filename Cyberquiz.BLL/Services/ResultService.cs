@@ -1,6 +1,7 @@
 ﻿using Cyberquiz.BLL.DummyFilesBLL;
 using Cyberquiz.BLL.Interfaces;
-using static Cyberquiz.BLL.DummyFilesBLL.DummyClassCollection;
+using Cyberquiz.Shared.DTOs.Progress;
+using Cyberquiz.DAL.Models;
 
 namespace Cyberquiz.BLL.Services
 {
@@ -10,7 +11,7 @@ namespace Cyberquiz.BLL.Services
     // Hämta historik
     // Räkna genomsnitt
     // Räkna procent
-    public class ResultService : IResultService // Serviceklass implementerar Interface
+    public class ResultService : IResultService
     {
 
         private readonly IQRepo _questionRepo;
@@ -22,19 +23,37 @@ namespace Cyberquiz.BLL.Services
             _resultRepo = resultRepo;
         }
 
-        public async Task<bool> SubmitAnswerAsync(string userId,int questionId,int selectedOptionId)
+        // Metod för att skicka in ett svar från användaren
+        public async Task<bool> SubmitAnswerAsync(string userId, int questionId, int selectedOptionId)
         {
+            // Hämta frågan med alla svarsalternativ
             var question = await _questionRepo.GetQByIdAsync(questionId);
 
-            var correctOption = question.AnswerOption; // Denna behöver korrigeras baserat på datamodeller Dummies är ej fullständiga!
-
-            bool isCorrect = correctOption.Id == selectedOptionId; // Denna behöver korrigeras baserat på datamodeller Dummies är ej fullständiga!
-
-            await _resultRepo.SaveAsync(new UserResult
+            if (question == null)
             {
-                UserId = userId, // Denna behöver korrigeras baserat på datamodeller Dummies är ej fullständiga!
-                QuestionId = questionId, // Denna behöver korrigeras baserat på datamodeller Dummies är ej fullständiga!
-                IsCorrect = isCorrect // Denna behöver korrigeras baserat på datamodeller Dummies är ej fullständiga!
+                throw new ArgumentException($"Fråga med ID {questionId} finns inte");
+            }
+
+            // Hitta rätt svar genom att kolla IsCorrect i QuestionAnswerOptions
+            var correctAnswer = question.QuestionAnswerOptions
+                .FirstOrDefault(qao => qao.IsCorrect);
+
+            if (correctAnswer == null)
+            {
+                throw new InvalidOperationException($"Fråga {questionId} har inget rätt svar definierat");
+            }
+
+            // Validera om användarens svar är rätt
+            bool isCorrect = correctAnswer.AnswerOptionId == selectedOptionId;
+
+            // Spara användarens svar i databasen genom att skicka det till repository
+            await _resultRepo.SaveAsync(new UserAnswerModel
+            {
+                UserName = userId,
+                QuestionId = questionId,
+                AnswerOptionId = selectedOptionId,
+                IsCorrect = isCorrect,
+                AnsweredAt = DateTime.UtcNow
             });
 
             return isCorrect;

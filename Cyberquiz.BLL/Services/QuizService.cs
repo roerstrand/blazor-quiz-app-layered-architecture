@@ -1,5 +1,6 @@
 ﻿using Cyberquiz.BLL.DummyFilesBLL;
 using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.DAL.Models;
 using Cyberquiz.DAL.Repositories;
 using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.Progress;
@@ -9,10 +10,10 @@ using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Cyberquiz.BLL.DummyFilesBLL.DummyClassCollection;
 
 namespace Cyberquiz.BLL.Services
 {
+    // Beroende av fråge-repo och användarens tidigare resultat
     // Flödeslogik för att visa quiz för användaren
     // Starta quiz
     // Ta emot och validera svar
@@ -44,17 +45,26 @@ namespace Cyberquiz.BLL.Services
             // Hämta frågor från repository
             var questions = await _questionRepo.GetBySubCategoryIdAsync(subCategoryId);
 
-            // Slumpa ordning (valfritt)
+            // Slumpa ordning
             var shuffledQs = questions.OrderBy(q => Guid.NewGuid()).ToList();
 
-            // Mappa till DTO (utan att visa rätt svar)
+            // Mappa till DTO
             return MapToQuestionDtos(shuffledQs);
         }
 
-        private List<QuestionDto> MapToQuestionDtos(List<Question> questions)
+        private List<QuestionDto> MapToQuestionDtos(List<QuestionModel> questions)
         {
-            // TODO: Implementera korrekt mappning när Question-modellen är klar
-            return new List<QuestionDto>();
+            return questions.Select(q => new QuestionDto
+            {
+                Id = q.Id,
+                Question = q.Question,
+                AnswerOptions = q.QuestionAnswerOptions.Select(qao => new AnswerOptionDto
+                {
+                    Id = qao.AnswerOptionId,
+                    Answer = qao.AnswerOption.Answer
+                    // IsCorrect skickas INTE till frontend
+                }).ToList()
+            }).ToList();
         }
 
         // Metod för att starta ett quiz
@@ -73,9 +83,10 @@ namespace Cyberquiz.BLL.Services
         // Metod för att skicka in ett svar
         public async Task<SubmitResponseDto> SubmitAnswerRequestAsync(string userId, int questionId, int selectedOptionId)
         {
-            // Spara via ResultService
+            // QuizService skickar vidare till ResultService 
             var isCorrect = await _resultService.SubmitAnswerAsync(userId, questionId, selectedOptionId);
 
+            // Skicka med info om svaret är rätt
             return new SubmitResponseDto
             {
                 IsCorrect = isCorrect
