@@ -1,19 +1,18 @@
 ﻿using Cyberquiz.BLL.DummyFilesBLL;
 using Cyberquiz.BLL.Interfaces;
-using Microsoft.AspNetCore.SignalR.Protocol;
+using Cyberquiz.DAL.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using static Cyberquiz.BLL.DummyFilesBLL.DummyClassCollection;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Cyberquiz.BLL.Services
 {
     // Reglerar åtkomst
     // Använder ResultsService för att hämta information om användarens resultat
-    public class ProgressService : IProgressService // Serviceklass implementerar Interface
+    public class ProgressService : IProgressService
     {
-        // Fält
         private readonly IUserResRepo _resultRepo;
         private readonly IQRepo _questionRepo;
 
