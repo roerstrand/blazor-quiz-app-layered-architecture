@@ -20,8 +20,6 @@ namespace Cyberquiz.DAL.Data
 
         public DbSet<QuestionAnswerOptionModel> QuestionAnswerOptions { get; set; } = null!;
 
-        public DbSet<QuizModel> Quizzes { get; set; } = null!;
-
         public DbSet<UserProgressModel> UserProgress { get; set; } = null!;
 
         public DbSet<QuestionModel> Questions { get; set; } = null!;
@@ -43,11 +41,6 @@ namespace Cyberquiz.DAL.Data
                 .HasOne(x => x.AnswerOption)
                 .WithMany(a => a.QuestionAnswerOptions)
                 .HasForeignKey(x => x.AnswerOptionId);
-
-            // Quiz ↔ Question: automatisk many-to-many (ingen payload, EF skapar shadow join-tabell)
-            modelBuilder.Entity<QuizModel>()
-                .HasMany(q => q.Questions)
-                .WithMany(q => q.Quizzes);
 
             // Undvik multipla cascade-paths: Category → SubCategory → Question
             modelBuilder.Entity<QuestionModel>()

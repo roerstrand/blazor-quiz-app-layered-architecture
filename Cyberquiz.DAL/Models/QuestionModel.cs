@@ -12,8 +12,6 @@ namespace Cyberquiz.DAL.Models
 
         public ICollection<QuestionAnswerOptionModel> QuestionAnswerOptions { get; set; }
 
-        public ICollection<QuizModel> Quizzes { get; set; }
-
         public int CategoryId { get; set; }
         public CategoryModel Category { get; set; }
 
