@@ -6,31 +6,51 @@
 
 <h3>SubCategory</h3>
 
-@if (subCategories == null)
+@if (_subs is null)
 {
-    <p>Loading...</p>
+    <p>Laddar...</p>
 }
-else if (subCategories.Count == 0)
+else if (_subs.Count == 0)
 {
-    <p>No subcategories found.</p>
+    <p>Inga subkategorier.</p>
 }
 else
 {
-    <SubCategoryList SubCategories="subCategories" OnSubCategorySelected="StartQuiz" />
+    <ul>
+        @foreach (var s in _subs.OrderBy(x => x.Order))
+        {
+            <li style="margin-bottom:10px;">
+                <span>@(s.IsLocked ? "🔒" : "🔓")</span>
+                <strong style="margin-left:6px;">@s.Name</strong>
+                <span style="opacity:.7;">(Kategori: @s.CategoryName, Nivå: @s.Order)</span>
+
+                @if (s.IsCompleted)
+                {
+                    <span style="margin-left:6px;">✅</span>
+                }
+
+                <button class="btn btn-sm btn-primary"
+                        style="margin-left:10px;"
+                        disabled="@s.IsLocked"
+                        @onclick="() =>GoToQuiz(s.Id)">
+                    Starta quiz
+                </button>
+            </li>
+        }
+    </ul>
 }
 
 @code {
-    [Parameter]
-    public int CategoryId { get; set; }
-    private List<SubCategoryDto>? subCategories;
+    [Parameter] public int CategoryId { get; set; }
+    private List<SubCategoryDto>? _subs;
 
-    protected override async Task OnParametersSetAsync() 
+    protected override async Task OnParametersSetAsync()
     {
-        subCategories = await ApiService.GetSubCategoiesByCategoryIdAsync(CategoryId);
+        _subs = await ApiService.GetSubCategoriesByCategoryIdAsync(CategoryId);
     }
 
-    private void StartQuiz(int subCategoryId)
+    ¨private void GoToQuiz(int subCategoryId)
     {
-        Nav.NavigateTo($"/quiz/{subCategoryId}"); //islocked
+        Nav.NavigateTo($"/quiz/{subCategoryId}");
     }
 }

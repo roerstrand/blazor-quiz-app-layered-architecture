@@ -19,4 +19,3 @@ namespace Cyberquiz.DAL.Models
     }
 }
 
-// Lägg t category prop

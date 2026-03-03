@@ -3,13 +3,15 @@ using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.Progress;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cyberquiz.API.Controllers
 {
     [ApiController]
     [Route("api/quiz")]
     [Authorize]
-    public class QuizController : Controller
+    public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
 
@@ -18,32 +20,43 @@ namespace Cyberquiz.API.Controllers
             _quizService = quizService;
         }
 
-        //GET api/quiz/subcategory/{subCategoryId}/next
-        [HttpGet("subcategory/{subCategoryId:int}/next")]
-        public ActionResult<QuestionDto> GetNextQuestion(int subCategoryId)
+        // POST api/quiz/subcategory/{subCategoryId}/start
+        // Startar ett quiz och returnerar alla frågor
+        [HttpPost("subcategory/{subCategoryId:int}/start")]
+        public async Task<ActionResult<List<QuestionDto>>> StartQuiz(int subCategoryId)
         {
-            // TODO: return await _quizService.GetNextQuestionAsync(User.Identity?.Name ?? "user", subCategoryId);
-            return NotFound();
+            var userId = User.Identity?.Name ?? "anonymous";
+            var questions = await _quizService.StartQuizAsync(subCategoryId, userId);
+
+            return Ok(questions);
         }
 
-        //POST: api/quiz/answer
+        // GET api/quiz/subcategory/{subCategoryId}/questions
+        // Hämtar alla frågor för en subkategori
+        [HttpGet("subcategory/{subCategoryId:int}/questions")]
+        public async Task<ActionResult<List<QuestionDto>>> GetQuestions(int subCategoryId)
+        {
+            var userId = User.Identity?.Name ?? "anonymous";
+            var questions = await _quizService.GetQuestionsBySubCategoryAsync(subCategoryId, userId);
+
+            return Ok(questions);
+        }
+
+        // POST api/quiz/answer
+        // Skickar in ett svar från användaren
         [HttpPost("answer")]
-        public ActionResult<SubmitResponseDto> SubmitAnswer(SubmitAnswerRequestDto request)
+        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer([FromBody] SubmitAnswerRequestDto request)
         {
-            if (request is null)
-                return BadRequest();
+            if (request == null)
+                return BadRequest("Request body saknas");
 
-            // TODO: return await _quizService.SubmitAnswerAsync(User.Identity?.Name ?? "user", request);
-            return Ok(new SubmitResponseDto());
+            var userId = User.Identity?.Name ?? "anonymous";
+            var result = await _quizService.SubmitAnswerRequestAsync(
+                userId, 
+                request.QuestionId, 
+                request.AnswerOptionId);
+
+            return Ok(result);
         }
-
-
-
-        //[HttpGet("/api/quizzes")]
-        //public async Task<ActionResult<List<QuizDto>>> GetQuizzes()
-        //{
-        //    var quizzes = await _quizService.GetAllAsync();
-        //    return Ok(quizzes);
-        //}
     }
 }

@@ -10,6 +10,6 @@ namespace Cyberquiz.Shared.DTOs
 
         public string Question { get; set; }
 
-        public ICollection<AnswerOptionDto> AnswerOptions { get; set; }
+        public ICollection<AnswerOptionDto> AnswerOptions { get; set; } // Hämtar svarsalternativen för frågan
     }
 }

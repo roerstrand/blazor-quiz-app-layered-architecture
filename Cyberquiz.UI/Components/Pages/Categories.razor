@@ -1,36 +1,63 @@
-﻿@using Cyberquiz.Shared.DTOs
+﻿@page "/categories"
+@using Cyberquiz.Shared.DTOs
 @using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
 @inject NavigationManager Nav
 @inject ApiService ApiService
+
 <h3>Categories</h3>
 
 <h2>Välj en kategori</h2>
 
-@if (categories == null)
+@if (_categories is null)
 {
-    <p>Loading...</p>
+    <p>Laddar...</p>
 }
-else if (categories.Count == 0)
+else if (_categories.Count == 0)
 {
-    <p>No categories found.</p>
+    <p>Inga kategorier hittades.</p>
 }
 else
 {
-    <CategoryList Categories="categories" OnCategorySelected="GoToSubCategory" />
+    @foreach (var c in _categories)
+    {
+        <div class="card p-3 mb-3">
+            <h4>@c.Name</h4>
+            <p>Avklarade subkategorier: <strong>@c.CompletedSubCategories</strong> / @c.TotalSubCategories</p>
+
+            <ul>
+                @foreach (var s in c.SubCategories.OrderBy(x => x.Order))
+                {
+                    <li style="margin-bottom:8px;">
+                        <span>@(s.IsLocked ? "🔒" : "🔓")</span>
+                        <strong style="margin-left:6px;">@s.Name</strong>
+
+                        @if (s.IsCompleted)
+                        {
+                            <span style="margin-left:6px;">✅</span>
+                        }
+
+                        <button class="btn btn-sm btn-secondary"
+                                style="margin-left:10px;"
+                                @onclick="() => GoToSubCategories(c.Id)">
+                            Visa subkategorier
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 }
 
 @code {
-    private List<CategoryDto>? categories;
+    private List<CategoryDto>? _categories;
 
     protected override async Task OnInitializedAsync()
     {
-         categories = await ApiService.GetCategoriesAsync();
+        _categories = await ApiService.GetCategoryOverviewAsync(); 
     }
-
-    private void GoToSubCategory(int categoryId)
+    private void GoToSubCategories(int categoryId)
     {
-        Nav.NavigateTo($"/categories/{categoryId}/subcategories"); // SubCategory
+        Nav.NavigateTo($"/categories/{categoryId}/subcategories");
     }
-
 }
