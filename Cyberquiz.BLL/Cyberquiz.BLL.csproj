@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\IUserDetailsService.cs" />
+    <Compile Remove="Services\UserDetailsService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Cyberquiz.DAL\Cyberquiz.DAL.csproj" />
     <ProjectReference Include="..\Cyberquiz.Shared\Cyberquiz.Shared.csproj" />
   </ItemGroup>

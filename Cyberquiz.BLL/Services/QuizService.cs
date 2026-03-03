@@ -19,10 +19,10 @@ namespace Cyberquiz.BLL.Services
     {
         private readonly IQuestionRepository _questionRepo;
         private readonly IProgressService _progressService;
-        private readonly IResultService _resultService;
+        private readonly IQuestionService _resultService;
         public QuizService(IQuestionRepository questionRepo, 
             IProgressService progressService, 
-            IResultService resultService)
+            IQuestionService resultService)
         {
             _questionRepo = questionRepo;
             _progressService = progressService;

@@ -15,13 +15,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // DAL
-builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
 
-//Kommentera bort för swagger
- //BLL
+// BLL
+builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
 
 builder.Services.AddControllers();

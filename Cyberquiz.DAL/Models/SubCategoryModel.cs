@@ -16,5 +16,7 @@ namespace Cyberquiz.DAL.Models
         public CategoryModel Category { get; set; }
 
         public ICollection<QuestionModel> Questions { get; set; }
+
+        public int QuestionCount => Questions?.Count ?? 0;
     }
 }

@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
-    public class ResultService : IResultService
+    public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
-        private readonly IQuizRepository _quizRepo;
+        private readonly IProgressRepository _progressRepo;
 
-        public ResultService(IQuestionRepository questionRepo, IQuizRepository quizRepo)
+        public QuestionService(IQuestionRepository questionRepo, IProgressRepository progressRepo)
         {
             _questionRepo = questionRepo;
-            _quizRepo = quizRepo;
+            _progressRepo = progressRepo;
         }
 
         // Metod för att spara ett enskilt svar från användaren
@@ -43,7 +43,7 @@ namespace Cyberquiz.BLL.Services
             bool isCorrect = correctAnswer.AnswerOptionId == selectedOptionId;
 
             // Spara användarens svar i databasen
-            await _quizRepo.SaveUserAnswerAsync(new UserAnswerModel
+            await _progressRepo.SaveUserAnswerAsync(new UserAnswerModel
             {
                 UserName = userId,
                 QuestionId = questionId,
@@ -59,14 +59,14 @@ namespace Cyberquiz.BLL.Services
         public async Task CompleteQuizAsync(string userId, int subCategoryId)
         {
             // Hämta alla användarens svar för denna subkategori
-            var userAnswers = await _quizRepo.GetUserAnswersBySubCategoryAsync(userId, subCategoryId);
+            var userAnswers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userId, subCategoryId);
 
             // Beräkna resultat
             var totalQuestions = userAnswers.Count();
             var score = userAnswers.Count(ua => ua.IsCorrect);
 
             // Spara progress
-            await _quizRepo.SaveUserProgressAsync(new UserProgressModel
+            await _progressRepo.SaveProgressAsync(new UserProgressModel
             {
                 UserName = userId,
                 SubCategoryId = subCategoryId,
