@@ -10,19 +10,40 @@ namespace Cyberquiz.API.Controllers
     [Authorize]
     public class ProgressController : Controller
     {
-        private readonly IProgressService _progressService;
+        // Senare: injicera IProgressService
 
-        public ProgressController(IProgressService progressService)
-        {
-            _progressService = progressService;
-        }
-
-        //Get api/progress/profile
+        // GET api/progress/profile
         [HttpGet("profile")]
-        public ActionResult<List<UserProgressDto>> GetUserProgress()
+        public ActionResult<List<UserProgressDto>> GetProfile()
         {
-            // TODO: return await _progressService.GetUserProgressAsync(User.Identity?.Name ?? "user");
-            return Ok(new List<UserProgressDto>());
+            // DUMMY
+            return Ok(new List<UserProgressDto>
+        {
+            new()
+            {
+                Id = 1,
+                UserName = "user",
+                SubCategoryId = 101,
+                SubCategoryName = "TCP/IP",
+                Score = 8,
+                TotalQuestions = 10,
+                CompletedAt = DateTime.UtcNow.AddDays(-1)
+            }
+        });
         }
+        //private readonly IProgressService _progressService;
+
+        //public ProgressController(IProgressService progressService)
+        //{
+        //    _progressService = progressService;
+        //}
+
+        ////Get api/progress/profile
+        //[HttpGet("profile")]
+        //public ActionResult<List<UserProgressDto>> GetUserProgress()
+        //{
+        //    // TODO: return await _progressService.GetUserProgressAsync(User.Identity?.Name ?? "user");
+        //    return Ok(new List<UserProgressDto>());
+        //}
     }
 }

@@ -26,7 +26,7 @@ else
 
     protected override async Task OnParametersSetAsync() 
     {
-        subCategories = await ApiService.GetSubCategoiesByCategoryIdAsync(CategoryId);
+        // subCategories = await ApiService.GetSubCategoiesByCategoryIdAsync(CategoryId);
     }
 
     private void StartQuiz(int subCategoryId)
