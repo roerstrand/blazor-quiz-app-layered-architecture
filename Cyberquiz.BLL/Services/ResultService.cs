@@ -55,7 +55,7 @@ namespace Cyberquiz.BLL.Services
             return isCorrect;
         }
 
-        // Metod för att slutföra quiz och spara progress i UserProgressModel
+        // Metod för att SLUTFÖRA QUIZ och SPARA PROGRESS
         public async Task CompleteQuizAsync(string userId, int subCategoryId)
         {
             // Hämta alla användarens svar för denna subkategori

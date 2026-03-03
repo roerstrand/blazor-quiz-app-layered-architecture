@@ -1,0 +1,40 @@
+Förslag till uppdatering i QuizRepo för att ta emot och spara data från ResultService: 
+
+        // Sparar eller uppdaterar användarens progress för en subkategori
+        public async Task SaveUserProgressAsync(UserProgressModel progress)
+        {
+            var existing = await _context.UserProgress
+                .FirstOrDefaultAsync(up => up.UserName == progress.UserName && up.SubCategoryId == progress.SubCategoryId);
+
+            if (existing != null)
+            {
+                // Uppdatera befintlig
+                existing.Score = progress.Score;
+                existing.TotalQuestions = progress.TotalQuestions;
+                existing.CompletedAt = progress.CompletedAt;
+            }
+            else
+            {
+                // Lägg till ny
+                _context.UserProgress.Add(progress);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        // Sparar ett enskilt svar från användaren
+        public async Task SaveUserAnswerAsync(UserAnswerModel userAnswer)
+        {
+            _context.UserAnswers.Add(userAnswer);
+            await _context.SaveChangesAsync();
+        }
+
+        // Hämtar alla användarens svar för en subkategori
+        public async Task<IEnumerable<UserAnswerModel>> GetUserAnswersBySubCategoryAsync(string userName, int subCategoryId)
+        {
+            return await _context.UserAnswers
+                .AsNoTracking()
+                .Include(ua => ua.Question)
+                .Where(ua => ua.UserName == userName && ua.Question.SubCategoryId == subCategoryId)
+                .ToListAsync();
+        }

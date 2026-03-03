@@ -1,0 +1,12 @@
+Förslag till uppdatering i IQuizRepo för att för att ta emot och spara data från ResultService: 
+
+        // Sparar eller uppdaterar användarens progress för en subkategori
+        Task SaveUserProgressAsync(UserProgressModel progress);
+
+        // === UserAnswers ===
+
+        // Sparar ett enskilt svar från användaren
+        Task SaveUserAnswerAsync(UserAnswerModel userAnswer);
+
+        // Hämtar alla användarens svar för en subkategori
+        Task<IEnumerable<UserAnswerModel>> GetUserAnswersBySubCategoryAsync(string userName, int subCategoryId);
