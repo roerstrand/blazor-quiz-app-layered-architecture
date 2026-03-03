@@ -2,7 +2,7 @@
 
 namespace Cyberquiz.BLL.Interfaces
 {
-    public interface IResultService
+    public interface IQuestionService
     {
         // Spara ett enskilt svar från användaren
         Task<bool> SubmitAnswerAsync(string userId, int questionId, int selectedOptionId);

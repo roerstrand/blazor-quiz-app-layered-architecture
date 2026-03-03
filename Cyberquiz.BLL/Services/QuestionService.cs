@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
-    public class ResultService : IResultService
+    public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
         private readonly IQuizRepository _quizRepo;
 
-        public ResultService(IQuestionRepository questionRepo, IQuizRepository quizRepo)
+        public QuestionService(IQuestionRepository questionRepo, IQuizRepository quizRepo)
         {
             _questionRepo = questionRepo;
             _quizRepo = quizRepo;
