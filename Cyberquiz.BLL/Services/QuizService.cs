@@ -29,7 +29,7 @@ namespace Cyberquiz.BLL.Services
             _resultService = resultService;
         }
 
-        // Metod för att hämta frågor med svarsalternativ för en subkategori
+        // Metod för att HÄMTA FRÅGOR med svarsalternativ för en subkategori
         public async Task<List<QuestionDto>> GetQuestionsBySubCategoryAsync(int subCategoryId, string userId)
         {
             // Kolla om användaren har tillgång till subkategorin
@@ -65,14 +65,9 @@ namespace Cyberquiz.BLL.Services
             }).ToList();
         }
 
-        // Metod för att starta ett quiz - returnerar lista av frågor
+        // Metod för att STARTA QUIZ - returnerar lista av frågor
         public async Task<List<QuestionDto>> StartQuizAsync(int subCategoryId, string userId)
         {
-            // GetQuestionsBySubCategoryAsync gör redan allt:
-            // 1. Kollar om subkategorin är upplåst
-            // 2. Hämtar frågor
-            // 3. Slumpar ordning
-            // 4. Mappar till DTOs
             return await GetQuestionsBySubCategoryAsync(subCategoryId, userId);
         }
 
