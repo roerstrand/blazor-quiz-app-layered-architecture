@@ -65,4 +65,3 @@ namespace Cyberquiz.DAL.Repositories
         }
     }
 }
-1

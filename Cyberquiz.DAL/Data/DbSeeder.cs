@@ -10,1142 +10,719 @@ namespace Cyberquiz.DAL.Data
             if (await context.Questions.AnyAsync())
                 return;
 
-            // SVARSALTERNATIV — globalt bibliotek, återanvänds fritt mellan frågor
-
-            // Städer & länder
-            var aParis          = new AnswerOptionModel { Answer = "Paris" };
-            var aLondon         = new AnswerOptionModel { Answer = "London" };
-            var aBerlin         = new AnswerOptionModel { Answer = "Berlin" };
-            var aMadrid         = new AnswerOptionModel { Answer = "Madrid" };
-            var aRom            = new AnswerOptionModel { Answer = "Rom" };
-            var aStockholm      = new AnswerOptionModel { Answer = "Stockholm" };
-            var aGoteborg       = new AnswerOptionModel { Answer = "Göteborg" };
-            var aMalmo          = new AnswerOptionModel { Answer = "Malmö" };
-            var aUppsala        = new AnswerOptionModel { Answer = "Uppsala" };
-            var aRyssland       = new AnswerOptionModel { Answer = "Ryssland" };      // ✓ störst land + flest invånare Europa
-            var aTyskland       = new AnswerOptionModel { Answer = "Tyskland" };      // ✗ återanvänds i flera frågor
-            var aFrankrike      = new AnswerOptionModel { Answer = "Frankrike" };
-            var aItalien        = new AnswerOptionModel { Answer = "Italien" };       // ✓ antika Rom, ✗ VM-guld, ✗ invånare
-            var aGrekland       = new AnswerOptionModel { Answer = "Grekland" };
-            var aSpanien        = new AnswerOptionModel { Answer = "Spanien" };
-            var aTurkiet        = new AnswerOptionModel { Answer = "Turkiet" };
-            var aKanada         = new AnswerOptionModel { Answer = "Kanada" };
-            var aUSA            = new AnswerOptionModel { Answer = "USA" };
-            var aKina           = new AnswerOptionModel { Answer = "Kina" };          // ✗ återanvänds i geografi + mat
-            var aJapan          = new AnswerOptionModel { Answer = "Japan" };         // ✓ sushi + Spirited Away
-            var aBrasilien      = new AnswerOptionModel { Answer = "Brasilien" };     // ✓ VM-guld fotboll + kaffe
-            var aArgentina      = new AnswerOptionModel { Answer = "Argentina" };
-            var aSydkorea       = new AnswerOptionModel { Answer = "Sydkorea" };      // ✗ återanvänds i mat + film
-            var aVietnam        = new AnswerOptionModel { Answer = "Vietnam" };       // ✗ återanvänds i mat + geografi
-            var aKolombia       = new AnswerOptionModel { Answer = "Colombia" };
-            var aEtiopien       = new AnswerOptionModel { Answer = "Etiopien" };
-            var aAthen          = new AnswerOptionModel { Answer = "Aten" };
-
-            // Floder
-            var aNilen          = new AnswerOptionModel { Answer = "Nilen" };
-            var aAmazonas       = new AnswerOptionModel { Answer = "Amazonas" };
-            var aYangtze        = new AnswerOptionModel { Answer = "Yangtze" };
-            var aMississippi    = new AnswerOptionModel { Answer = "Mississippi" };
-
-            // Siffror — återanvänds brett över kategorier
-            var a2  = new AnswerOptionModel { Answer = "2" };
-            var a3  = new AnswerOptionModel { Answer = "3" };
-            var a4  = new AnswerOptionModel { Answer = "4" };   // ✗ gitarr, insekt, ✓ OS-intervall
-            var a5  = new AnswerOptionModel { Answer = "5" };
-            var a6  = new AnswerOptionModel { Answer = "6" };   // ✓ gitarrsträngar + hexagon + insektben
-            var a7  = new AnswerOptionModel { Answer = "7" };
-            var a8  = new AnswerOptionModel { Answer = "8" };   // ✗ gitarr, insekt, hexagon
-            var a9  = new AnswerOptionModel { Answer = "9" };
-            var a10 = new AnswerOptionModel { Answer = "10" };
-            var a11 = new AnswerOptionModel { Answer = "11" };  // ✓ fotbollsspelare, ✗ kvadratrot 144
-            var a12 = new AnswerOptionModel { Answer = "12" };  // ✓ kvadratrot 144, ✗ fotboll
-            var a13 = new AnswerOptionModel { Answer = "13" };
-            var a14 = new AnswerOptionModel { Answer = "14" };
-            var a45  = new AnswerOptionModel { Answer = "45" };
-            var a60  = new AnswerOptionModel { Answer = "60" };
-            var a90  = new AnswerOptionModel { Answer = "90" };
-            var a180 = new AnswerOptionModel { Answer = "180" };
-
-            // Årtal
-            var a395  = new AnswerOptionModel { Answer = "395" };
-            var a410  = new AnswerOptionModel { Answer = "410" };
-            var a476  = new AnswerOptionModel { Answer = "476" };
-            var a500  = new AnswerOptionModel { Answer = "500" };
-            var a1943 = new AnswerOptionModel { Answer = "1943" };
-            var a1944 = new AnswerOptionModel { Answer = "1944" };
-            var a1945 = new AnswerOptionModel { Answer = "1945" };
-            var a1946 = new AnswerOptionModel { Answer = "1946" };
-            var a1969 = new AnswerOptionModel { Answer = "1969" };
-            var a1970 = new AnswerOptionModel { Answer = "1970" };
-            var a1972 = new AnswerOptionModel { Answer = "1972" };
-            var a1975 = new AnswerOptionModel { Answer = "1975" };
-            var a1995 = new AnswerOptionModel { Answer = "1995" };
-            var a1997 = new AnswerOptionModel { Answer = "1997" };
-            var a1998 = new AnswerOptionModel { Answer = "1998" };
-            var a1999 = new AnswerOptionModel { Answer = "1999" };
-            var a2000 = new AnswerOptionModel { Answer = "2000" };
-            var a2001 = new AnswerOptionModel { Answer = "2001" };
-
-            // Svenska regenter
-            var aKarlXII       = new AnswerOptionModel { Answer = "Karl XII" };
-            var aGustavIIAdolf = new AnswerOptionModel { Answer = "Gustav II Adolf" };
-            var aKarlXI        = new AnswerOptionModel { Answer = "Karl XI" };
-            var aGustavIII     = new AnswerOptionModel { Answer = "Gustav III" };
-
-            // Kemi
-            var aH2O  = new AnswerOptionModel { Answer = "H₂O" };
-            var aCO2  = new AnswerOptionModel { Answer = "CO₂" };
-            var aNaCl = new AnswerOptionModel { Answer = "NaCl" };
-            var aO2   = new AnswerOptionModel { Answer = "O₂" };
-
-            // Grundämnen
-            var aVate   = new AnswerOptionModel { Answer = "Väte" };
-            var aHelium = new AnswerOptionModel { Answer = "Helium" };
-            var aSyre   = new AnswerOptionModel { Answer = "Syre" };
-            var aKol    = new AnswerOptionModel { Answer = "Kol" };
-
-            // Hastigheter
-            var a300000 = new AnswerOptionModel { Answer = "300 000 km/s" };
-            var a150000 = new AnswerOptionModel { Answer = "150 000 km/s" };
-            var a500000 = new AnswerOptionModel { Answer = "500 000 km/s" };
-            var a100000 = new AnswerOptionModel { Answer = "100 000 km/s" };
-
-            // Vetenskapsmän — återanvänds i fysikfrågor
-            var aNewton   = new AnswerOptionModel { Answer = "Newton" };
-            var aEinstein = new AnswerOptionModel { Answer = "Einstein" };
-            var aGalileo  = new AnswerOptionModel { Answer = "Galileo" };
-            var aHawking  = new AnswerOptionModel { Answer = "Hawking" };
-
-            // Kompositörer
-            var aBeethoven = new AnswerOptionModel { Answer = "Beethoven" };
-            var aMozart    = new AnswerOptionModel { Answer = "Mozart" };
-            var aBach      = new AnswerOptionModel { Answer = "Bach" };
-            var aChopin    = new AnswerOptionModel { Answer = "Chopin" };
-
-            // Band
-            var aQueen         = new AnswerOptionModel { Answer = "Queen" };
-            var aBeatles       = new AnswerOptionModel { Answer = "The Beatles" };
-            var aLedZeppelin   = new AnswerOptionModel { Answer = "Led Zeppelin" };
-            var aRollingStones = new AnswerOptionModel { Answer = "Rolling Stones" };
-
-            // Skådespelare
-            var aRDJ            = new AnswerOptionModel { Answer = "Robert Downey Jr." };
-            var aChrisEvans     = new AnswerOptionModel { Answer = "Chris Evans" };
-            var aChrisHemsworth = new AnswerOptionModel { Answer = "Chris Hemsworth" };
-            var aMarkRuffalo    = new AnswerOptionModel { Answer = "Mark Ruffalo" };
-
-            // Animationsstudios
-            var aDisney     = new AnswerOptionModel { Answer = "Disney" };
-            var aPixar      = new AnswerOptionModel { Answer = "Pixar" };
-            var aDreamWorks = new AnswerOptionModel { Answer = "DreamWorks" };
-            var aWarnerBros = new AnswerOptionModel { Answer = "Warner Bros" };
-
-            // Förkortningar (teknik)
-            var aCpuCorrect = new AnswerOptionModel { Answer = "Central Processing Unit" };
-            var aCpuWrong1  = new AnswerOptionModel { Answer = "Computer Power Unit" };
-            var aCpuWrong2  = new AnswerOptionModel { Answer = "Central Program Unit" };
-            var aCpuWrong3  = new AnswerOptionModel { Answer = "Core Processing Unit" };
-            var aWwwCorrect = new AnswerOptionModel { Answer = "World Wide Web" };
-            var aWwwWrong1  = new AnswerOptionModel { Answer = "World Wire Web" };
-            var aWwwWrong2  = new AnswerOptionModel { Answer = "Wide World Web" };
-            var aWwwWrong3  = new AnswerOptionModel { Answer = "Web World Wide" };
-
-            // Teknikföretag — återanvänds i Windows + Google-frågor
-            var aMicrosoft = new AnswerOptionModel { Answer = "Microsoft" };
-            var aApple     = new AnswerOptionModel { Answer = "Apple" };
-            var aGoogle    = new AnswerOptionModel { Answer = "Google" };
-            var aIBM       = new AnswerOptionModel { Answer = "IBM" };
-
-            // Pi
-            var aPi314 = new AnswerOptionModel { Answer = "3,14" };
-            var aPi312 = new AnswerOptionModel { Answer = "3,12" };
-            var aPi316 = new AnswerOptionModel { Answer = "3,16" };
-            var aPi318 = new AnswerOptionModel { Answer = "3,18" };
-
-            // Djur
-            var aElefant   = new AnswerOptionModel { Answer = "Afrikansk elefant" };
-            var aNoshorn   = new AnswerOptionModel { Answer = "Noshörning" };
-            var aFlodhaest = new AnswerOptionModel { Answer = "Flodhäst" };
-            var aGiraff    = new AnswerOptionModel { Answer = "Giraff" };
-
-            // Träd
-            var aEk    = new AnswerOptionModel { Answer = "Ek" };
-            var aBjork = new AnswerOptionModel { Answer = "Björk" };
-            var aGran  = new AnswerOptionModel { Answer = "Gran" };
-            var aTall  = new AnswerOptionModel { Answer = "Tall" };
-
-            // Biologiska processer
-            var aFotosyntes  = new AnswerOptionModel { Answer = "Fotosyntes" };
-            var aMetabolism  = new AnswerOptionModel { Answer = "Metabolism" };
-            var aOsmos       = new AnswerOptionModel { Answer = "Osmos" };
-            var aRespiration = new AnswerOptionModel { Answer = "Respiration" };
-
-            // Mat & dryck
-            var aAvokado = new AnswerOptionModel { Answer = "Avokado" };
-            var aTomat   = new AnswerOptionModel { Answer = "Tomat" };
-            var aLok     = new AnswerOptionModel { Answer = "Lök" };
-            var aLime    = new AnswerOptionModel { Answer = "Lime" };
-            var aDruvor  = new AnswerOptionModel { Answer = "Druvor" };
-            var aApplen  = new AnswerOptionModel { Answer = "Äpplen" };
-            var aParon   = new AnswerOptionModel { Answer = "Päron" };
-            var aPlommon = new AnswerOptionModel { Answer = "Plommon" };
-
-            // Skandinaviska städer
-            var aOslo        = new AnswerOptionModel { Answer = "Oslo" };
-            var aKopenhagen  = new AnswerOptionModel { Answer = "Köpenhamn" };
-            var aHelsinki    = new AnswerOptionModel { Answer = "Helsingfors" };
-            var aNorge       = new AnswerOptionModel { Answer = "Norge" };
-            var aDanmark     = new AnswerOptionModel { Answer = "Danmark" };
-            var aFinland     = new AnswerOptionModel { Answer = "Finland" };
-            var aSverige     = new AnswerOptionModel { Answer = "Sverige" };
-
-            // Medeltiden — årtal
-            var a1066 = new AnswerOptionModel { Answer = "1066" };
-            var a1215 = new AnswerOptionModel { Answer = "1215" };
-            var a1348 = new AnswerOptionModel { Answer = "1348" };
-            var a1389 = new AnswerOptionModel { Answer = "1389" };
-            var a1453 = new AnswerOptionModel { Answer = "1453" };
-            var a1492 = new AnswerOptionModel { Answer = "1492" };
-            var a1500 = new AnswerOptionModel { Answer = "1500" };
-
-            // Biologi
-            var a1   = new AnswerOptionModel { Answer = "1" };
-            var a22  = new AnswerOptionModel { Answer = "22" };
-            var a23  = new AnswerOptionModel { Answer = "23" };
-            var a24  = new AnswerOptionModel { Answer = "24" };
-            var a46  = new AnswerOptionModel { Answer = "46" };
-            var aCellen    = new AnswerOptionModel { Answer = "Cellen" };
-            var aAtomen    = new AnswerOptionModel { Answer = "Atomen" };
-            var aMolekylen = new AnswerOptionModel { Answer = "Molekylen" };
-            var aVavnaden  = new AnswerOptionModel { Answer = "Vävnaden" };
-
-            // Tennis
-            var aLove           = new AnswerOptionModel { Answer = "Love" };
-            var aZero           = new AnswerOptionModel { Answer = "Zero" };
-            var aNil            = new AnswerOptionModel { Answer = "Nil" };
-            var aNoll           = new AnswerOptionModel { Answer = "Noll" };
-            var aRolandGarros   = new AnswerOptionModel { Answer = "Roland Garros" };
-            var aWimbledon      = new AnswerOptionModel { Answer = "Wimbledon" };
-            var aUSOpen         = new AnswerOptionModel { Answer = "US Open" };
-            var aAustralianOpen = new AnswerOptionModel { Answer = "Australian Open" };
-
-            // Jazz — instrument
-            var aTrumpet  = new AnswerOptionModel { Answer = "Trumpet" };
-            var aSaxofon  = new AnswerOptionModel { Answer = "Saxofon" };
-            var aPiano    = new AnswerOptionModel { Answer = "Piano" };
-            var aKlarinet = new AnswerOptionModel { Answer = "Klarinett" };
-
-            // Serier & TV
-            var aHBO          = new AnswerOptionModel { Answer = "HBO" };
-            var aNetflix      = new AnswerOptionModel { Answer = "Netflix" };
-            var aAmazonPrime  = new AnswerOptionModel { Answer = "Amazon Prime" };
-            var aHulu         = new AnswerOptionModel { Answer = "Hulu" };
-
-            // Hav & Oceaner
-            var aStillahavet     = new AnswerOptionModel { Answer = "Stilla havet" };
-            var aAtlanten        = new AnswerOptionModel { Answer = "Atlanten" };
-            var aIndiskaOceanen  = new AnswerOptionModel { Answer = "Indiska oceanen" };
-            var aArktiskaOceanen = new AnswerOptionModel { Answer = "Arktiska oceanen" };
-            var a71pct = new AnswerOptionModel { Answer = "71%" };
-            var a50pct = new AnswerOptionModel { Answer = "50%" };
-            var a60pct = new AnswerOptionModel { Answer = "60%" };
-            var a80pct = new AnswerOptionModel { Answer = "80%" };
-
-            // Mobil & Appar
-            var aSamsung = new AnswerOptionModel { Answer = "Samsung" };
-            var a2005 = new AnswerOptionModel { Answer = "2005" };
-            var a2007 = new AnswerOptionModel { Answer = "2007" };
-            var a2008 = new AnswerOptionModel { Answer = "2008" };
-            var a2010 = new AnswerOptionModel { Answer = "2010" };
-
-            // Bakning
-            var aMjol      = new AnswerOptionModel { Answer = "Mjöl" };
-            var aSocker    = new AnswerOptionModel { Answer = "Socker" };
-            var aSalt      = new AnswerOptionModel { Answer = "Salt" };
-            var aJast      = new AnswerOptionModel { Answer = "Jäst" };
-            var aBakpulver = new AnswerOptionModel { Answer = "Bakpulver" };
-            var aMaizena   = new AnswerOptionModel { Answer = "Majsstärkelse" };
-            var aVanilj    = new AnswerOptionModel { Answer = "Vaniljsocker" };
-
-
-            // KATEGORIER & SUBKATEGORIER
-
-            var catGeografi  = new CategoryModel { Name = "Geografi" };
-            var catHistoria  = new CategoryModel { Name = "Historia" };
-            var catVetenskap = new CategoryModel { Name = "Vetenskap" };
-            var catSport     = new CategoryModel { Name = "Sport" };
-            var catMusik     = new CategoryModel { Name = "Musik" };
-            var catFilmTV    = new CategoryModel { Name = "Film & TV" };
-            var catMatematik = new CategoryModel { Name = "Matematik" };
-            var catNatur     = new CategoryModel { Name = "Natur" };
-            var catTeknik    = new CategoryModel { Name = "Teknik" };
-            var catMatDryck  = new CategoryModel { Name = "Mat & Dryck" };
-
-            var subEuropa         = new SubCategoryModel { Name = "Europa" };
-            var subVarlden        = new SubCategoryModel { Name = "Världen" };
-            var subAntiken        = new SubCategoryModel { Name = "Antiken" };
-            var subModernHistoria = new SubCategoryModel { Name = "Modern Historia" };
-            var subKemi           = new SubCategoryModel { Name = "Kemi" };
-            var subFysik          = new SubCategoryModel { Name = "Fysik" };
-            var subFotboll        = new SubCategoryModel { Name = "Fotboll" };
-            var subOS             = new SubCategoryModel { Name = "Olympiska Spelen" };
-            var subKlassisk       = new SubCategoryModel { Name = "Klassisk Musik" };
-            var subPopRock        = new SubCategoryModel { Name = "Pop & Rock" };
-            var subHollywood      = new SubCategoryModel { Name = "Hollywood" };
-            var subAnimation      = new SubCategoryModel { Name = "Animation" };
-            var subAritmetik      = new SubCategoryModel { Name = "Aritmetik" };
-            var subGeometri       = new SubCategoryModel { Name = "Geometri" };
-            var subDjur           = new SubCategoryModel { Name = "Djur" };
-            var subVaxter         = new SubCategoryModel { Name = "Växter" };
-            var subDatorer        = new SubCategoryModel { Name = "Datorer" };
-            var subInternet       = new SubCategoryModel { Name = "Internet" };
-            var subMatlagning     = new SubCategoryModel { Name = "Matlagning" };
-            var subDrycker        = new SubCategoryModel { Name = "Drycker" };
-            var subSkandinavien   = new SubCategoryModel { Name = "Skandinavien" };
-            var subMedeltiden     = new SubCategoryModel { Name = "Medeltiden" };
-            var subBiologi        = new SubCategoryModel { Name = "Biologi" };
-            var subTennis         = new SubCategoryModel { Name = "Tennis" };
-            var subJazz           = new SubCategoryModel { Name = "Jazz" };
-            var subSerier         = new SubCategoryModel { Name = "Serier & TV" };
-            var subAlgebra        = new SubCategoryModel { Name = "Algebra" };
-            var subHav            = new SubCategoryModel { Name = "Hav & Oceaner" };
-            var subMobil          = new SubCategoryModel { Name = "Mobil & Appar" };
-            var subBakning        = new SubCategoryModel { Name = "Bakning" };
-
-            subEuropa.Category     = catGeografi;
-            subVarlden.Category    = catGeografi;
-            subAntiken.Category    = catHistoria;
-            subModernHistoria.Category = catHistoria;
-            subKemi.Category       = catVetenskap;
-            subFysik.Category      = catVetenskap;
-            subFotboll.Category    = catSport;
-            subOS.Category         = catSport;
-            subKlassisk.Category   = catMusik;
-            subPopRock.Category    = catMusik;
-            subHollywood.Category  = catFilmTV;
-            subAnimation.Category  = catFilmTV;
-            subAritmetik.Category  = catMatematik;
-            subGeometri.Category   = catMatematik;
-            subDjur.Category       = catNatur;
-            subVaxter.Category     = catNatur;
-            subDatorer.Category    = catTeknik;
-            subInternet.Category   = catTeknik;
-            subMatlagning.Category = catMatDryck;
-            subDrycker.Category    = catMatDryck;
-            subSkandinavien.Category = catGeografi;
-            subMedeltiden.Category   = catHistoria;
-            subBiologi.Category      = catVetenskap;
-            subTennis.Category       = catSport;
-            subJazz.Category         = catMusik;
-            subSerier.Category       = catFilmTV;
-            subAlgebra.Category      = catMatematik;
-            subHav.Category          = catNatur;
-            subMobil.Category        = catTeknik;
-            subBakning.Category      = catMatDryck;
-
-            // FRÅGOR
-
-            // --- Geografi: Europa ---
-            var qFrankrikesHuvudstad = new QuestionModel
-            {
-                Question = "Vad är huvudstaden i Frankrike?",
-                Category = catGeografi,
-                SubCategory = subEuropa
-            };
-            var qSverigesHuvudstad = new QuestionModel
-            {
-                Question = "Vad är huvudstaden i Sverige?",
-                Category = catGeografi,
-                SubCategory = subEuropa
-            };
-            var qFlestInvanareEuropa = new QuestionModel
-            {
-                Question = "Vilket land har flest invånare i Europa?",
-                Category = catGeografi,
-                SubCategory = subEuropa
-            };
-
-            // --- Geografi: Världen ---
-            var qStorstaLandYta = new QuestionModel
-            {
-                Question = "Vilket är världens största land till ytan?",
-                Category = catGeografi,
-                SubCategory = subVarlden
-            };
-            var qLangstaFlod = new QuestionModel
-            {
-                Question = "Vilken är världens längsta flod?",
-                Category = catGeografi,
-                SubCategory = subVarlden
-            };
-
-            // --- Historia: Antiken ---
-            var qAntikRomLand = new QuestionModel
-            {
-                Question = "I vilket land låg det antika Rom?",
-                Category = catHistoria,
-                SubCategory = subAntiken
-            };
-            var qVastromerriketFall = new QuestionModel
-            {
-                Question = "Vilket år föll Västromerska riket?",
-                Category = catHistoria,
-                SubCategory = subAntiken
-            };
-
-            // --- Historia: Modern Historia ---
-            var qAndraVK = new QuestionModel
-            {
-                Question = "Vilket år slutade andra världskriget?",
-                Category = catHistoria,
-                SubCategory = subModernHistoria
-            };
-            var qStoraNordiskaKriget = new QuestionModel
-            {
-                Question = "Vem var Sveriges kung under stora nordiska kriget?",
-                Category = catHistoria,
-                SubCategory = subModernHistoria
-            };
-
-            // --- Vetenskap: Kemi ---
-            var qVattenFormel = new QuestionModel
-            {
-                Question = "Vad är den kemiska beteckningen för vatten?",
-                Category = catVetenskap,
-                SubCategory = subKemi
-            };
-            var qAtomNummer1 = new QuestionModel
-            {
-                Question = "Vilket grundämne har atomnummer 1?",
-                Category = catVetenskap,
-                SubCategory = subKemi
-            };
-
-            // --- Vetenskap: Fysik ---
-            var qLjusets = new QuestionModel
-            {
-                Question = "Ungefär hur snabbt rör sig ljus i vakuum?",
-                Category = catVetenskap,
-                SubCategory = subFysik
-            };
-            var qGravitationslagen = new QuestionModel
-            {
-                Question = "Vem formulerade gravitationslagen?",
-                Category = catVetenskap,
-                SubCategory = subFysik
-            };
-
-            // --- Sport: Fotboll ---
-            var qFotbollsspelare = new QuestionModel
-            {
-                Question = "Hur många spelare har ett fotbollslag på planen?",
-                Category = catSport,
-                SubCategory = subFotboll
-            };
-            var qVMGuldFotboll = new QuestionModel
-            {
-                Question = "Vilket land har vunnit flest VM-guld i fotboll?",
-                Category = catSport,
-                SubCategory = subFotboll
-            };
-
-            // --- Sport: OS ---
-            var qForstaModernaOS = new QuestionModel
-            {
-                Question = "Var hölls de första moderna olympiska spelen (1896)?",
-                Category = catSport,
-                SubCategory = subOS
-            };
-            var qOSIntervall = new QuestionModel
-            {
-                Question = "Med hur många års mellanrum hålls de olympiska sommarspelen?",
-                Category = catSport,
-                SubCategory = subOS
-            };
-
-            // --- Musik: Klassisk ---
-            var qFurElise = new QuestionModel
-            {
-                Question = "Vem komponerade \"Für Elise\"?",
-                Category = catMusik,
-                SubCategory = subKlassisk
-            };
-            var qGitarrStrangar = new QuestionModel
-            {
-                Question = "Hur många strängar har en standardgitarr?",
-                Category = catMusik,
-                SubCategory = subKlassisk
-            };
-
-            // --- Musik: Pop & Rock ---
-            var qBohemianRhapsody = new QuestionModel
-            {
-                Question = "Vilket band sjöng \"Bohemian Rhapsody\"?",
-                Category = catMusik,
-                SubCategory = subPopRock
-            };
-            var qABBA = new QuestionModel
-            {
-                Question = "Vilket år bildades ABBA?",
-                Category = catMusik,
-                SubCategory = subPopRock
-            };
-
-            // --- Film & TV: Hollywood ---
-            var qIronMan = new QuestionModel
-            {
-                Question = "Vem spelar Iron Man i MCU?",
-                Category = catFilmTV,
-                SubCategory = subHollywood
-            };
-            var qTitanicAr = new QuestionModel
-            {
-                Question = "Vilket år hade filmen Titanic premiär?",
-                Category = catFilmTV,
-                SubCategory = subHollywood
-            };
-
-            // --- Film & TV: Animation ---
-            var qSpiritedAway = new QuestionModel
-            {
-                Question = "Vilket land producerade animationsfilmen \"Spirited Away\"?",
-                Category = catFilmTV,
-                SubCategory = subAnimation
-            };
-            var qLejonkungen = new QuestionModel
-            {
-                Question = "Vilket studio skapade \"Lejonkungen\" (1994)?",
-                Category = catFilmTV,
-                SubCategory = subAnimation
-            };
-
-            // --- Matematik: Aritmetik ---
-            var qKvadratrot144 = new QuestionModel
-            {
-                Question = "Vad är kvadratroten ur 144?",
-                Category = catMatematik,
-                SubCategory = subAritmetik
-            };
-            var qHexagonSidor = new QuestionModel
-            {
-                Question = "Hur många sidor har en hexagon?",
-                Category = catMatematik,
-                SubCategory = subAritmetik
-            };
-
-            // --- Matematik: Geometri ---
-            var qRatVinkel = new QuestionModel
-            {
-                Question = "Hur många grader är en rät vinkel?",
-                Category = catMatematik,
-                SubCategory = subGeometri
-            };
-            var qPi = new QuestionModel
-            {
-                Question = "Vad är talet pi avrundat till 2 decimaler?",
-                Category = catMatematik,
-                SubCategory = subGeometri
-            };
-
-            // --- Natur: Djur ---
-            var qStorstaLanddjur = new QuestionModel
-            {
-                Question = "Vilket är världens största landlevande djur?",
-                Category = catNatur,
-                SubCategory = subDjur
-            };
-            var qInsektBen = new QuestionModel
-            {
-                Question = "Hur många ben har en insekt?",
-                Category = catNatur,
-                SubCategory = subDjur
-            };
-
-            // --- Natur: Växter ---
-            var qEkollon = new QuestionModel
-            {
-                Question = "Vilket träd producerar ekollon?",
-                Category = catNatur,
-                SubCategory = subVaxter
-            };
-            var qFotosyntes = new QuestionModel
-            {
-                Question = "Vad heter processen där växter omvandlar solljus till energi?",
-                Category = catNatur,
-                SubCategory = subVaxter
-            };
-
-            // --- Teknik: Datorer ---
-            var qCPU = new QuestionModel
-            {
-                Question = "Vad står förkortningen CPU för?",
-                Category = catTeknik,
-                SubCategory = subDatorer
-            };
-            var qWindowsSkapare = new QuestionModel
-            {
-                Question = "Vilket företag skapade operativsystemet Windows?",
-                Category = catTeknik,
-                SubCategory = subDatorer
-            };
-
-            // --- Teknik: Internet ---
-            var qWWW = new QuestionModel
-            {
-                Question = "Vad står WWW för?",
-                Category = catTeknik,
-                SubCategory = subInternet
-            };
-            var qGoogleGrundat = new QuestionModel
-            {
-                Question = "Vilket år grundades Google?",
-                Category = catTeknik,
-                SubCategory = subInternet
-            };
-
-            // --- Mat & Dryck: Matlagning ---
-            var qSushiUrsprung = new QuestionModel
-            {
-                Question = "Vilket land kommer sushi ursprungligen från?",
-                Category = catMatDryck,
-                SubCategory = subMatlagning
-            };
-            var qGuacamoleIngrediens = new QuestionModel
-            {
-                Question = "Vad är huvudingrediensen i guacamole?",
-                Category = catMatDryck,
-                SubCategory = subMatlagning
-            };
-
-            // --- Mat & Dryck: Drycker ---
-            var qKaffeProducent = new QuestionModel
-            {
-                Question = "Vilket land är världens största producent av kaffe?",
-                Category = catMatDryck,
-                SubCategory = subDrycker
-            };
-            var qVinIngredienser = new QuestionModel
-            {
-                Question = "Av vad tillverkas vin?",
-                Category = catMatDryck,
-                SubCategory = subDrycker
-            };
-
-            // --- Geografi: Skandinavien ---
-            var qNorgesHuvudstad = new QuestionModel
-            {
-                Question = "Vad heter Norges huvudstad?",
-                Category = catGeografi,
-                SubCategory = subSkandinavien
-            };
-            var qDanmarksHuvudstad = new QuestionModel
-            {
-                Question = "Vad heter Danmarks huvudstad?",
-                Category = catGeografi,
-                SubCategory = subSkandinavien
-            };
-
-            // --- Historia: Medeltiden ---
-            var qMagnaCarta = new QuestionModel
-            {
-                Question = "Vilket år undertecknades Magna Carta?",
-                Category = catHistoria,
-                SubCategory = subMedeltiden
-            };
-            var qKonstantinopel = new QuestionModel
-            {
-                Question = "Vilket år föll Konstantinopel till osmanska riket?",
-                Category = catHistoria,
-                SubCategory = subMedeltiden
-            };
-
-            // --- Vetenskap: Biologi ---
-            var qKromosompar = new QuestionModel
-            {
-                Question = "Hur många kromosompar har en frisk människa?",
-                Category = catVetenskap,
-                SubCategory = subBiologi
-            };
-            var qMinstaEnhet = new QuestionModel
-            {
-                Question = "Vad kallas den minsta enheten i en levande organism?",
-                Category = catVetenskap,
-                SubCategory = subBiologi
-            };
-
-            // --- Sport: Tennis ---
-            var qTennisNollPoang = new QuestionModel
-            {
-                Question = "Vad kallas noll poäng i tennis?",
-                Category = catSport,
-                SubCategory = subTennis
-            };
-            var qTennisGrus = new QuestionModel
-            {
-                Question = "Vilket är det mest prestigefyllda tennisturneringen på grus?",
-                Category = catSport,
-                SubCategory = subTennis
-            };
-
-            // --- Musik: Jazz ---
-            var qJazzUrsprung = new QuestionModel
-            {
-                Question = "I vilket land uppstod jazzmusiken?",
-                Category = catMusik,
-                SubCategory = subJazz
-            };
-            var qMilesDavis = new QuestionModel
-            {
-                Question = "Vilket instrument är Miles Davis känd för att spela?",
-                Category = catMusik,
-                SubCategory = subJazz
-            };
-
-            // --- Film & TV: Serier ---
-            var qGameOfThrones = new QuestionModel
-            {
-                Question = "Vilket nätverk producerade Game of Thrones?",
-                Category = catFilmTV,
-                SubCategory = subSerier
-            };
-            var qSquidGame = new QuestionModel
-            {
-                Question = "Vilket land producerade serien 'Squid Game'?",
-                Category = catFilmTV,
-                SubCategory = subSerier
-            };
-
-            // --- Matematik: Algebra ---
-            var qAlgebra2x = new QuestionModel
-            {
-                Question = "Vad är x om 2x + 4 = 10?",
-                Category = catMatematik,
-                SubCategory = subAlgebra
-            };
-            var qAndragradsekvation = new QuestionModel
-            {
-                Question = "Hur många lösningar kan en andragradsekvation ha som mest?",
-                Category = catMatematik,
-                SubCategory = subAlgebra
-            };
-
-            // --- Natur: Hav & Oceaner ---
-            var qStorstaOcean = new QuestionModel
-            {
-                Question = "Vilket är världens största ocean?",
-                Category = catNatur,
-                SubCategory = subHav
-            };
-            var qJordensVatten = new QuestionModel
-            {
-                Question = "Hur stor del av jordens yta täcks av vatten (ungefär)?",
-                Category = catNatur,
-                SubCategory = subHav
-            };
-
-            // --- Teknik: Mobil & Appar ---
-            var qFoerstaIphone = new QuestionModel
-            {
-                Question = "Vilket år lanserades den första iPhone?",
-                Category = catTeknik,
-                SubCategory = subMobil
-            };
-            var qIphoneTillverkare = new QuestionModel
-            {
-                Question = "Vilket företag tillverkar iPhone?",
-                Category = catTeknik,
-                SubCategory = subMobil
-            };
-
-            // --- Mat & Dryck: Bakning ---
-            var qBrodJaesning = new QuestionModel
-            {
-                Question = "Vilken ingrediens gör att bröddeg jäser?",
-                Category = catMatDryck,
-                SubCategory = subBakning
-            };
-            var qBakpulver = new QuestionModel
-            {
-                Question = "Vad är det vanligaste pulvret för att få kakor att jäsa utan jäst?",
-                Category = catMatDryck,
-                SubCategory = subBakning
-            };
-
-            // FRÅGA ↔ SVARSALTERNATIV  (IsCorrect = true på exakt ett svar/fråga)
-            // Notera: samma AnswerOptionModel-instans återanvänds i flera frågor
+            //SVARsALTERNATIV
+
+            // Nätverk
+            var aNatverkslager = new AnswerOptionModel { Answer = "Nätverkslager (Layer 3)" };
+            var aDatalankslager = new AnswerOptionModel { Answer = "Datalänklager (Layer 2)" };
+            var aTransportlager = new AnswerOptionModel { Answer = "Transportlager (Layer 4)" };
+            var aSessionslager = new AnswerOptionModel { Answer = "Sessionslager (Layer 5)" };
+
+            var aPort443 = new AnswerOptionModel { Answer = "443" };
+            var aPort80 = new AnswerOptionModel { Answer = "80" };
+            var aPort8080 = new AnswerOptionModel { Answer = "8080" };
+            var aPort22 = new AnswerOptionModel { Answer = "22" };
+            var aPort53 = new AnswerOptionModel { Answer = "53" };
+            var aPort25 = new AnswerOptionModel { Answer = "25" };
+            var aPort110 = new AnswerOptionModel { Answer = "110" };
+
+            var aSynForklaring = new AnswerOptionModel { Answer = "Det första paketet i en TCP-handskakning" };
+            var aSynFel1 = new AnswerOptionModel { Answer = "Ett avslutningspaket i TCP" };
+            var aSynFel2 = new AnswerOptionModel { Answer = "En bekräftelse på mottagna data" };
+            var aSynFel3 = new AnswerOptionModel { Answer = "Ett felmeddelande i TCP" };
+
+            var aDnsKorrekt = new AnswerOptionModel { Answer = "Översätter domännamn till IP-adresser" };
+            var aDnsFel1 = new AnswerOptionModel { Answer = "Tilldelar IP-adresser dynamiskt till enheter" };
+            var aDnsFel2 = new AnswerOptionModel { Answer = "Filtrerar nätverkstrafik" };
+            var aDnsFel3 = new AnswerOptionModel { Answer = "Krypterar dataöverföring" };
+
+            var aDnsPoisonKorrekt = new AnswerOptionModel { Answer = "En attack som lägger in falska poster i DNS-cachen" };
+            var aDnsPoisonFel1 = new AnswerOptionModel { Answer = "En metod för att kryptera DNS-trafik" };
+            var aDnsPoisonFel2 = new AnswerOptionModel { Answer = "En teknik för att öka DNS-prestanda" };
+            var aDnsPoisonFel3 = new AnswerOptionModel { Answer = "En typ av DDoS-attack mot DNS-servrar" };
+
+            var aStatefulKorrekt = new AnswerOptionModel { Answer = "Stateful firewall" };
+            var aStatefulFel1 = new AnswerOptionModel { Answer = "Stateless firewall" };
+            var aStatefulFel2 = new AnswerOptionModel { Answer = "Proxy-brandvägg" };
+            var aStatefulFel3 = new AnswerOptionModel { Answer = "Paketfiltrerande brandvägg" };
+
+            var aIdsIpsKorrekt = new AnswerOptionModel { Answer = "IDS detekterar intrång, IPS kan även blockera dem" };
+            var aIdsIpsFel1 = new AnswerOptionModel { Answer = "IDS blockerar intrång, IPS enbart detekterar" };
+            var aIdsIpsFel2 = new AnswerOptionModel { Answer = "De är identiska teknologier" };
+            var aIdsIpsFel3 = new AnswerOptionModel { Answer = "IDS är hårdvara, IPS är mjukvara" };
+
+            var aDmzKorrekt = new AnswerOptionModel { Answer = "En nätverkszon mellan internet och det interna nätverket" };
+            var aDmzFel1 = new AnswerOptionModel { Answer = "En krypterad tunnel mellan två nätverk" };
+            var aDmzFel2 = new AnswerOptionModel { Answer = "En typ av VPN-konfiguration" };
+            var aDmzFel3 = new AnswerOptionModel { Answer = "Ett isolerat administrativt nätverk" };
+
+            // Webbsäkerhet
+            var aOwaspKorrekt = new AnswerOptionModel { Answer = "Open Worldwide Application Security Project" };
+            var aOwaspFel1 = new AnswerOptionModel { Answer = "Open Web Access Security Protocol" };
+            var aOwaspFel2 = new AnswerOptionModel { Answer = "Online Web Application Security Platform" };
+            var aOwaspFel3 = new AnswerOptionModel { Answer = "Open Windows Application Service Provider" };
+
+            var aBrokenAccessKorrekt = new AnswerOptionModel { Answer = "Broken Access Control" };
+            var aBrokenAccessFel1 = new AnswerOptionModel { Answer = "SQL Injection" };
+            var aBrokenAccessFel2 = new AnswerOptionModel { Answer = "Cryptographic Failures" };
+            var aBrokenAccessFel3 = new AnswerOptionModel { Answer = "Security Misconfiguration" };
+
+            var aSecMisconfigKorrekt = new AnswerOptionModel { Answer = "Felaktigt konfigurerade säkerhetsinställningar i applikationen" };
+            var aSecMisconfigFel1 = new AnswerOptionModel { Answer = "En typ av XSS-attack" };
+            var aSecMisconfigFel2 = new AnswerOptionModel { Answer = "Svag kryptering av lagrad data" };
+            var aSecMisconfigFel3 = new AnswerOptionModel { Answer = "Bristfällig autentisering" };
+
+            var aXssKorrekt = new AnswerOptionModel { Answer = "Skadlig kod injiceras i webbsidor och körs i offrets webbläsare" };
+            var aXssFel1 = new AnswerOptionModel { Answer = "En attack som manipulerar databaser via SQL" };
+            var aXssFel2 = new AnswerOptionModel { Answer = "En nätverksattack som avlyssnar trafik" };
+            var aXssFel3 = new AnswerOptionModel { Answer = "En attack som förfalskar HTTP-förfrågningar" };
+
+            var aSqlKorrekt = new AnswerOptionModel { Answer = "SQL-kod injiceras i inmatningsfält för att manipulera databasen" };
+            var aSqlFel1 = new AnswerOptionModel { Answer = "En krypteringsteknik för databaser" };
+            var aSqlFel2 = new AnswerOptionModel { Answer = "En metod för att optimera SQL-frågor" };
+            var aSqlFel3 = new AnswerOptionModel { Answer = "En autentiseringsmetod för databaser" };
+
+            var aPreparedKorrekt = new AnswerOptionModel { Answer = "Prepared statements (parameteriserade frågor)" };
+            var aPreparedFel1 = new AnswerOptionModel { Answer = "HTTPS-kryptering" };
+            var aPreparedFel2 = new AnswerOptionModel { Answer = "Base64-kodning av inmatning" };
+            var aPreparedFel3 = new AnswerOptionModel { Answer = "Cookies med HttpOnly-flagga" };
+
+            var aMfaKorrekt = new AnswerOptionModel { Answer = "Autentisering med minst två oberoende faktorer" };
+            var aMfaFel1 = new AnswerOptionModel { Answer = "Autentisering med ett extra långt lösenord" };
+            var aMfaFel2 = new AnswerOptionModel { Answer = "En typ av kryptering för inloggning" };
+            var aMfaFel3 = new AnswerOptionModel { Answer = "Single sign-on med certifikat" };
+
+            var aSessionKorrekt = new AnswerOptionModel { Answer = "En attack där angriparen stjäl sessions-ID för att ta över en session" };
+            var aSessionFel1 = new AnswerOptionModel { Answer = "En attack som skapar miljontals falska sessioner" };
+            var aSessionFel2 = new AnswerOptionModel { Answer = "En teknik för att radera användarens cookies" };
+            var aSessionFel3 = new AnswerOptionModel { Answer = "En variant av XSS-attack" };
+
+            var aCsrfKorrekt = new AnswerOptionModel { Answer = "En attack som lurar en inloggad användare att utföra oönskade handlingar" };
+            var aCsrfFel1 = new AnswerOptionModel { Answer = "En attack som injicerar skript i webbsidor" };
+            var aCsrfFel2 = new AnswerOptionModel { Answer = "En attack som stjäl lösenord via phishing" };
+            var aCsrfFel3 = new AnswerOptionModel { Answer = "En attack mot databaser" };
+
+            // Kryptografi
+            var aSymKorrekt = new AnswerOptionModel { Answer = "Samma nyckel används för kryptering och dekryptering" };
+            var aSymFel1 = new AnswerOptionModel { Answer = "Olika nycklar används för kryptering och dekryptering" };
+            var aSymFel2 = new AnswerOptionModel { Answer = "Kryptering sker utan nyckel" };
+            var aSymFel3 = new AnswerOptionModel { Answer = "Kryptering med en publik nyckel" };
+
+            var aAesKorrekt = new AnswerOptionModel { Answer = "AES (Advanced Encryption Standard)" };
+            var aAesFel1 = new AnswerOptionModel { Answer = "RSA" };
+            var aAesFel2 = new AnswerOptionModel { Answer = "ECC (Elliptic Curve Cryptography)" };
+            var aAesFel3 = new AnswerOptionModel { Answer = "Diffie-Hellman" };
+
+            var aAesBetydKorrekt = new AnswerOptionModel { Answer = "Advanced Encryption Standard" };
+            var aAesBetydFel1 = new AnswerOptionModel { Answer = "Asymmetric Encryption System" };
+            var aAesBetydFel2 = new AnswerOptionModel { Answer = "Authenticated Exchange Standard" };
+            var aAesBetydFel3 = new AnswerOptionModel { Answer = "Adaptive Encryption Service" };
+
+            var aAsymKorrekt = new AnswerOptionModel { Answer = "Kryptering med ett nyckelpar — en publik och en privat nyckel" };
+            var aAsymFel1 = new AnswerOptionModel { Answer = "Kryptering med samma nyckel för alla operationer" };
+            var aAsymFel2 = new AnswerOptionModel { Answer = "Kryptering utan nyckel baserad på algoritm" };
+            var aAsymFel3 = new AnswerOptionModel { Answer = "Kryptering med lösenordsfras" };
+
+            var aPrivatKorrekt = new AnswerOptionModel { Answer = "Dekryptering och digital signering" };
+            var aPrivatFel1 = new AnswerOptionModel { Answer = "Kryptering av meddelanden till mottagaren" };
+            var aPrivatFel2 = new AnswerOptionModel { Answer = "Distribueras öppet till alla parter" };
+            var aPrivatFel3 = new AnswerOptionModel { Answer = "Utbyte av symmetriska nycklar" };
+
+            var aCertKorrekt = new AnswerOptionModel { Answer = "En elektronisk handling som binder en publik nyckel till en identitet" };
+            var aCertFel1 = new AnswerOptionModel { Answer = "En krypterad lösenordsfil" };
+            var aCertFel2 = new AnswerOptionModel { Answer = "En privat nyckel signerad av användaren" };
+            var aCertFel3 = new AnswerOptionModel { Answer = "En hashad version av ett lösenord" };
+
+            var aHashKorrekt = new AnswerOptionModel { Answer = "En funktion som omvandlar data till ett fast hashvärde" };
+            var aHashFel1 = new AnswerOptionModel { Answer = "En funktion som krypterar data med en nyckel" };
+            var aHashFel2 = new AnswerOptionModel { Answer = "En funktion som komprimerar filer" };
+            var aHashFel3 = new AnswerOptionModel { Answer = "En funktion som signerar dokument digitalt" };
+
+            var aEnvagKorrekt = new AnswerOptionModel { Answer = "Det ska vara praktiskt omöjligt att återskapa originaldatan (envägsfunktion)" };
+            var aEnvagFel1 = new AnswerOptionModel { Answer = "Hashen ska kunna dekrypteras med en nyckel" };
+            var aEnvagFel2 = new AnswerOptionModel { Answer = "Hashen ska alltid vara lika lång som originaldatan" };
+            var aEnvagFel3 = new AnswerOptionModel { Answer = "Hashen ska vara reversibel för admin" };
+
+            var aShaKorrekt = new AnswerOptionModel { Answer = "SHA-256" };
+            var aShaFel1 = new AnswerOptionModel { Answer = "AES-256" };
+            var aShaFel2 = new AnswerOptionModel { Answer = "RSA-2048" };
+            var aShaFel3 = new AnswerOptionModel { Answer = "TLS 1.3" };
+
+            // Malware & Attacker
+            var aRansomKorrekt = new AnswerOptionModel { Answer = "Krypterar offrets filer och kräver lösen för att låsa upp dem" };
+            var aRansomFel1 = new AnswerOptionModel { Answer = "Stjäl lösenord och skickar dem till angriparen" };
+            var aRansomFel2 = new AnswerOptionModel { Answer = "Spionerar på användaren via webbkameran" };
+            var aRansomFel3 = new AnswerOptionModel { Answer = "Skapar ett botnät av infekterade datorer" };
+
+            var aTrojanKorrekt = new AnswerOptionModel { Answer = "Skadlig programvara som döljer sig som ett legitimt program" };
+            var aTrojanFel1 = new AnswerOptionModel { Answer = "Programvara som sprider sig automatiskt i nätverk" };
+            var aTrojanFel2 = new AnswerOptionModel { Answer = "Programvara som krypterar hela hårddisken" };
+            var aTrojanFel3 = new AnswerOptionModel { Answer = "Programvara som blockerar nätverkstrafik" };
+
+            var aWormKorrekt = new AnswerOptionModel { Answer = "En mask sprider sig automatiskt utan att behöva en värd" };
+            var aWormFel1 = new AnswerOptionModel { Answer = "En mask kräver alltid manuell aktivering av användaren" };
+            var aWormFel2 = new AnswerOptionModel { Answer = "En mask krypterar alltid filer den infekterar" };
+            var aWormFel3 = new AnswerOptionModel { Answer = "En mask är alltid ofarlig och tas enkelt bort" };
+
+            var aDdosKorrekt = new AnswerOptionModel { Answer = "Många datorer översvämmar ett mål med trafik för att ta ner tjänsten" };
+            var aDdosFel1 = new AnswerOptionModel { Answer = "En riktad attack mot en specifik användares dator" };
+            var aDdosFel2 = new AnswerOptionModel { Answer = "En attack som injicerar skadlig kod i databaser" };
+            var aDdosFel3 = new AnswerOptionModel { Answer = "En attack som sker via skadliga e-postbilagor" };
+
+            var aMitmKorrekt = new AnswerOptionModel { Answer = "Angriparen placerar sig mellan två parter och kan avlyssna kommunikationen" };
+            var aMitmFel1 = new AnswerOptionModel { Answer = "Angriparen gissar lösenord med brute force" };
+            var aMitmFel2 = new AnswerOptionModel { Answer = "Angriparen skickar falska e-postmeddelanden" };
+            var aMitmFel3 = new AnswerOptionModel { Answer = "Angriparen utnyttjar en okänd sårbarhet" };
+
+            var aZerodayKorrekt = new AnswerOptionModel { Answer = "En attack som utnyttjar en sårbarhet okänd för mjukvaruleverantören" };
+            var aZerodayFel1 = new AnswerOptionModel { Answer = "En attack som sker exakt kl 00:00" };
+            var aZerodayFel2 = new AnswerOptionModel { Answer = "En attack mot nyinstallerade system utan uppdateringar" };
+            var aZerodayFel3 = new AnswerOptionModel { Answer = "En attack som genomförs inom noll sekunder" };
+
+            var aPhishKorrekt = new AnswerOptionModel { Answer = "Angriparen utger sig för att vara en pålitlig källa för att lura offret att lämna ut information" };
+            var aPhishFel1 = new AnswerOptionModel { Answer = "En nätverksattack som avlyssnar okrypterad trafik" };
+            var aPhishFel2 = new AnswerOptionModel { Answer = "En typ av malware som krypterar filer" };
+            var aPhishFel3 = new AnswerOptionModel { Answer = "En attack som utnyttjar sårbarheter i webbläsare" };
+
+            var aSpearKorrekt = new AnswerOptionModel { Answer = "En riktad phishingattack mot en specifik person eller organisation" };
+            var aSpearFel1 = new AnswerOptionModel { Answer = "En massutskickad phishingattack till miljontals mottagare" };
+            var aSpearFel2 = new AnswerOptionModel { Answer = "En phishingattack som sker via SMS" };
+            var aSpearFel3 = new AnswerOptionModel { Answer = "En phishingattack via telefon" };
+
+            var aVishingKorrekt = new AnswerOptionModel { Answer = "Phishing via telefon (voice phishing)" };
+            var aVishingFel1 = new AnswerOptionModel { Answer = "Phishing via SMS" };
+            var aVishingFel2 = new AnswerOptionModel { Answer = "Phishing via e-post" };
+            var aVishingFel3 = new AnswerOptionModel { Answer = "Phishing via sociala medier" };
+
+            // Operativsystem
+            var aChmodKorrekt = new AnswerOptionModel { Answer = "Ändrar filbehörigheter (läs, skriv, kör) i Linux" };
+            var aChmodFel1 = new AnswerOptionModel { Answer = "Ändrar ägaren av en fil i Linux" };
+            var aChmodFel2 = new AnswerOptionModel { Answer = "Visar aktiva processer i Linux" };
+            var aChmodFel3 = new AnswerOptionModel { Answer = "Skapar en ny användare i Linux" };
+
+            var aLeastPrivKorrekt = new AnswerOptionModel { Answer = "Användare och processer ska bara ha de behörigheter de absolut behöver" };
+            var aLeastPrivFel1 = new AnswerOptionModel { Answer = "Alla användare ges administratörsbehörighet som standard" };
+            var aLeastPrivFel2 = new AnswerOptionModel { Answer = "Behörigheter roterar automatiskt varje dag" };
+            var aLeastPrivFel3 = new AnswerOptionModel { Answer = "Behörigheter tilldelas enbart baserat på avdelning" };
+
+            var aSudoKorrekt = new AnswerOptionModel { Answer = "Tillåter en användare att köra ett kommando med förhöjda rättigheter" };
+            var aSudoFel1 = new AnswerOptionModel { Answer = "Byter permanent till root-kontot" };
+            var aSudoFel2 = new AnswerOptionModel { Answer = "Visar systemloggar i realtid" };
+            var aSudoFel3 = new AnswerOptionModel { Answer = "Krypterar en fil med root-behörighet" };
+
+            var aDefenderKorrekt = new AnswerOptionModel { Answer = "Microsofts inbyggda antivirus- och säkerhetslösning" };
+            var aDefenderFel1 = new AnswerOptionModel { Answer = "En inbyggd brandvägg i Windows" };
+            var aDefenderFel2 = new AnswerOptionModel { Answer = "En lösenordshanterare i Windows" };
+            var aDefenderFel3 = new AnswerOptionModel { Answer = "En inbyggd VPN-tjänst i Windows" };
+
+            var aBitlockerKorrekt = new AnswerOptionModel { Answer = "Microsofts inbyggda diskkrypteringsverktyg för Windows" };
+            var aBitlockerFel1 = new AnswerOptionModel { Answer = "En antiviruslösning i Windows" };
+            var aBitlockerFel2 = new AnswerOptionModel { Answer = "En inbyggd brandvägg i Windows" };
+            var aBitlockerFel3 = new AnswerOptionModel { Answer = "En säkerhetskopieringstjänst i Windows" };
+
+            var aUacKorrekt = new AnswerOptionModel { Answer = "En funktion som ber om bekräftelse innan program utför administrativa ändringar" };
+            var aUacFel1 = new AnswerOptionModel { Answer = "En antivirusfunktion i Windows" };
+            var aUacFel2 = new AnswerOptionModel { Answer = "En nätverksbrandvägg i Windows" };
+            var aUacFel3 = new AnswerOptionModel { Answer = "En lösenordspolicy i Active Directory" };
+
+            // Lagstiftning
+            var aGdprKorrekt = new AnswerOptionModel { Answer = "General Data Protection Regulation" };
+            var aGdprFel1 = new AnswerOptionModel { Answer = "Global Data Privacy Rights" };
+            var aGdprFel2 = new AnswerOptionModel { Answer = "General Digital Privacy Rules" };
+            var aGdprFel3 = new AnswerOptionModel { Answer = "Government Data Protection Registry" };
+
+            var a72hKorrekt = new AnswerOptionModel { Answer = "72 timmar" };
+            var a72hFel1 = new AnswerOptionModel { Answer = "24 timmar" };
+            var a72hFel2 = new AnswerOptionModel { Answer = "48 timmar" };
+            var a72hFel3 = new AnswerOptionModel { Answer = "7 dagar" };
+
+            var aPersonuppgiftKorrekt = new AnswerOptionModel { Answer = "All information som direkt eller indirekt kan identifiera en levande person" };
+            var aPersonuppgiftFel1 = new AnswerOptionModel { Answer = "Enbart namn och personnummer" };
+            var aPersonuppgiftFel2 = new AnswerOptionModel { Answer = "Bara digitalt lagrad information" };
+            var aPersonuppgiftFel3 = new AnswerOptionModel { Answer = "Enbart medicinsk och finansiell information" };
+
+            var aNis2Korrekt = new AnswerOptionModel { Answer = "Stärka cybersäkerheten för kritisk infrastruktur och samhällsviktiga tjänster i EU" };
+            var aNis2Fel1 = new AnswerOptionModel { Answer = "Reglera hantering av personuppgifter i EU" };
+            var aNis2Fel2 = new AnswerOptionModel { Answer = "Standardisera mjukvaruutveckling inom EU" };
+            var aNis2Fel3 = new AnswerOptionModel { Answer = "Reglera e-handel och digitala marknadsplatser" };
+
+            var aIso27001Korrekt = new AnswerOptionModel { Answer = "En internationell standard för informationssäkerhetsledningssystem (ISMS)" };
+            var aIso27001Fel1 = new AnswerOptionModel { Answer = "En EU-förordning om dataskydd" };
+            var aIso27001Fel2 = new AnswerOptionModel { Answer = "En standard för programmeringsspråk" };
+            var aIso27001Fel3 = new AnswerOptionModel { Answer = "En nätverksprotokollstandard" };
+
+            var aIsmsKorrekt = new AnswerOptionModel { Answer = "Ett ramverk för att systematiskt hantera och skydda organisationens information" };
+            var aIsmsFel1 = new AnswerOptionModel { Answer = "En typ av nästa generations brandvägg" };
+            var aIsmsFel2 = new AnswerOptionModel { Answer = "Ett antivirusprogram för företag" };
+            var aIsmsFel3 = new AnswerOptionModel { Answer = "En krypteringsstandard för e-post" };
+
+            var aIrFaserKorrekt = new AnswerOptionModel { Answer = "Förberedelse, Identifiering, Inneslutning & Eliminering, Återhämtning, Utvärdering" };
+            var aIrFaserFel1 = new AnswerOptionModel { Answer = "Attack, Försvar, Rapportering, Avslutning" };
+            var aIrFaserFel2 = new AnswerOptionModel { Answer = "Planering, Genomförande, Testning, Driftsättning" };
+            var aIrFaserFel3 = new AnswerOptionModel { Answer = "Detektering, Analys, Patchning, Loggning" };
+
+            var aForensikKorrekt = new AnswerOptionModel { Answer = "Insamling och analys av digital bevisning efter en incident" };
+            var aForensikFel1 = new AnswerOptionModel { Answer = "Förebyggande säkerhetsarbete mot intrång" };
+            var aForensikFel2 = new AnswerOptionModel { Answer = "Kryptering av känslig data i realtid" };
+            var aForensikFel3 = new AnswerOptionModel { Answer = "Nätverksövervakning för att detektera attacker" };
+
+            var aRunbookKorrekt = new AnswerOptionModel { Answer = "Dokumentation med steg-för-steg-instruktioner för att hantera specifika incidenter" };
+            var aRunbookFel1 = new AnswerOptionModel { Answer = "En lista över alla systemadministratörer" };
+            var aRunbookFel2 = new AnswerOptionModel { Answer = "En brandväggskonfigurationsfil" };
+            var aRunbookFel3 = new AnswerOptionModel { Answer = "En krypteringsnyckel för incidentdata" };
+
+            // ── KATEGORIER & SUBKATEGORIER ───────────────────────────────────────
+
+            var catNatverk = new CategoryModel { Name = "Nätverk", Description = "Grundläggande nätverkskoncept som TCP/IP, DNS, brandväggar och intrångsdetektering." };
+            var catWebbsak = new CategoryModel { Name = "Webbsäkerhet", Description = "Säkerhetshot och skyddsmekanismer för webbapplikationer, inklusive OWASP Top 10." };
+            var catKrypto = new CategoryModel { Name = "Kryptografi", Description = "Krypteringsmetoder, certifikat och hashningsalgoritmer för säker dataöverföring." };
+            var catMalware = new CategoryModel { Name = "Malware & Attacker", Description = "Olika typer av skadlig kod, attackvektorer och social engineering." };
+            var catOS = new CategoryModel { Name = "Operativsystem", Description = "Säkerhetsfunktioner i Linux och Windows samt hantering av behörigheter." };
+            var catLagstiftning = new CategoryModel { Name = "Lagstiftning & Compliance", Description = "Regelverk och standarder som GDPR, NIS2, ISO 27001 och incident response." };
+
+            var subTCPIP = new SubCategoryModel { Name = "TCP/IP-grunderna", Description = "OSI-modellen, TCP/IP-protokollet, portar och grundläggande nätverkskommunikation.", Order = 1, Category = catNatverk };
+            var subDNS = new SubCategoryModel { Name = "DNS & DHCP", Description = "Namnupplösning, DHCP-tilldelning och relaterade säkerhetshot som DNS poisoning.", Order = 2, Category = catNatverk };
+            var subBrandvaggar = new SubCategoryModel { Name = "Brandväggar & IDS/IPS", Description = "Brandväggstyper, intrångsdetektering och -prevention samt DMZ-konfiguration.", Order = 3, Category = catNatverk };
+
+            var subOwasp = new SubCategoryModel { Name = "OWASP Top 10", Description = "De tio vanligaste säkerhetssårbarheterna i webbapplikationer enligt OWASP.", Order = 1, Category = catWebbsak };
+            var subInjektioner = new SubCategoryModel { Name = "XSS & Injektioner", Description = "Cross-Site Scripting, SQL-injektion och andra injektionsattacker mot webbapplikationer.", Order = 2, Category = catWebbsak };
+            var subAutentisering = new SubCategoryModel { Name = "Autentisering & Sessions", Description = "Sessionssäkerhet, CSRF, JWT och säker autentisering i webbapplikationer.", Order = 3, Category = catWebbsak };
+
+            var subSymKrypto = new SubCategoryModel { Name = "Symmetrisk kryptering", Description = "AES, DES och andra symmetriska algoritmer för kryptering av data.", Order = 1, Category = catKrypto };
+            var subAsymKrypto = new SubCategoryModel { Name = "Asymmetrisk kryptering & PKI", Description = "RSA, certifikat, PKI-infrastruktur och digital signering.", Order = 2, Category = catKrypto };
+            var subHashning = new SubCategoryModel { Name = "Hashning", Description = "Hashfunktioner som SHA och MD5, salting och säker lösenordslagring.", Order = 3, Category = catKrypto };
+
+            var subMalwaretyper = new SubCategoryModel { Name = "Malwaretyper", Description = "Virus, trojaner, ransomware, spyware och andra typer av skadlig kod.", Order = 1, Category = catMalware };
+            var subAttackmetoder = new SubCategoryModel { Name = "Attackmetoder", Description = "DDoS, man-in-the-middle, zero-day-exploits och andra attacktekniker.", Order = 2, Category = catMalware };
+            var subSocialEng = new SubCategoryModel { Name = "Social Engineering", Description = "Phishing, spear phishing, vishing och manipulation av människor.", Order = 3, Category = catMalware };
+
+            var subLinux = new SubCategoryModel { Name = "Linux-säkerhet", Description = "Filrättigheter, sudo, chmod och säkerhetsfunktioner i Linux.", Order = 1, Category = catOS };
+            var subWindows = new SubCategoryModel { Name = "Windows-säkerhet", Description = "Windows Defender, BitLocker, UAC och inbyggda säkerhetsfunktioner i Windows.", Order = 2, Category = catOS };
+            var subBehorighet = new SubCategoryModel { Name = "Behörighetshantering", Description = "RBAC, PAM, autentisering, auktorisering och principen om minsta möjliga behörighet.", Order = 3, Category = catOS };
+
+            var subGdpr = new SubCategoryModel { Name = "GDPR", Description = "Allmänna dataskyddsförordningen, personuppgifter och rapporteringskrav.", Order = 1, Category = catLagstiftning };
+            var subNis2 = new SubCategoryModel { Name = "NIS2 & ISO 27001", Description = "EU:s nätverks- och informationssäkerhetsdirektiv samt ISO-standarden för informationssäkerhet.", Order = 2, Category = catLagstiftning };
+            var subIncident = new SubCategoryModel { Name = "Incident Response", Description = "Hantering av säkerhetsincidenter, digital forensik och runbooks.", Order = 3, Category = catLagstiftning };
+
+            // ── FRÅGOR ───────────────────────────────────────────────────────────
+
+            // Nätverk: TCP/IP
+            var qOsiIpLager = new QuestionModel { Question = "Vilket lager i OSI-modellen hanterar IP-adressering och routing?", Category = catNatverk, SubCategory = subTCPIP };
+            var qHttpsPort = new QuestionModel { Question = "Vilken port använder HTTPS som standard?", Category = catNatverk, SubCategory = subTCPIP };
+            var qSynPaket = new QuestionModel { Question = "Vad är ett SYN-paket i TCP?", Category = catNatverk, SubCategory = subTCPIP };
+
+            // Nätverk: DNS & DHCP
+            var qDnsVad = new QuestionModel { Question = "Vad är en DNS-servers primära uppgift?", Category = catNatverk, SubCategory = subDNS };
+            var qDnsPort = new QuestionModel { Question = "Vilken port använder DNS normalt?", Category = catNatverk, SubCategory = subDNS };
+            var qDnsPoison = new QuestionModel { Question = "Vad är DNS-förgiftning (DNS cache poisoning)?", Category = catNatverk, SubCategory = subDNS };
+
+            // Nätverk: Brandväggar & IDS/IPS
+            var qIdsVsIps = new QuestionModel { Question = "Vad är den viktigaste skillnaden mellan IDS och IPS?", Category = catNatverk, SubCategory = subBrandvaggar };
+            var qStatefulFw = new QuestionModel { Question = "Vad kallas en brandvägg som inspekterar tillståndet i TCP-sessioner?", Category = catNatverk, SubCategory = subBrandvaggar };
+            var qDmz = new QuestionModel { Question = "Vad är en DMZ (demilitariserad zon) i nätverkssäkerhet?", Category = catNatverk, SubCategory = subBrandvaggar };
+
+            // Webbsäkerhet: OWASP
+            var qOwaspVad = new QuestionModel { Question = "Vad står förkortningen OWASP för?", Category = catWebbsak, SubCategory = subOwasp };
+            var qOwaspAccess = new QuestionModel { Question = "Vilket OWASP-problem innebär att angripare kan komma åt resurser de inte bör ha tillgång till?", Category = catWebbsak, SubCategory = subOwasp };
+            var qOwaspMisconfig = new QuestionModel { Question = "Vad är 'Security Misconfiguration' enligt OWASP?", Category = catWebbsak, SubCategory = subOwasp };
+
+            // Webbsäkerhet: XSS & Injektioner
+            var qXssVad = new QuestionModel { Question = "Vad är Cross-Site Scripting (XSS)?", Category = catWebbsak, SubCategory = subInjektioner };
+            var qSqlVad = new QuestionModel { Question = "Vad är SQL-injektion?", Category = catWebbsak, SubCategory = subInjektioner };
+            var qSqlSkydd = new QuestionModel { Question = "Vilken teknik är mest effektiv för att skydda mot SQL-injektion?", Category = catWebbsak, SubCategory = subInjektioner };
+
+            // Webbsäkerhet: Autentisering & Sessions
+            var qMfaVad = new QuestionModel { Question = "Vad är multi-faktorautentisering (MFA)?", Category = catWebbsak, SubCategory = subAutentisering };
+            var qSessionHijack = new QuestionModel { Question = "Vad är session hijacking?", Category = catWebbsak, SubCategory = subAutentisering };
+            var qCsrf = new QuestionModel { Question = "Vad är en CSRF-attack (Cross-Site Request Forgery)?", Category = catWebbsak, SubCategory = subAutentisering };
+
+            // Kryptografi: Symmetrisk
+            var qSymVad = new QuestionModel { Question = "Vad kännetecknar symmetrisk kryptering?", Category = catKrypto, SubCategory = subSymKrypto };
+            var qSymExempel = new QuestionModel { Question = "Vilket är ett exempel på en symmetrisk krypteringsalgoritm?", Category = catKrypto, SubCategory = subSymKrypto };
+            var qAesBetyd = new QuestionModel { Question = "Vad står AES för?", Category = catKrypto, SubCategory = subSymKrypto };
+
+            // Kryptografi: Asymmetrisk & PKI
+            var qAsymVad = new QuestionModel { Question = "Vad är asymmetrisk kryptering?", Category = catKrypto, SubCategory = subAsymKrypto };
+            var qPrivatNyckel = new QuestionModel { Question = "Vad används den privata nyckeln till i asymmetrisk kryptering?", Category = catKrypto, SubCategory = subAsymKrypto };
+            var qCertifikat = new QuestionModel { Question = "Vad är ett digitalt certifikat?", Category = catKrypto, SubCategory = subAsymKrypto };
+
+            // Kryptografi: Hashning
+            var qHashVad = new QuestionModel { Question = "Vad är en kryptografisk hashfunktion?", Category = catKrypto, SubCategory = subHashning };
+            var qHashEgenskap = new QuestionModel { Question = "Vilken egenskap är avgörande för en kryptografisk hashfunktion?", Category = catKrypto, SubCategory = subHashning };
+            var qHashExempel = new QuestionModel { Question = "Vilket är ett exempel på en kryptografisk hashalgoritm?", Category = catKrypto, SubCategory = subHashning };
+
+            // Malware: Malwaretyper
+            var qRansomVad = new QuestionModel { Question = "Vad är ransomware?", Category = catMalware, SubCategory = subMalwaretyper };
+            var qTrojanVad = new QuestionModel { Question = "Vad är en trojansk häst (trojan)?", Category = catMalware, SubCategory = subMalwaretyper };
+            var qWormVad = new QuestionModel { Question = "Vad skiljer en mask (worm) från ett vanligt virus?", Category = catMalware, SubCategory = subMalwaretyper };
+
+            // Malware: Attackmetoder
+            var qDdosVad = new QuestionModel { Question = "Vad är en DDoS-attack?", Category = catMalware, SubCategory = subAttackmetoder };
+            var qMitmVad = new QuestionModel { Question = "Vad är en man-in-the-middle-attack (MitM)?", Category = catMalware, SubCategory = subAttackmetoder };
+            var qZerodayVad = new QuestionModel { Question = "Vad är ett zero-day-exploit?", Category = catMalware, SubCategory = subAttackmetoder };
+
+            // Malware: Social Engineering
+            var qPhishVad = new QuestionModel { Question = "Vad är phishing?", Category = catMalware, SubCategory = subSocialEng };
+            var qSpearVad = new QuestionModel { Question = "Vad är spear phishing?", Category = catMalware, SubCategory = subSocialEng };
+            var qVishingVad = new QuestionModel { Question = "Vad är vishing?", Category = catMalware, SubCategory = subSocialEng };
+
+            // OS: Linux
+            var qChmodVad = new QuestionModel { Question = "Vad gör kommandot chmod i Linux?", Category = catOS, SubCategory = subLinux };
+            var qLeastPriv = new QuestionModel { Question = "Vad innebär principen om minsta möjliga behörighet (Principle of Least Privilege)?", Category = catOS, SubCategory = subLinux };
+            var qSudoVad = new QuestionModel { Question = "Vad gör kommandot sudo i Linux?", Category = catOS, SubCategory = subLinux };
+
+            // OS: Windows
+            var qDefenderVad = new QuestionModel { Question = "Vad är Windows Defender?", Category = catOS, SubCategory = subWindows };
+            var qBitlockerVad = new QuestionModel { Question = "Vad är BitLocker?", Category = catOS, SubCategory = subWindows };
+            var qUacVad = new QuestionModel { Question = "Vad är UAC (User Account Control) i Windows?", Category = catOS, SubCategory = subWindows };
+
+            // OS: Behörighet
+            var qRbacVad = new QuestionModel { Question = "Vad är RBAC (Role-Based Access Control)?", Category = catOS, SubCategory = subBehorighet };
+            var qAutnVsAutz = new QuestionModel { Question = "Vad är skillnaden mellan autentisering och auktorisering?", Category = catOS, SubCategory = subBehorighet };
+            var qPamVad = new QuestionModel { Question = "Vad är ett PAM-system (Privileged Access Management)?", Category = catOS, SubCategory = subBehorighet };
+
+            // Lagstiftning: GDPR
+            var qGdprVad = new QuestionModel { Question = "Vad står GDPR för?", Category = catLagstiftning, SubCategory = subGdpr };
+            var qGdpr72h = new QuestionModel { Question = "Inom hur många timmar måste en personuppgiftsincident rapporteras enligt GDPR?", Category = catLagstiftning, SubCategory = subGdpr };
+            var qPersonuppgift = new QuestionModel { Question = "Vad räknas som en personuppgift enligt GDPR?", Category = catLagstiftning, SubCategory = subGdpr };
+
+            // Lagstiftning: NIS2 & ISO 27001
+            var qNis2Syfte = new QuestionModel { Question = "Vad är syftet med NIS2-direktivet?", Category = catLagstiftning, SubCategory = subNis2 };
+            var qIso27001Vad = new QuestionModel { Question = "Vad är ISO 27001?", Category = catLagstiftning, SubCategory = subNis2 };
+            var qIsmsVad = new QuestionModel { Question = "Vad är ett ISMS?", Category = catLagstiftning, SubCategory = subNis2 };
+
+            // Lagstiftning: Incident Response
+            var qIrFaser = new QuestionModel { Question = "Vilka är huvudfaserna i incident response-processen?", Category = catLagstiftning, SubCategory = subIncident };
+            var qForensik = new QuestionModel { Question = "Vad är digital forensik inom cybersäkerhet?", Category = catLagstiftning, SubCategory = subIncident };
+            var qRunbook = new QuestionModel { Question = "Vad är en runbook inom incident response?", Category = catLagstiftning, SubCategory = subIncident };
+
+            // ── FRÅGA ↔ SVARSALTERNATIV ──────────────────────────────────────────
 
             context.QuestionAnswerOptions.AddRange(
 
-                // Vad är huvudstaden i Frankrike?
-                new QuestionAnswerOptionModel { Question = qFrankrikesHuvudstad, AnswerOption = aParis,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFrankrikesHuvudstad, AnswerOption = aLondon,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFrankrikesHuvudstad, AnswerOption = aBerlin,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFrankrikesHuvudstad, AnswerOption = aMadrid,  IsCorrect = false },
+                // OSI-lager för IP
+                new QuestionAnswerOptionModel { Question = qOsiIpLager, AnswerOption = aNatverkslager, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOsiIpLager, AnswerOption = aDatalankslager, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOsiIpLager, AnswerOption = aTransportlager, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOsiIpLager, AnswerOption = aSessionslager, IsCorrect = false },
 
-                // Vad är huvudstaden i Sverige?
-                new QuestionAnswerOptionModel { Question = qSverigesHuvudstad, AnswerOption = aStockholm, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qSverigesHuvudstad, AnswerOption = aGoteborg,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSverigesHuvudstad, AnswerOption = aMalmo,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSverigesHuvudstad, AnswerOption = aUppsala,   IsCorrect = false },
+                // HTTPS-port
+                new QuestionAnswerOptionModel { Question = qHttpsPort, AnswerOption = aPort443, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qHttpsPort, AnswerOption = aPort80, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHttpsPort, AnswerOption = aPort8080, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHttpsPort, AnswerOption = aPort22, IsCorrect = false },
 
-                // Vilket land har flest invånare i Europa?
-                new QuestionAnswerOptionModel { Question = qFlestInvanareEuropa, AnswerOption = aRyssland,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFlestInvanareEuropa, AnswerOption = aTyskland,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFlestInvanareEuropa, AnswerOption = aFrankrike, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFlestInvanareEuropa, AnswerOption = aItalien,   IsCorrect = false },
+                // SYN-paket
+                new QuestionAnswerOptionModel { Question = qSynPaket, AnswerOption = aSynForklaring, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSynPaket, AnswerOption = aSynFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSynPaket, AnswerOption = aSynFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSynPaket, AnswerOption = aSynFel3, IsCorrect = false },
 
-                // Vilket är världens största land till ytan?  — aRyssland återanvänds!
-                new QuestionAnswerOptionModel { Question = qStorstaLandYta, AnswerOption = aRyssland, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qStorstaLandYta, AnswerOption = aKanada,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaLandYta, AnswerOption = aUSA,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaLandYta, AnswerOption = aKina,     IsCorrect = false },
+                // DNS uppgift
+                new QuestionAnswerOptionModel { Question = qDnsVad, AnswerOption = aDnsKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDnsVad, AnswerOption = aDnsFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsVad, AnswerOption = aDnsFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsVad, AnswerOption = aDnsFel3, IsCorrect = false },
 
-                // Vilket är världens längsta flod?
-                new QuestionAnswerOptionModel { Question = qLangstaFlod, AnswerOption = aNilen,       IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qLangstaFlod, AnswerOption = aAmazonas,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLangstaFlod, AnswerOption = aYangtze,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLangstaFlod, AnswerOption = aMississippi, IsCorrect = false },
+                // DNS-port
+                new QuestionAnswerOptionModel { Question = qDnsPort, AnswerOption = aPort53, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDnsPort, AnswerOption = aPort80, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsPort, AnswerOption = aPort25, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsPort, AnswerOption = aPort110, IsCorrect = false },
 
-                // I vilket land låg det antika Rom?  — aItalien återanvänds!
-                new QuestionAnswerOptionModel { Question = qAntikRomLand, AnswerOption = aItalien,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qAntikRomLand, AnswerOption = aGrekland, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAntikRomLand, AnswerOption = aSpanien,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAntikRomLand, AnswerOption = aTurkiet,  IsCorrect = false },
+                // DNS poisoning
+                new QuestionAnswerOptionModel { Question = qDnsPoison, AnswerOption = aDnsPoisonKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDnsPoison, AnswerOption = aDnsPoisonFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsPoison, AnswerOption = aDnsPoisonFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsPoison, AnswerOption = aDnsPoisonFel3, IsCorrect = false },
 
-                // Vilket år föll Västromerska riket?
-                new QuestionAnswerOptionModel { Question = qVastromerriketFall, AnswerOption = a476, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qVastromerriketFall, AnswerOption = a395, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVastromerriketFall, AnswerOption = a410, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVastromerriketFall, AnswerOption = a500, IsCorrect = false },
+                // IDS vs IPS
+                new QuestionAnswerOptionModel { Question = qIdsVsIps, AnswerOption = aIdsIpsKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIdsVsIps, AnswerOption = aIdsIpsFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIdsVsIps, AnswerOption = aIdsIpsFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIdsVsIps, AnswerOption = aIdsIpsFel3, IsCorrect = false },
 
-                // Vilket år slutade andra världskriget?
-                new QuestionAnswerOptionModel { Question = qAndraVK, AnswerOption = a1945, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qAndraVK, AnswerOption = a1944, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAndraVK, AnswerOption = a1946, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAndraVK, AnswerOption = a1943, IsCorrect = false },
+                // Stateful firewall
+                new QuestionAnswerOptionModel { Question = qStatefulFw, AnswerOption = aStatefulKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qStatefulFw, AnswerOption = aStatefulFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qStatefulFw, AnswerOption = aStatefulFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qStatefulFw, AnswerOption = aStatefulFel3, IsCorrect = false },
 
-                // Vem var Sveriges kung under stora nordiska kriget?
-                new QuestionAnswerOptionModel { Question = qStoraNordiskaKriget, AnswerOption = aKarlXII,       IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qStoraNordiskaKriget, AnswerOption = aGustavIIAdolf, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStoraNordiskaKriget, AnswerOption = aKarlXI,        IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStoraNordiskaKriget, AnswerOption = aGustavIII,     IsCorrect = false },
+                // DMZ
+                new QuestionAnswerOptionModel { Question = qDmz, AnswerOption = aDmzKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDmz, AnswerOption = aDmzFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDmz, AnswerOption = aDmzFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDmz, AnswerOption = aDmzFel3, IsCorrect = false },
 
-                // Vad är den kemiska beteckningen för vatten?
-                new QuestionAnswerOptionModel { Question = qVattenFormel, AnswerOption = aH2O,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qVattenFormel, AnswerOption = aCO2,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVattenFormel, AnswerOption = aNaCl, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVattenFormel, AnswerOption = aO2,   IsCorrect = false },
+                // OWASP
+                new QuestionAnswerOptionModel { Question = qOwaspVad, AnswerOption = aOwaspKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOwaspVad, AnswerOption = aOwaspFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspVad, AnswerOption = aOwaspFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspVad, AnswerOption = aOwaspFel3, IsCorrect = false },
 
-                // Vilket grundämne har atomnummer 1?
-                new QuestionAnswerOptionModel { Question = qAtomNummer1, AnswerOption = aVate,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qAtomNummer1, AnswerOption = aHelium, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAtomNummer1, AnswerOption = aSyre,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAtomNummer1, AnswerOption = aKol,    IsCorrect = false },
+                // Broken Access Control
+                new QuestionAnswerOptionModel { Question = qOwaspAccess, AnswerOption = aBrokenAccessKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOwaspAccess, AnswerOption = aBrokenAccessFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspAccess, AnswerOption = aBrokenAccessFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspAccess, AnswerOption = aBrokenAccessFel3, IsCorrect = false },
 
-                // Ungefär hur snabbt rör sig ljus i vakuum?
-                new QuestionAnswerOptionModel { Question = qLjusets, AnswerOption = a300000, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qLjusets, AnswerOption = a150000, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLjusets, AnswerOption = a500000, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLjusets, AnswerOption = a100000, IsCorrect = false },
+                // Security Misconfiguration
+                new QuestionAnswerOptionModel { Question = qOwaspMisconfig, AnswerOption = aSecMisconfigKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOwaspMisconfig, AnswerOption = aSecMisconfigFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspMisconfig, AnswerOption = aSecMisconfigFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspMisconfig, AnswerOption = aSecMisconfigFel3, IsCorrect = false },
 
-                // Vem formulerade gravitationslagen?
-                new QuestionAnswerOptionModel { Question = qGravitationslagen, AnswerOption = aNewton,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qGravitationslagen, AnswerOption = aEinstein, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGravitationslagen, AnswerOption = aGalileo,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGravitationslagen, AnswerOption = aHawking,  IsCorrect = false },
+                // XSS
+                new QuestionAnswerOptionModel { Question = qXssVad, AnswerOption = aXssKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qXssVad, AnswerOption = aXssFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qXssVad, AnswerOption = aXssFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qXssVad, AnswerOption = aXssFel3, IsCorrect = false },
 
-                // Hur många spelare har ett fotbollslag på planen?
-                // a11 och a12 återanvänds i matematik!
-                new QuestionAnswerOptionModel { Question = qFotbollsspelare, AnswerOption = a11, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFotbollsspelare, AnswerOption = a10, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFotbollsspelare, AnswerOption = a12, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFotbollsspelare, AnswerOption = a9,  IsCorrect = false },
+                // SQL-injektion
+                new QuestionAnswerOptionModel { Question = qSqlVad, AnswerOption = aSqlKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSqlVad, AnswerOption = aSqlFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSqlVad, AnswerOption = aSqlFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSqlVad, AnswerOption = aSqlFel3, IsCorrect = false },
 
-                // Vilket land har vunnit flest VM-guld i fotboll?
-                // aBrasilien återanvänds i kaffeproducent! aTyskland + aItalien återanvänds!
-                new QuestionAnswerOptionModel { Question = qVMGuldFotboll, AnswerOption = aBrasilien, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qVMGuldFotboll, AnswerOption = aTyskland,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVMGuldFotboll, AnswerOption = aItalien,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVMGuldFotboll, AnswerOption = aArgentina, IsCorrect = false },
+                // SQL-skydd
+                new QuestionAnswerOptionModel { Question = qSqlSkydd, AnswerOption = aPreparedKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSqlSkydd, AnswerOption = aPreparedFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSqlSkydd, AnswerOption = aPreparedFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSqlSkydd, AnswerOption = aPreparedFel3, IsCorrect = false },
 
-                // Var hölls de första moderna olympiska spelen?
-                // aParis, aLondon, aRom återanvänds!
-                new QuestionAnswerOptionModel { Question = qForstaModernaOS, AnswerOption = aAthen,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qForstaModernaOS, AnswerOption = aParis,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qForstaModernaOS, AnswerOption = aLondon, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qForstaModernaOS, AnswerOption = aRom,    IsCorrect = false },
+                // MFA
+                new QuestionAnswerOptionModel { Question = qMfaVad, AnswerOption = aMfaKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qMfaVad, AnswerOption = aMfaFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMfaVad, AnswerOption = aMfaFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMfaVad, AnswerOption = aMfaFel3, IsCorrect = false },
 
-                // Vart hur många år hålls de olympiska sommarspelen?
-                // a4 återanvänds i gitarr/insekt!
-                new QuestionAnswerOptionModel { Question = qOSIntervall, AnswerOption = a4, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qOSIntervall, AnswerOption = a2, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qOSIntervall, AnswerOption = a3, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qOSIntervall, AnswerOption = a5, IsCorrect = false },
+                // Session hijacking
+                new QuestionAnswerOptionModel { Question = qSessionHijack, AnswerOption = aSessionKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSessionHijack, AnswerOption = aSessionFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSessionHijack, AnswerOption = aSessionFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSessionHijack, AnswerOption = aSessionFel3, IsCorrect = false },
 
-                // Vem komponerade "Für Elise"?
-                new QuestionAnswerOptionModel { Question = qFurElise, AnswerOption = aBeethoven, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFurElise, AnswerOption = aMozart,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFurElise, AnswerOption = aBach,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFurElise, AnswerOption = aChopin,    IsCorrect = false },
+                // CSRF
+                new QuestionAnswerOptionModel { Question = qCsrf, AnswerOption = aCsrfKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qCsrf, AnswerOption = aCsrfFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCsrf, AnswerOption = aCsrfFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCsrf, AnswerOption = aCsrfFel3, IsCorrect = false },
 
-                // Hur många strängar har en standardgitarr?
-                // a6 återanvänds i hexagon + insektben!
-                new QuestionAnswerOptionModel { Question = qGitarrStrangar, AnswerOption = a6, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qGitarrStrangar, AnswerOption = a4, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGitarrStrangar, AnswerOption = a5, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGitarrStrangar, AnswerOption = a8, IsCorrect = false },
+                // Symmetrisk kryptering
+                new QuestionAnswerOptionModel { Question = qSymVad, AnswerOption = aSymKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSymVad, AnswerOption = aSymFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSymVad, AnswerOption = aSymFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSymVad, AnswerOption = aSymFel3, IsCorrect = false },
 
-                // Vilket band sjöng "Bohemian Rhapsody"?
-                new QuestionAnswerOptionModel { Question = qBohemianRhapsody, AnswerOption = aQueen,         IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qBohemianRhapsody, AnswerOption = aBeatles,       IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBohemianRhapsody, AnswerOption = aLedZeppelin,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBohemianRhapsody, AnswerOption = aRollingStones, IsCorrect = false },
+                // Symmetrisk exempel
+                new QuestionAnswerOptionModel { Question = qSymExempel, AnswerOption = aAesKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSymExempel, AnswerOption = aAesFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSymExempel, AnswerOption = aAesFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSymExempel, AnswerOption = aAesFel3, IsCorrect = false },
 
-                // Vilket år bildades ABBA?
-                new QuestionAnswerOptionModel { Question = qABBA, AnswerOption = a1972, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qABBA, AnswerOption = a1969, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qABBA, AnswerOption = a1975, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qABBA, AnswerOption = a1970, IsCorrect = false },
+                // AES betydelse
+                new QuestionAnswerOptionModel { Question = qAesBetyd, AnswerOption = aAesBetydKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qAesBetyd, AnswerOption = aAesBetydFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAesBetyd, AnswerOption = aAesBetydFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAesBetyd, AnswerOption = aAesBetydFel3, IsCorrect = false },
 
-                // Vem spelar Iron Man i MCU?
-                new QuestionAnswerOptionModel { Question = qIronMan, AnswerOption = aRDJ,            IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qIronMan, AnswerOption = aChrisEvans,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qIronMan, AnswerOption = aChrisHemsworth, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qIronMan, AnswerOption = aMarkRuffalo,    IsCorrect = false },
+                // Asymmetrisk kryptering
+                new QuestionAnswerOptionModel { Question = qAsymVad, AnswerOption = aAsymKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qAsymVad, AnswerOption = aAsymFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAsymVad, AnswerOption = aAsymFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAsymVad, AnswerOption = aAsymFel3, IsCorrect = false },
 
-                // Vilket år hade Titanic premiär?
-                new QuestionAnswerOptionModel { Question = qTitanicAr, AnswerOption = a1997, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qTitanicAr, AnswerOption = a1995, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTitanicAr, AnswerOption = a1999, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTitanicAr, AnswerOption = a2001, IsCorrect = false },
+                // Privat nyckel
+                new QuestionAnswerOptionModel { Question = qPrivatNyckel, AnswerOption = aPrivatKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPrivatNyckel, AnswerOption = aPrivatFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPrivatNyckel, AnswerOption = aPrivatFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPrivatNyckel, AnswerOption = aPrivatFel3, IsCorrect = false },
 
-                // Vilket land producerade "Spirited Away"?  — aJapan återanvänds i sushi!
-                new QuestionAnswerOptionModel { Question = qSpiritedAway, AnswerOption = aJapan,    IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qSpiritedAway, AnswerOption = aUSA,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSpiritedAway, AnswerOption = aSydkorea, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSpiritedAway, AnswerOption = aKina,     IsCorrect = false },
+                // Digitalt certifikat
+                new QuestionAnswerOptionModel { Question = qCertifikat, AnswerOption = aCertKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qCertifikat, AnswerOption = aCertFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCertifikat, AnswerOption = aCertFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCertifikat, AnswerOption = aCertFel3, IsCorrect = false },
 
-                // Vilket studio skapade "Lejonkungen"?
-                new QuestionAnswerOptionModel { Question = qLejonkungen, AnswerOption = aDisney,     IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qLejonkungen, AnswerOption = aPixar,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLejonkungen, AnswerOption = aDreamWorks, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qLejonkungen, AnswerOption = aWarnerBros, IsCorrect = false },
+                // Hash-funktion
+                new QuestionAnswerOptionModel { Question = qHashVad, AnswerOption = aHashKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qHashVad, AnswerOption = aHashFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashVad, AnswerOption = aHashFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashVad, AnswerOption = aHashFel3, IsCorrect = false },
 
-                // Vad är kvadratroten ur 144?  — a12 och a11 återanvänds från fotboll!
-                new QuestionAnswerOptionModel { Question = qKvadratrot144, AnswerOption = a12, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qKvadratrot144, AnswerOption = a14, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKvadratrot144, AnswerOption = a11, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKvadratrot144, AnswerOption = a13, IsCorrect = false },
+                // Hash-egenskap
+                new QuestionAnswerOptionModel { Question = qHashEgenskap, AnswerOption = aEnvagKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qHashEgenskap, AnswerOption = aEnvagFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashEgenskap, AnswerOption = aEnvagFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashEgenskap, AnswerOption = aEnvagFel3, IsCorrect = false },
 
-                // Hur många sidor har en hexagon?  — a6 återanvänds i gitarr + insekt!
-                new QuestionAnswerOptionModel { Question = qHexagonSidor, AnswerOption = a6, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qHexagonSidor, AnswerOption = a5, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qHexagonSidor, AnswerOption = a7, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qHexagonSidor, AnswerOption = a8, IsCorrect = false },
+                // Hash-exempel
+                new QuestionAnswerOptionModel { Question = qHashExempel, AnswerOption = aShaKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qHashExempel, AnswerOption = aShaFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashExempel, AnswerOption = aShaFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qHashExempel, AnswerOption = aShaFel3, IsCorrect = false },
 
-                // Hur många grader är en rät vinkel?
-                new QuestionAnswerOptionModel { Question = qRatVinkel, AnswerOption = a90,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qRatVinkel, AnswerOption = a45,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qRatVinkel, AnswerOption = a180, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qRatVinkel, AnswerOption = a60,  IsCorrect = false },
+                // Ransomware
+                new QuestionAnswerOptionModel { Question = qRansomVad, AnswerOption = aRansomKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qRansomVad, AnswerOption = aRansomFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRansomVad, AnswerOption = aRansomFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRansomVad, AnswerOption = aRansomFel3, IsCorrect = false },
 
-                // Vad är pi avrundat till 2 decimaler?
-                new QuestionAnswerOptionModel { Question = qPi, AnswerOption = aPi314, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qPi, AnswerOption = aPi312, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qPi, AnswerOption = aPi316, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qPi, AnswerOption = aPi318, IsCorrect = false },
+                // Trojan
+                new QuestionAnswerOptionModel { Question = qTrojanVad, AnswerOption = aTrojanKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qTrojanVad, AnswerOption = aTrojanFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qTrojanVad, AnswerOption = aTrojanFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qTrojanVad, AnswerOption = aTrojanFel3, IsCorrect = false },
 
-                // Vilket är världens största landlevande djur?
-                new QuestionAnswerOptionModel { Question = qStorstaLanddjur, AnswerOption = aElefant,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qStorstaLanddjur, AnswerOption = aNoshorn,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaLanddjur, AnswerOption = aFlodhaest, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaLanddjur, AnswerOption = aGiraff,    IsCorrect = false },
+                // Worm
+                new QuestionAnswerOptionModel { Question = qWormVad, AnswerOption = aWormKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qWormVad, AnswerOption = aWormFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qWormVad, AnswerOption = aWormFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qWormVad, AnswerOption = aWormFel3, IsCorrect = false },
 
-                // Hur många ben har en insekt?  — a6 återanvänds i gitarr + hexagon!
-                new QuestionAnswerOptionModel { Question = qInsektBen, AnswerOption = a6,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qInsektBen, AnswerOption = a4,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qInsektBen, AnswerOption = a8,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qInsektBen, AnswerOption = a10, IsCorrect = false },
+                // DDoS
+                new QuestionAnswerOptionModel { Question = qDdosVad, AnswerOption = aDdosKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDdosVad, AnswerOption = aDdosFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDdosVad, AnswerOption = aDdosFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDdosVad, AnswerOption = aDdosFel3, IsCorrect = false },
 
-                // Vilket träd producerar ekollon?
-                new QuestionAnswerOptionModel { Question = qEkollon, AnswerOption = aEk,    IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qEkollon, AnswerOption = aBjork, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qEkollon, AnswerOption = aGran,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qEkollon, AnswerOption = aTall,  IsCorrect = false },
+                // MitM
+                new QuestionAnswerOptionModel { Question = qMitmVad, AnswerOption = aMitmKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qMitmVad, AnswerOption = aMitmFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMitmVad, AnswerOption = aMitmFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMitmVad, AnswerOption = aMitmFel3, IsCorrect = false },
 
-                // Vad heter processen där växter omvandlar solljus till energi?
-                new QuestionAnswerOptionModel { Question = qFotosyntes, AnswerOption = aFotosyntes,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFotosyntes, AnswerOption = aMetabolism,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFotosyntes, AnswerOption = aOsmos,       IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFotosyntes, AnswerOption = aRespiration, IsCorrect = false },
+                // Zero-day
+                new QuestionAnswerOptionModel { Question = qZerodayVad, AnswerOption = aZerodayKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qZerodayVad, AnswerOption = aZerodayFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qZerodayVad, AnswerOption = aZerodayFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qZerodayVad, AnswerOption = aZerodayFel3, IsCorrect = false },
 
-                // Vad står CPU för?
-                new QuestionAnswerOptionModel { Question = qCPU, AnswerOption = aCpuCorrect, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qCPU, AnswerOption = aCpuWrong1,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qCPU, AnswerOption = aCpuWrong2,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qCPU, AnswerOption = aCpuWrong3,  IsCorrect = false },
+                // Phishing
+                new QuestionAnswerOptionModel { Question = qPhishVad, AnswerOption = aPhishKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPhishVad, AnswerOption = aPhishFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPhishVad, AnswerOption = aPhishFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPhishVad, AnswerOption = aPhishFel3, IsCorrect = false },
 
-                // Vilket företag skapade Windows?  — aMicrosoft/aApple/aGoogle återanvänds i Google!
-                new QuestionAnswerOptionModel { Question = qWindowsSkapare, AnswerOption = aMicrosoft, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qWindowsSkapare, AnswerOption = aApple,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qWindowsSkapare, AnswerOption = aGoogle,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qWindowsSkapare, AnswerOption = aIBM,       IsCorrect = false },
+                // Spear phishing
+                new QuestionAnswerOptionModel { Question = qSpearVad, AnswerOption = aSpearKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSpearVad, AnswerOption = aSpearFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSpearVad, AnswerOption = aSpearFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSpearVad, AnswerOption = aSpearFel3, IsCorrect = false },
 
-                // Vad står WWW för?
-                new QuestionAnswerOptionModel { Question = qWWW, AnswerOption = aWwwCorrect, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qWWW, AnswerOption = aWwwWrong1,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qWWW, AnswerOption = aWwwWrong2,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qWWW, AnswerOption = aWwwWrong3,  IsCorrect = false },
+                // Vishing
+                new QuestionAnswerOptionModel { Question = qVishingVad, AnswerOption = aVishingKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qVishingVad, AnswerOption = aVishingFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qVishingVad, AnswerOption = aVishingFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qVishingVad, AnswerOption = aVishingFel3, IsCorrect = false },
 
-                // Vilket år grundades Google?  — a1998/a1995/a2000/a2001 återanvänds från historia/film!
-                new QuestionAnswerOptionModel { Question = qGoogleGrundat, AnswerOption = a1998, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qGoogleGrundat, AnswerOption = a1995, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGoogleGrundat, AnswerOption = a2000, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGoogleGrundat, AnswerOption = a2001, IsCorrect = false },
+                // chmod
+                new QuestionAnswerOptionModel { Question = qChmodVad, AnswerOption = aChmodKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qChmodVad, AnswerOption = aChmodFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChmodVad, AnswerOption = aChmodFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChmodVad, AnswerOption = aChmodFel3, IsCorrect = false },
 
-                // Vilket land kommer sushi från?  — aJapan återanvänds från Spirited Away!
-                new QuestionAnswerOptionModel { Question = qSushiUrsprung, AnswerOption = aJapan,    IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qSushiUrsprung, AnswerOption = aKina,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSushiUrsprung, AnswerOption = aSydkorea, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSushiUrsprung, AnswerOption = aVietnam,  IsCorrect = false },
+                // Least privilege
+                new QuestionAnswerOptionModel { Question = qLeastPriv, AnswerOption = aLeastPrivKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qLeastPriv, AnswerOption = aLeastPrivFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qLeastPriv, AnswerOption = aLeastPrivFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qLeastPriv, AnswerOption = aLeastPrivFel3, IsCorrect = false },
 
-                // Vad är huvudingrediensen i guacamole?
-                new QuestionAnswerOptionModel { Question = qGuacamoleIngrediens, AnswerOption = aAvokado, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qGuacamoleIngrediens, AnswerOption = aTomat,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGuacamoleIngrediens, AnswerOption = aLok,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGuacamoleIngrediens, AnswerOption = aLime,    IsCorrect = false },
+                // sudo
+                new QuestionAnswerOptionModel { Question = qSudoVad, AnswerOption = aSudoKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSudoVad, AnswerOption = aSudoFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSudoVad, AnswerOption = aSudoFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSudoVad, AnswerOption = aSudoFel3, IsCorrect = false },
 
-                // Vilket land är störst kaffeproducent?  — aBrasilien återanvänds från fotboll!
-                new QuestionAnswerOptionModel { Question = qKaffeProducent, AnswerOption = aBrasilien, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qKaffeProducent, AnswerOption = aKolombia,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKaffeProducent, AnswerOption = aEtiopien,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKaffeProducent, AnswerOption = aVietnam,   IsCorrect = false },
+                // Windows Defender
+                new QuestionAnswerOptionModel { Question = qDefenderVad, AnswerOption = aDefenderKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDefenderVad, AnswerOption = aDefenderFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDefenderVad, AnswerOption = aDefenderFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDefenderVad, AnswerOption = aDefenderFel3, IsCorrect = false },
 
-                // Av vad tillverkas vin?
-                new QuestionAnswerOptionModel { Question = qVinIngredienser, AnswerOption = aDruvor,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qVinIngredienser, AnswerOption = aApplen,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVinIngredienser, AnswerOption = aParon,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qVinIngredienser, AnswerOption = aPlommon, IsCorrect = false },
+                // BitLocker
+                new QuestionAnswerOptionModel { Question = qBitlockerVad, AnswerOption = aBitlockerKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qBitlockerVad, AnswerOption = aBitlockerFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBitlockerVad, AnswerOption = aBitlockerFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBitlockerVad, AnswerOption = aBitlockerFel3, IsCorrect = false },
 
-                // Vad heter Norges huvudstad?
-                new QuestionAnswerOptionModel { Question = qNorgesHuvudstad, AnswerOption = aOslo,       IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qNorgesHuvudstad, AnswerOption = aStockholm,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qNorgesHuvudstad, AnswerOption = aKopenhagen, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qNorgesHuvudstad, AnswerOption = aBerlin,     IsCorrect = false },
+                // UAC
+                new QuestionAnswerOptionModel { Question = qUacVad, AnswerOption = aUacKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qUacVad, AnswerOption = aUacFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qUacVad, AnswerOption = aUacFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qUacVad, AnswerOption = aUacFel3, IsCorrect = false },
 
-                // Vad heter Danmarks huvudstad?
-                new QuestionAnswerOptionModel { Question = qDanmarksHuvudstad, AnswerOption = aKopenhagen, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qDanmarksHuvudstad, AnswerOption = aOslo,       IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qDanmarksHuvudstad, AnswerOption = aStockholm,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qDanmarksHuvudstad, AnswerOption = aHelsinki,   IsCorrect = false },
+                // RBAC
+                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aLeastPrivKorrekt, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aUacKorrekt, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aSudoKorrekt, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = new AnswerOptionModel { Answer = "Åtkomstkontroll där behörigheter tilldelas baserat på användarens roll i organisationen" }, IsCorrect = true },
 
-                // Vilket år undertecknades Magna Carta?
-                new QuestionAnswerOptionModel { Question = qMagnaCarta, AnswerOption = a1215, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qMagnaCarta, AnswerOption = a1066, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMagnaCarta, AnswerOption = a1348, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMagnaCarta, AnswerOption = a1453, IsCorrect = false },
+                // Autentisering vs Auktorisering
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering verifierar vem du är, auktorisering avgör vad du får göra" }, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "De är synonymer och betyder samma sak" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering avgör vad du får göra, auktorisering verifierar vem du är" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering gäller maskiner, auktorisering gäller människor" }, IsCorrect = false },
 
-                // Vilket år föll Konstantinopel?
-                new QuestionAnswerOptionModel { Question = qKonstantinopel, AnswerOption = a1453, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qKonstantinopel, AnswerOption = a1389, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKonstantinopel, AnswerOption = a1492, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKonstantinopel, AnswerOption = a1500, IsCorrect = false },
+                // PAM
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "Ett system för att kontrollera och övervaka åtkomst till privilegierade konton" }, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En typ av nästa generations brandvägg" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En krypteringsalgoritm för administratörslösenord" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En antiviruslösning för servrar" }, IsCorrect = false },
 
-                // Hur många kromosompar har en frisk människa?
-                new QuestionAnswerOptionModel { Question = qKromosompar, AnswerOption = a23, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qKromosompar, AnswerOption = a22, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKromosompar, AnswerOption = a24, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qKromosompar, AnswerOption = a46, IsCorrect = false },
+                // GDPR
+                new QuestionAnswerOptionModel { Question = qGdprVad, AnswerOption = aGdprKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qGdprVad, AnswerOption = aGdprFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdprVad, AnswerOption = aGdprFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdprVad, AnswerOption = aGdprFel3, IsCorrect = false },
 
-                // Vad kallas den minsta enheten i en levande organism?
-                new QuestionAnswerOptionModel { Question = qMinstaEnhet, AnswerOption = aCellen,    IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qMinstaEnhet, AnswerOption = aAtomen,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMinstaEnhet, AnswerOption = aMolekylen, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMinstaEnhet, AnswerOption = aVavnaden,  IsCorrect = false },
+                // GDPR 72h
+                new QuestionAnswerOptionModel { Question = qGdpr72h, AnswerOption = a72hKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qGdpr72h, AnswerOption = a72hFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdpr72h, AnswerOption = a72hFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdpr72h, AnswerOption = a72hFel3, IsCorrect = false },
 
-                // Vad kallas noll poäng i tennis?
-                new QuestionAnswerOptionModel { Question = qTennisNollPoang, AnswerOption = aLove, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qTennisNollPoang, AnswerOption = aZero, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTennisNollPoang, AnswerOption = aNil,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTennisNollPoang, AnswerOption = aNoll, IsCorrect = false },
+                // Personuppgift
+                new QuestionAnswerOptionModel { Question = qPersonuppgift, AnswerOption = aPersonuppgiftKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPersonuppgift, AnswerOption = aPersonuppgiftFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPersonuppgift, AnswerOption = aPersonuppgiftFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPersonuppgift, AnswerOption = aPersonuppgiftFel3, IsCorrect = false },
 
-                // Vilket är det mest prestigefyllda tennisturneringen på grus?
-                new QuestionAnswerOptionModel { Question = qTennisGrus, AnswerOption = aRolandGarros,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qTennisGrus, AnswerOption = aWimbledon,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTennisGrus, AnswerOption = aUSOpen,         IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qTennisGrus, AnswerOption = aAustralianOpen, IsCorrect = false },
+                // NIS2
+                new QuestionAnswerOptionModel { Question = qNis2Syfte, AnswerOption = aNis2Korrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qNis2Syfte, AnswerOption = aNis2Fel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qNis2Syfte, AnswerOption = aNis2Fel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qNis2Syfte, AnswerOption = aNis2Fel3, IsCorrect = false },
 
-                // I vilket land uppstod jazzmusiken?
-                new QuestionAnswerOptionModel { Question = qJazzUrsprung, AnswerOption = aUSA,       IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qJazzUrsprung, AnswerOption = aFrankrike, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qJazzUrsprung, AnswerOption = aKina,      IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qJazzUrsprung, AnswerOption = aBrasilien, IsCorrect = false },
+                // ISO 27001
+                new QuestionAnswerOptionModel { Question = qIso27001Vad, AnswerOption = aIso27001Korrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIso27001Vad, AnswerOption = aIso27001Fel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIso27001Vad, AnswerOption = aIso27001Fel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIso27001Vad, AnswerOption = aIso27001Fel3, IsCorrect = false },
 
-                // Vilket instrument är Miles Davis känd för att spela?
-                new QuestionAnswerOptionModel { Question = qMilesDavis, AnswerOption = aTrumpet,  IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qMilesDavis, AnswerOption = aSaxofon,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMilesDavis, AnswerOption = aPiano,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qMilesDavis, AnswerOption = aKlarinet, IsCorrect = false },
+                // ISMS
+                new QuestionAnswerOptionModel { Question = qIsmsVad, AnswerOption = aIsmsKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIsmsVad, AnswerOption = aIsmsFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIsmsVad, AnswerOption = aIsmsFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIsmsVad, AnswerOption = aIsmsFel3, IsCorrect = false },
 
-                // Vilket nätverk producerade Game of Thrones?
-                new QuestionAnswerOptionModel { Question = qGameOfThrones, AnswerOption = aHBO,         IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qGameOfThrones, AnswerOption = aNetflix,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGameOfThrones, AnswerOption = aAmazonPrime, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qGameOfThrones, AnswerOption = aHulu,        IsCorrect = false },
+                // IR-faser
+                new QuestionAnswerOptionModel { Question = qIrFaser, AnswerOption = aIrFaserKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIrFaser, AnswerOption = aIrFaserFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIrFaser, AnswerOption = aIrFaserFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIrFaser, AnswerOption = aIrFaserFel3, IsCorrect = false },
 
-                // Vilket land producerade 'Squid Game'?
-                new QuestionAnswerOptionModel { Question = qSquidGame, AnswerOption = aSydkorea, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qSquidGame, AnswerOption = aJapan,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSquidGame, AnswerOption = aKina,     IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qSquidGame, AnswerOption = aUSA,      IsCorrect = false },
+                // Forensik
+                new QuestionAnswerOptionModel { Question = qForensik, AnswerOption = aForensikKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qForensik, AnswerOption = aForensikFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qForensik, AnswerOption = aForensikFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qForensik, AnswerOption = aForensikFel3, IsCorrect = false },
 
-                // Vad är x om 2x + 4 = 10?
-                new QuestionAnswerOptionModel { Question = qAlgebra2x, AnswerOption = a3, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qAlgebra2x, AnswerOption = a2, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAlgebra2x, AnswerOption = a4, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAlgebra2x, AnswerOption = a5, IsCorrect = false },
-
-                // Hur många lösningar kan en andragradsekvation ha som mest?
-                new QuestionAnswerOptionModel { Question = qAndragradsekvation, AnswerOption = a2, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qAndragradsekvation, AnswerOption = a1, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAndragradsekvation, AnswerOption = a3, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAndragradsekvation, AnswerOption = a4, IsCorrect = false },
-
-                // Vilket är världens största ocean?
-                new QuestionAnswerOptionModel { Question = qStorstaOcean, AnswerOption = aStillahavet,     IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qStorstaOcean, AnswerOption = aAtlanten,        IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaOcean, AnswerOption = aIndiskaOceanen,  IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qStorstaOcean, AnswerOption = aArktiskaOceanen, IsCorrect = false },
-
-                // Hur stor del av jordens yta täcks av vatten?
-                new QuestionAnswerOptionModel { Question = qJordensVatten, AnswerOption = a71pct, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qJordensVatten, AnswerOption = a50pct, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qJordensVatten, AnswerOption = a60pct, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qJordensVatten, AnswerOption = a80pct, IsCorrect = false },
-
-                // Vilket år lanserades den första iPhone?
-                new QuestionAnswerOptionModel { Question = qFoerstaIphone, AnswerOption = a2007, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qFoerstaIphone, AnswerOption = a2005, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFoerstaIphone, AnswerOption = a2008, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qFoerstaIphone, AnswerOption = a2010, IsCorrect = false },
-
-                // Vilket företag tillverkar iPhone?
-                new QuestionAnswerOptionModel { Question = qIphoneTillverkare, AnswerOption = aApple,     IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qIphoneTillverkare, AnswerOption = aSamsung,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qIphoneTillverkare, AnswerOption = aGoogle,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qIphoneTillverkare, AnswerOption = aMicrosoft, IsCorrect = false },
-
-                // Vilken ingrediens gör att bröddeg jäser?
-                new QuestionAnswerOptionModel { Question = qBrodJaesning, AnswerOption = aJast,   IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qBrodJaesning, AnswerOption = aMjol,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBrodJaesning, AnswerOption = aSalt,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBrodJaesning, AnswerOption = aSocker, IsCorrect = false },
-
-                // Vad är det vanligaste pulvret för att få kakor att jäsa utan jäst?
-                new QuestionAnswerOptionModel { Question = qBakpulver, AnswerOption = aBakpulver, IsCorrect = true  },
-                new QuestionAnswerOptionModel { Question = qBakpulver, AnswerOption = aMaizena,   IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBakpulver, AnswerOption = aVanilj,    IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qBakpulver, AnswerOption = aSalt,      IsCorrect = false }
+                // Runbook
+                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel3, IsCorrect = false }
             );
 
             await context.SaveChangesAsync();

@@ -18,7 +18,7 @@ namespace Cyberquiz.API.Controllers
         //    _progressService = progressService;
         //}
 
-        
+
         //// GET api/progress/profile
         //[HttpGet("profile")]
         //public async Task<ActionResult<List<UserProgressDto>>> GetProgress()
@@ -31,6 +31,6 @@ namespace Cyberquiz.API.Controllers
 
 
 
-        
+
     }
 }
