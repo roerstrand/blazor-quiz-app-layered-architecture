@@ -1,13 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Cyberquiz.DAL.Models;
 
 namespace Cyberquiz.BLL.Interfaces
 {
     public interface IQuestionService
     {
-        // Spara ett enskilt svar från användaren
-        Task<bool> SubmitAnswerAsync(string userId, int questionId, int selectedOptionId);
-
-        // Slutför quiz och spara progress
-        Task CompleteQuizAsync(string userId, int subCategoryId);
+        Task<QuestionModel?> GetByIdAsync(int id);
+        Task<IEnumerable<QuestionModel>> GetBySubCategoryAsync(int subCategoryId);
     }
 }

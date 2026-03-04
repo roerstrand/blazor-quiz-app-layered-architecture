@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Cyberquiz.DAL.Models;
 
 namespace Cyberquiz.BLL.Interfaces
 {
-    internal interface ICategoryService
+    public interface ICategoryService
     {
+        Task<IEnumerable<CategoryModel>> GetAllCategoriesAsync();
+        Task<CategoryModel?> GetCategoryByIdAsync(int id);
+
+        Task<IEnumerable<SubCategoryModel>> GetAllSubCategoriesAsync();
+        Task<SubCategoryModel?> GetSubCategoryByIdAsync(int id);
     }
 }

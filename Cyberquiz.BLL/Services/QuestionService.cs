@@ -1,79 +1,24 @@
 ﻿using Cyberquiz.BLL.Interfaces;
-using Cyberquiz.Shared.DTOs.Progress;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.DAL.Interface;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cyberquiz.BLL.Services
 {
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
-        private readonly IQuizRepository _quizRepo;
-
-        public QuestionService(IQuestionRepository questionRepo, IQuizRepository quizRepo)
+        public QuestionService(IQuestionRepository questionRepo)
         {
             _questionRepo = questionRepo;
-            _quizRepo = quizRepo;
+        }
+        public async Task<QuestionModel?> GetByIdAsync(int id)
+        {
+            return await _questionRepo.GetByIdAsync(id);
         }
 
-        // Metod för att spara ett enskilt svar från användaren
-        public async Task<bool> SubmitAnswerAsync(string userId, int questionId, int selectedOptionId)
+        public async Task<IEnumerable<QuestionModel>> GetBySubCategoryAsync(int subCategoryId)
         {
-            // Hämta frågan med alla svarsalternativ
-            var question = await _questionRepo.GetByIdAsync(questionId);
-
-            if (question == null)
-            {
-                throw new ArgumentException($"Fråga med ID {questionId} finns inte");
-            }
-
-            // Hitta rätt svar genom att kolla IsCorrect i QuestionAnswerOptions
-            var correctAnswer = question.QuestionAnswerOptions
-                .FirstOrDefault(qao => qao.IsCorrect);
-
-            if (correctAnswer == null)
-            {
-                throw new InvalidOperationException($"Fråga {questionId} har inget rätt svar definierat");
-            }
-
-            // Validera om användarens svar är rätt
-            bool isCorrect = correctAnswer.AnswerOptionId == selectedOptionId;
-
-            // Spara användarens svar i databasen
-            await _quizRepo.SaveUserAnswerAsync(new UserAnswerModel
-            {
-                UserName = userId,
-                QuestionId = questionId,
-                AnswerOptionId = selectedOptionId,
-                IsCorrect = isCorrect,
-                AnsweredAt = DateTime.UtcNow
-            });
-
-            return isCorrect;
-        }
-
-        // Metod för att SLUTFÖRA QUIZ och SPARA PROGRESS
-        public async Task CompleteQuizAsync(string userId, int subCategoryId)
-        {
-            // Hämta alla användarens svar för denna subkategori
-            var userAnswers = await _quizRepo.GetUserAnswersBySubCategoryAsync(userId, subCategoryId);
-
-            // Beräkna resultat
-            var totalQuestions = userAnswers.Count();
-            var score = userAnswers.Count(ua => ua.IsCorrect);
-
-            // Spara progress
-            await _quizRepo.SaveUserProgressAsync(new UserProgressModel
-            {
-                UserName = userId,
-                SubCategoryId = subCategoryId,
-                Score = score,
-                TotalQuestions = totalQuestions,
-                CompletedAt = DateTime.UtcNow
-            });
+            return await _questionRepo.GetBySubCategoryAsync(subCategoryId);
         }
     }
 }
