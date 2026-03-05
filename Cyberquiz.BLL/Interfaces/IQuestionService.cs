@@ -6,5 +6,9 @@ namespace Cyberquiz.BLL.Interfaces
     {
         Task<QuestionDto?> GetByIdAsync(int id);
         Task<IEnumerable<QuestionDto>> GetBySubCategoryAsync(int subCategoryId);
+
+        //för endpoints
+        //Task<QuestionDto?> GetNextQuestionAsync(string userName, int subCategoryId); hämtar nästa fråga som användaren inte har svarat på i den subkategorin
+        //Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request); tar emot användarens svar, sparar det och returnerar om det var rätt eller fel
     }
 }

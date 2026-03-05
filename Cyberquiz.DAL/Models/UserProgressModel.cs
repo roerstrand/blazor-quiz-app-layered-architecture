@@ -16,5 +16,7 @@ namespace Cyberquiz.DAL.Models
         public int TotalQuestions { get; set; }
 
         public DateTime CompletedAt { get; set; }
+
+        public ICollection<UserAnswerModel> UserAnswers { get; set; } = new List<UserAnswerModel>();
     }
 }

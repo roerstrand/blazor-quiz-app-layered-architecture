@@ -18,5 +18,11 @@ namespace Cyberquiz.DAL.Interface
 
         // Hämtar alla svar en användare lämnat för en subkategori
         Task<IEnumerable<UserAnswerModel>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
+
+        // Tar bort all data för en användare (GDPR/admin)
+        Task DeleteByUserAsync(string userName);
+
+        // Behåller de X senaste resultaten och tar bort resten (DB-rensning)
+        Task DeleteOldestByUserAsync(string userName, int keepLatest);
     }
 }

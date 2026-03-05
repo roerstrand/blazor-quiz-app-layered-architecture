@@ -22,7 +22,7 @@ builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
 // BLL
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
-builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -48,6 +48,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (app.Environment.IsDevelopment())
+
+        // TA BORT EnsureDeleteAsync EFTER TEST/INNAN PRODUCTION, ANNARS KOMMER ALLA ANVÄNDARES PROGRESS OCH SVAR ATT RADERAS VID VARJE START
+        await db.Database.EnsureDeletedAsync();
     await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(db);
 }
