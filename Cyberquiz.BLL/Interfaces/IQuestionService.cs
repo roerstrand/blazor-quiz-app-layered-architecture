@@ -1,10 +1,10 @@
-﻿using Cyberquiz.DAL.Models;
+﻿using Cyberquiz.Shared.DTOs;
 
 namespace Cyberquiz.BLL.Interfaces
 {
     public interface IQuestionService
     {
-        Task<QuestionModel?> GetByIdAsync(int id);
-        Task<IEnumerable<QuestionModel>> GetBySubCategoryAsync(int subCategoryId);
+        Task<QuestionDto?> GetByIdAsync(int id);
+        Task<IEnumerable<QuestionDto>> GetBySubCategoryAsync(int subCategoryId);
     }
 }

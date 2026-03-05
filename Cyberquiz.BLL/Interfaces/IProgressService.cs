@@ -1,18 +1,19 @@
-﻿using Cyberquiz.DAL.Models;
+﻿using Cyberquiz.Shared.DTOs;
+using Cyberquiz.Shared.DTOs.Progress;
 
 namespace Cyberquiz.BLL.Interfaces
 {
     public interface IProgressService // Interface för kontrakt med Service
     {
-        Task<UserProgressModel?> GetByUserAndSubCategoryAsync(string userId, int subCategoryId);
+        Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userId, int subCategoryId);
 
-        Task<IEnumerable<UserProgressModel>> GetAllByUserAsync(string userId);
+        Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userId);
 
-        Task SaveProgressAsync(UserProgressModel progress);
+        Task SaveProgressAsync(UserProgressDto progress);
 
-        Task SaveUserAnswerAsync(UserAnswerModel answer);
+        Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer);
 
-        Task<IEnumerable<UserAnswerModel>> GetAnswersByUserAndSubCategoryAsync(string userId, int subCategoryId);
+        Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userId, int subCategoryId);
 
         Task<double> CalculateSuccessRateAsync(string userId, int subCategoryId);
 
