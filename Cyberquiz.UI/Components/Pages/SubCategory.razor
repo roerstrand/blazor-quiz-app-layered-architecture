@@ -3,8 +3,9 @@
 @using Cyberquiz.UI.Services
 @inject ApiService ApiService
 @inject NavigationManager Nav
+@rendermode InteractiveServer
 
-<h3>SubCategory</h3>
+<h3>Subkategorier</h3>
 
 @if (_subs is null)
 {
@@ -16,28 +17,39 @@ else if (_subs.Count == 0)
 }
 else
 {
-    <ul>
-        @foreach (var s in _subs.OrderBy(x => x.Order))
-        {
-            <li style="margin-bottom:10px;">
-                <span>@(s.IsLocked ? "🔒" : "🔓")</span>
-                <strong style="margin-left:6px;">@s.Name</strong>
-                <span style="opacity:.7;">(Kategori: @s.CategoryName, Nivå: @s.Order)</span>
+    @foreach (var s in _subs.OrderBy(x => x.Order))
+    {
+        <div class="card p-3 mb-3">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h5 style="margin:0;">
+                        @(s.IsLocked ? "🔒" : "🔓") @s.Name
+                        @if (s.IsCompleted)
+                        {
+                            <span>✅</span>
+                        }
+                    </h5>
 
-                @if (s.IsCompleted)
-                {
-                    <span style="margin-left:6px;">✅</span>
-                }
+                    <div style="opacity:.8;">
+                        <span>Kategori: @s.CategoryName</span>
+                        <span style="margin-left:10px;">Nivå: @s.Order</span>
+                        <span style="margin-left:10px;">Frågor: @s.QuestionCount</span>
+                    </div>
+                </div>
 
-                <button class="btn btn-sm btn-primary"
-                        style="margin-left:10px;"
+                <button class="btn btn-primary"
                         disabled="@s.IsLocked"
-                        @onclick="() =>GoToQuiz(s.Id)">
+                        @onclick="() => StartQuiz(s.Id)">
                     Starta quiz
                 </button>
-            </li>
-        }
-    </ul>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(s.Description))
+            {
+                <p style="margin-top:10px;">@s.Description</p>
+            }
+        </div>
+    }
 }
 
 @code {
@@ -49,8 +61,7 @@ else
         _subs = await ApiService.GetSubCategoriesByCategoryIdAsync(CategoryId);
     }
 
-    ¨private void GoToQuiz(int subCategoryId)
-    {
-        Nav.NavigateTo($"/quiz/{subCategoryId}");
-    }
+    private void StartQuiz(int subCategoryId)
+        => Nav.NavigateTo($"/quiz/{subCategoryId}");
 }
+

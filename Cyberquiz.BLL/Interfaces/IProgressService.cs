@@ -18,5 +18,7 @@ namespace Cyberquiz.BLL.Interfaces
         Task<double> CalculateSuccessRateAsync(string userId, int subCategoryId);
 
         Task<bool> IsSubCategoryCompletedAsync(string userId, int subCategoryId);
+
+        
     }
 }

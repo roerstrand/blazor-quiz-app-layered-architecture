@@ -4,15 +4,22 @@
 @using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
 @inject ApiService ApiService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
 
 
 <h3>Quiz</h3>
 
-<h3>Quiz</h3>
-
-@if (question is null)
+@if (_loading)
 {
     <p>Loading...</p>
+}
+else if (question == null)
+{
+    <div class="alert alert-info">
+        <p>Du är klar med alla frågor i den här subkategorin! ✅</p>
+        <button class="btn btn-secondary" @onclick="GoBack">Tillbaka</button>
+    </div>
 }
 else
 {
@@ -45,7 +52,7 @@ else
                     @onclick="SubmitAnswer">
                 Svara
             </button>
-            @*  Ändra till div *@
+
             <button class="btn btn-secondary"
                     style="margin-left:8px;"
                     disabled="@(!answered)"
@@ -66,8 +73,7 @@ else
                 else
                 {
                     <div class="alert alert-danger">
-                        <p>Fel svar.</p>
-                        <p>Rätt svar var: @GetCorrectAnswerText()</p>
+                        <p>Fel svar. Rätt svar var: @GetCorrectAnswerText()</p>
                     </div>
                 }
             </div>
@@ -127,6 +133,7 @@ else
     private int? selectedAnswerId;
     private bool answered;
     private SubmitResponseDto? result;
+    private bool _loading;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -135,17 +142,22 @@ else
 
     private async Task LoadQuestion()
     {
-        question = await Api.GetNextQuestionAsync(SubCategoryId);
+        _loading = true;
+
+        question = await ApiService.GetNextQuestionAsync(SubCategoryId);
+
         selectedAnswerId = null;
         answered = false;
         result = null;
+
+        _loading = false;
     }
 
     private async Task SubmitAnswer()
     {
         if (question is null || !selectedAnswerId.HasValue) return;
 
-        var res = await Api.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
+        var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
         {
             SubCategoryId = SubCategoryId,
             QuestionId = question.Id,
@@ -185,6 +197,11 @@ else
     {
         if (question?.AnswerOptions is null || result is null) return "(okänt)";
         return question.AnswerOptions.FirstOrDefault(o => o.Id == result.CorrectAnswerOptionId)?.Answer ?? "(okänt)";
+    }
+
+    private void GoBack()
+    {
+        Nav.NavigateTo("/categories");
     }
 }
 
