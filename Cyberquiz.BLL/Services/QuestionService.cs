@@ -48,11 +48,37 @@ namespace Cyberquiz.BLL.Services
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
         public async Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
-            var result = await _questionRepo.SubmitAnswerAsync(userName, request); // Behöver fångas upp i Repo! 
+            // Hämta frågan
+            var question = await _questionRepo.GetByIdAsync(request.QuestionId);
+            if (question == null)
+            {
+                throw new Exception("Frågan kunde inte hittas.");
+            }
+            // Kolla om användaren valt rätta svaret till den frågan
+            var correctAnswerOption = question.QuestionAnswerOptions?
+                .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
+            if (correctAnswerOption == null) 
+            { 
+                throw new Exception("Rätt svar kunde inte hittas."); 
+            }
+            // Annars hämta svarets id
+            bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;
+            // Spara användarens svar
+            var userAnswer = new UserAnswerModel
+            {
+                UserName = userName,
+                QuestionId = request.QuestionId,
+                AnswerOptionId = request.AnswerOptionId,
+                IsCorrect = isCorrect,
+                AnsweredAt = DateTime.UtcNow,
+            };
+            // ...och uppdatera framsteg
+            await _progressRepo.SaveUserAnswerAsync(userAnswer);
+            // ... samt returnera resultatet till användaren
             return new SubmitResponseDto
             {
-                IsCorrect = result.IsCorrect, 
-                CorrectAnswerOptionId = result.CorrectAnswerOptionId
+                IsCorrect = isCorrect,
+                CorrectAnswerOptionId = correctAnswerOption.AnswerOptionId
             };
         }
 
