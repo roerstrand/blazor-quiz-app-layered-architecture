@@ -15,16 +15,16 @@ namespace Cyberquiz.BLL.Services
         {
             _progressRepo = progressRepo;
         }
-        public async Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userId, int subCategoryId)
+        public async Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
-            var progress = await _progressRepo.GetByUserAndSubCategoryAsync(userId, subCategoryId);
+            var progress = await _progressRepo.GetByUserAndSubCategoryAsync(userName, subCategoryId);
             return progress == null ? null : MapToUserProgressDto(progress);
         }
 
-        public async Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userId)
+        public async Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName)
         {
-            var progressList = await _progressRepo.GetAllByUserAsync(userId);
-            return progressList.Select(MapToUserProgressDto);
+            var progressList = await _progressRepo.GetAllByUserAsync(userName);
+            return progressList.Select(pl => MapToUserProgressDto(pl)); // Mappar om hela listan av dto's till model
         }
 
         public async Task SaveProgressAsync(UserProgressDto progress)
@@ -39,16 +39,16 @@ namespace Cyberquiz.BLL.Services
             await _progressRepo.SaveUserAnswerAsync(answerModel);
         }
 
-        public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userId, int subCategoryId)
+        public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
-            var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userId, subCategoryId);
-            return answers.Select(MapToSubmitAnswerRequestDto);
+            var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            return answers.Select(ans => MapToSubmitAnswerRequestDto(ans));
         }
 
-        public async Task<double> CalculateSuccessRateAsync(string userId, int subCategoryId)
+        public async Task<double> CalculateSuccessRateAsync(string userName, int subCategoryId)
         {
             var answers = await _progressRepo
-                .GetAnswersByUserAndSubCategoryAsync(userId, subCategoryId);
+                .GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
 
             if (!answers.Any())
                 return 0;
@@ -59,11 +59,10 @@ namespace Cyberquiz.BLL.Services
             return (correct / total) * 100;
         }
 
-        public async Task<bool> IsSubCategoryCompletedAsync(string userId, int subCategoryId)
+        public async Task<bool> IsSubCategoryCompletedAsync(string userName, int subCategoryId)
         {
-            double successRate = await CalculateSuccessRateAsync(userId, subCategoryId);
-
-            return successRate >= 80; // er godkänd-gräns
+            double successRate = await CalculateSuccessRateAsync(userName, subCategoryId);
+            return successRate >= 80; // godkänd-gräns
         }
 
         // Mapping-metoder från Model till Dto
