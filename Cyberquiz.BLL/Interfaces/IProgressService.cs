@@ -5,20 +5,19 @@ namespace Cyberquiz.BLL.Interfaces
 {
     public interface IProgressService // Interface för kontrakt med Service
     {
-        Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userId, int subCategoryId);
+        Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
-        Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userId);
+        Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName);
 
         Task SaveProgressAsync(UserProgressDto progress);
 
         Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer);
 
-        Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userId, int subCategoryId);
+        Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
-        Task<double> CalculateSuccessRateAsync(string userId, int subCategoryId);
+        Task<double> CalculateSuccessRateAsync(string userName, int subCategoryId);
 
-        Task<bool> IsSubCategoryCompletedAsync(string userId, int subCategoryId);
-
+        Task<bool> IsSubCategoryCompletedAsync(string userName, int subCategoryId);
         
     }
 }
