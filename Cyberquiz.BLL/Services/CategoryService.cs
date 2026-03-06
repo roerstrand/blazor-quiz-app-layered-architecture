@@ -17,7 +17,7 @@ namespace Cyberquiz.BLL.Services
         public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
         {
             var categories = await _categoryRepo.GetAllCategoriesAsync();
-            return categories.Select(MapToCategoryDto);
+            return categories.Select(cs => MapToCategoryDto(cs));
         }
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int id)
@@ -29,7 +29,7 @@ namespace Cyberquiz.BLL.Services
         public async Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync()
         {
             var subCategories = await _categoryRepo.GetAllSubCategoriesAsync();
-            return subCategories.Select(MapToSubCategoryDto);
+            return subCategories.Select(scs => MapToSubCategoryDto(scs));
         }
 
         public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(int id)
@@ -46,7 +46,9 @@ namespace Cyberquiz.BLL.Services
                 Id = model.Id,
                 Name = model.Name,
                 TotalSubCategories = model.SubCategories?.Count ?? 0,
-                SubCategories = model.SubCategories?.Select(MapToSubCategoryDto).ToList() ?? new()
+                SubCategories = model.SubCategories?
+                .Select(scs => MapToSubCategoryDto(scs))
+                .ToList() ?? new()
             };
         }
 

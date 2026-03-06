@@ -27,7 +27,7 @@ namespace Cyberquiz.BLL.Services
         public async Task<IEnumerable<QuestionDto>> GetBySubCategoryAsync(int subCategoryId)
         {
             var questions = await _questionRepo.GetBySubCategoryAsync(subCategoryId);
-            return questions.Select(MapToQuestionDto);
+            return questions.Select(qs => MapToQuestionDto(qs));
         }
 
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
