@@ -9,9 +9,11 @@ namespace Cyberquiz.BLL.Services
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
-        public QuestionService(IQuestionRepository questionRepo)
+        private readonly IProgressRepository _progressRepo; 
+        public QuestionService(IQuestionRepository questionRepo, IProgressRepository progressRepo)
         {
             _questionRepo = questionRepo;
+            _progressRepo = progressRepo;
         }
 
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/questions" som hämtar alla frågor inom en underkategori
@@ -31,18 +33,26 @@ namespace Cyberquiz.BLL.Services
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
         public async Task<QuestionDto?> GetNextQuestionAsync(string userName, int subCategoryId)
         {
-            var question = await _questionRepo.GetNextQuestionAsync(userName, subCategoryId); // Behöver fångas upp i Repo!
-            return question == null ? null : MapToQuestionDto(question);
+            // Hämta alla frågor inom underkategorin
+            var allQuestions = await _questionRepo.GetBySubCategoryAsync(subCategoryId);
+            // Hämta användarens framsteg hittills inom underkategorin
+            var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            // Hämta de frågor som användaren redan har svarat på i underkategorin
+            var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
+            // Hitta nästa (= första) frågan som användaren inte har svarat på
+            var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
+            // Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
+            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
         }
 
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request)
+        public async Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
-            var result = await _questionRepo.SubmitAnswerAsync(userName, request); // Behöver fångas upp i Repo!
+            var result = await _questionRepo.SubmitAnswerAsync(userName, request); // Behöver fångas upp i Repo! 
             return new SubmitResponseDto
             {
-                IsCorrect = result.IsCorrect,
-                CorrectAnswerId = result.CorrectAnswerId
+                IsCorrect = result.IsCorrect, 
+                CorrectAnswerOptionId = result.CorrectAnswerOptionId
             };
         }
 
