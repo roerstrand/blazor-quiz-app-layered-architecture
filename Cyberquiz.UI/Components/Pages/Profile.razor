@@ -1,6 +1,7 @@
 ﻿@page "/profile"
 @using System.ComponentModel.DataAnnotations
 @using Cyberquiz.UI.Components.Account
+@using Cyberquiz.UI.Components.Account.Shared
 @using Cyberquiz.UI.Data
 @using Cyberquiz.UI.Services
 @using Cyberquiz.Shared.DTOs
@@ -17,14 +18,14 @@
 @attribute [Authorize]
 
 
-<h1>Profile</h1>
+<h1>Profil</h1>
 
 <div class="row">
     <div class="col-lg-6">
         <section class="mb-4">
             <StatusMessage Message="@successMessage" />
-            <h2>Welcome, @currentUsername</h2>
-            <p class="text-muted">Member since: @memberSince?.ToString("yyyy-MM-dd")</p>
+            <h2>Välkommen, @currentUsername</h2>
+            
             <hr />
         </section>
 
@@ -32,18 +33,18 @@
             <StatusMessage Message="@errorMessage" />
             <EditForm Model="UsernameInput" method="post" OnValidSubmit="OnValidSubmitUsernameAsync" FormName="change-username">
                 <DataAnnotationsValidator />
-                <h2>Change your username</h2>
+                <h2>Byt användarnamn</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 
                 <div class="form-floating mb-3">
-                    <input type="text" value="@currentUsername" id="current-username" class="form-control" placeholder="Current username" disabled />
-                    <label for="current-username" class="form-label">Current username</label>
+                    <input type="text" value="@currentUsername" id="current-username" class="form-control" placeholder="Nuvarande användarnamn" disabled />
+                    <label for="current-username" class="form-label">Nuvarande användarnamn</label>
                 </div>
                 
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="UsernameInput.NewUsername" id="UsernameInput.NewUsername" class="form-control" autocomplete="username" aria-required="true" placeholder="New username" />
-                    <label for="UsernameInput.NewUsername" class="form-label">New username</label>
+                    <InputText @bind-Value="UsernameInput.NewUsername" id="UsernameInput.NewUsername" class="form-control" autocomplete="username" aria-required="true" placeholder="Nytt användarnamn" />
+                    <label for="UsernameInput.NewUsername" class="form-label">Nytt användarnamn</label>
                     <ValidationMessage For="() => UsernameInput.NewUsername" class="text-danger" />
                 </div>
                 
@@ -53,7 +54,7 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Update username
+                        Uppdatera användarnamn
                     </button>
                 </div>
             </EditForm>
@@ -64,25 +65,25 @@
         <section>
             <EditForm Model="PasswordInput" method="post" OnValidSubmit="OnValidSubmitPasswordAsync" FormName="change-password">
                 <DataAnnotationsValidator />
-                <h2>Change your password</h2>
+                <h2>Byt lösenord</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
 
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.CurrentPassword" id="PasswordInput.CurrentPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Current password" />
-                    <label for="PasswordInput.CurrentPassword" class="form-label">Current password</label>
+                    <InputText type="password" @bind-Value="PasswordInput.CurrentPassword" id="PasswordInput.CurrentPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Nuvarande lösenord" />
+                    <label for="PasswordInput.CurrentPassword" class="form-label">Nuvarande lösenord</label>
                     <ValidationMessage For="() => PasswordInput.CurrentPassword" class="text-danger" />
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.NewPassword" id="PasswordInput.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="New password" />
-                    <label for="PasswordInput.NewPassword" class="form-label">New password</label>
+                    <InputText type="password" @bind-Value="PasswordInput.NewPassword" id="PasswordInput.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Nytt lösenord" />
+                    <label for="PasswordInput.NewPassword" class="form-label">Nytt lösenord</label>
                     <ValidationMessage For="() => PasswordInput.NewPassword" class="text-danger" />
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.ConfirmPassword" id="PasswordInput.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirm password" />
-                    <label for="PasswordInput.ConfirmPassword" class="form-label">Confirm new password</label>
+                    <InputText type="password" @bind-Value="PasswordInput.ConfirmPassword" id="PasswordInput.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Bekräfta nytt lösenord" />
+                    <label for="PasswordInput.ConfirmPassword" class="form-label">Bekräfta nyttlösenord</label>
                     <ValidationMessage For="() => PasswordInput.ConfirmPassword" class="text-danger" />
                 </div>
 
@@ -92,12 +93,81 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Update password
+                        Uppdatera lösenord
                     </button>
                 </div>
             </EditForm>
         </section>
     </div>
+    <div class="col-lg-4 col-lg-offset-2">
+        <section>
+            <h3>Din progression</h3>
+            <hr />
+
+            @if (isLoading)
+            {
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading your progress...</p>
+                </div>
+            }
+            else if (categories != null && categories.Any())
+            {
+                @foreach (var category in categories)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">@category.Name</h5>
+                            @if (!string.IsNullOrEmpty(category.Description))
+                            {
+                                <p class="card-text text-muted small">@category.Description</p>
+                            }
+                            <p class="card-text">
+                                <strong>Progress:</strong> @category.CompletedSubCategories / @category.TotalSubCategories completed
+                            </p>
+
+                            @if (category.SubCategories != null && category.SubCategories.Any())
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var sub in category.SubCategories)
+                                    {
+                                        <li class="small">
+                                            @if (sub.IsCompleted)
+                                            {
+                                                <span class="text-success">✓ @sub.Name</span>
+                                            }
+                                            else if (sub.IsLocked)
+                                            {
+                                                <span class="text-muted">🔒 @sub.Name</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-warning">○ @sub.Name</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="alert alert-info mt-3">
+                    <strong>Total:</strong> @TotalCompleted klara, @TotalRemaining kvar
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Ingen progression än. Starta ett quiz för att börja!</p>
+                <p>
+                    <a href="/categories" class="btn btn-primary">Gå till kategorier</a>
+                </p>
+            }
+        </section>
+    </div>
+</div>
 @code {
     private ApplicationUser? user;
     private string? currentUsername;
@@ -106,6 +176,7 @@
     private bool isSaving = false;
     private string? successMessage;
     private string? errorMessage;
+    private List<CategoryDto>? categories;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -115,6 +186,9 @@
 
     [SupplyParameterFromForm]
     private PasswordInputModel PasswordInput { get; set; } = default!;
+
+    private int TotalCompleted => categories?.Sum(c => c.CompletedSubCategories) ?? 0; //summerar completed subcats för alla kategorier
+    private int TotalRemaining => categories?.Sum(c => c.TotalSubCategories - c.CompletedSubCategories) ?? 0; //summerar kvarstående subcats för alla kategorier
 
     protected override async Task OnInitializedAsync()
     {
@@ -129,9 +203,24 @@
         }
 
         currentUsername = await UserManager.GetUserNameAsync(user);
-        memberSince = user.CreatedAt ?? DateTime.UtcNow;
 
         await LoadProgressAsync();
+    }
+    private async Task LoadProgressAsync()
+    {
+        isLoading = true;
+        try
+        {
+            categories = await ApiService.GetCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Failed to load progression data.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task OnValidSubmitUsernameAsync()
