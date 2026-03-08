@@ -1,6 +1,6 @@
 ﻿@page "/quiz/{SubCategoryId:int}"
 @using Cyberquiz.Shared.DTOs
-@using Cyberquiz.Shared.DTOs.Progress
+
 @using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
 @inject ApiService ApiService
@@ -18,6 +18,20 @@ else if (question == null)
 {
     <div class="alert alert-info">
         <p>Du är klar med alla frågor i den här subkategorin! ✅</p>
+        @if(_quizResult == null)
+        {
+            <p>Resultat kunde inte hämtas</p>
+        }
+        else if (_quizResult.Score == 0)
+        {
+            <p>Tyvärr du fick 0 poäng</p>
+        }
+        else
+        {
+            <p>Ditt resultat: <strong>@_quizResult.Score</strong>/ @_quizResult.TotalQuestions frågor rätt</p>
+        }
+        
+
         <button class="btn btn-secondary" @onclick="GoBack">Tillbaka</button>
     </div>
 }
@@ -78,6 +92,14 @@ else
                 }
             </div>
         }
+        @* <div class="d-flex gap-2 justify-content-center mt-4">
+            <button class="btn btn-primary" @onclick="RestartQuiz">
+                Starta om
+            </button>
+            <button class="btn btn-secondary" @onclick="GoBack">
+                Tillbaka
+            </button>
+        </div> *@
     </div>
 }
 
@@ -134,6 +156,7 @@ else
     private bool answered;
     private SubmitResponseDto? result;
     private bool _loading;
+    private UserProgressDto? _quizResult;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -145,6 +168,12 @@ else
         _loading = true;
 
         question = await ApiService.GetNextQuestionAsync(SubCategoryId);
+
+        // if (question == null) //Kanske inte behövs
+        // {
+        //     var progress = await ApiService.GetUserProgressAsync(SubCategoryId);
+        //     _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
+        // }
 
         selectedAnswerId = null;
         answered = false;
@@ -173,6 +202,10 @@ else
     private async Task NextQuestion()
     {
         await LoadQuestion();
+    }
+    private void RestartQuiz() // KANSKE INTE ANVÄNDAS
+    {
+        Nav.NavigateTo($"/quiz/{SubCategoryId}", forceLoad: true); // Force reload to reset state
     }
 
     private string GetOptionClass(int optionId)
