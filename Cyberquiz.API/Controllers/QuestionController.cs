@@ -1,13 +1,13 @@
 using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
-using Cyberquiz.Shared.DTOs.Progress;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cyberquiz.API.Controllers
 {
     [ApiController]
-    [Route("api/quiz")]
+    [Route("api/questions")]
     
     public class QuestionController : ControllerBase
     {
@@ -19,16 +19,16 @@ namespace Cyberquiz.API.Controllers
             _questionService = questionService;
         }
 
-        // GET api/questions/subcategory/{subCategoryId}/next
-        //[HttpGet("subcategory/{subCategoryId:int}/next")]
-        //public async Task<ActionResult<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId)
-        //{
-        //    var userName = User.Identity?.Name ?? "user";
-        //    var q = await _questionService.GetBySubCategoryAsync(subCategoryId);
-        //    if (q is null || !q.Any()) return NotFound();
+        [HttpGet("[id]")]
+        public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int id)
+        {
+            var result = await _questionService.GetByIdAsync(id);
+            if (result == null) return NotFound();
 
-        //    return Ok(q.First());
-        //}
+            return Ok(result);
+        }
+        
+
         [HttpGet("subcategory/{subCategoryId:int}/next")]
         public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId)
         {
@@ -37,7 +37,7 @@ namespace Cyberquiz.API.Controllers
             var q = await _questionService.GetNextQuestionAsync(userName, subCategoryId);
             if (q is null) return NotFound();
 
-            return Ok(q);
+            //return Ok(q);
         }
 
         // POST api/questions/answer

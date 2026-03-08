@@ -33,18 +33,7 @@ namespace Cyberquiz.DAL.Repositories
 
         public async Task SaveProgressAsync(UserProgressModel progress)
         {
-            var existing = await _context.UserProgress
-                .FirstOrDefaultAsync(p => p.UserName == progress.UserName && p.SubCategoryId == progress.SubCategoryId);
-
-            if (existing is null)
-                _context.UserProgress.Add(progress);
-            else
-            {
-                existing.Score = progress.Score;
-                existing.TotalQuestions = progress.TotalQuestions;
-                existing.CompletedAt = progress.CompletedAt;
-            }
-
+            _context.UserProgress.Add(progress);
             await _context.SaveChangesAsync();
         }
 
@@ -62,6 +51,33 @@ namespace Cyberquiz.DAL.Repositories
                 .Include(a => a.Question)
                 .Include(a => a.AnswerOption)
                 .ToListAsync();
+        }
+
+        public async Task DeleteByUserAsync(string userName)
+        {
+            var answers = await _context.UserAnswers
+                .Where(a => a.UserName == userName)
+                .ToListAsync();
+            _context.UserAnswers.RemoveRange(answers);
+
+            var progress = await _context.UserProgress
+                .Where(p => p.UserName == userName)
+                .ToListAsync();
+            _context.UserProgress.RemoveRange(progress);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteOldestByUserAsync(string userName, int keepLatest)
+        {
+            var toDelete = await _context.UserProgress
+                .Where(p => p.UserName == userName)
+                .OrderByDescending(p => p.CompletedAt)
+                .Skip(keepLatest)
+                .ToListAsync();
+
+            _context.UserProgress.RemoveRange(toDelete);
+            await _context.SaveChangesAsync();
         }
     }
 }

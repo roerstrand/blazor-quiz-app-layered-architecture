@@ -17,5 +17,8 @@ namespace Cyberquiz.DAL.Models
         public bool IsCorrect { get; set; }
 
         public DateTime AnsweredAt { get; set; }
+
+        public int UserProgressId { get; set; }
+        public UserProgressModel UserProgress { get; set; }
     }
 }

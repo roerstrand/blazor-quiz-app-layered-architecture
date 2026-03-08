@@ -2,7 +2,6 @@
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.Shared.DTOs;
-using Cyberquiz.Shared.DTOs.Progress;
 
 namespace Cyberquiz.BLL.Services
 {

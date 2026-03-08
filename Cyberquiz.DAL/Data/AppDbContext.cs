@@ -54,6 +54,12 @@ namespace Cyberquiz.DAL.Data
                 .WithMany(c => c.Questions)
                 .HasForeignKey(q => q.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserAnswerModel>()
+                .HasOne(a => a.UserProgress)
+                .WithMany(p => p.UserAnswers)
+                .HasForeignKey(a => a.UserProgressId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

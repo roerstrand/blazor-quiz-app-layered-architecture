@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Cyberquiz.Shared.DTOs.Progress
+namespace Cyberquiz.Shared.DTOs
 {
     public class SubmitAnswerRequestDto 
     {

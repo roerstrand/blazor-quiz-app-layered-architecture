@@ -225,6 +225,18 @@ namespace Cyberquiz.DAL.Data
             var aUacFel2 = new AnswerOptionModel { Answer = "En nätverksbrandvägg i Windows" };
             var aUacFel3 = new AnswerOptionModel { Answer = "En lösenordspolicy i Active Directory" };
 
+            var aRbacKorrekt = new AnswerOptionModel { Answer = "Åtkomstkontroll där behörigheter tilldelas baserat på användarens roll i organisationen" };
+
+            var aAutnVsAutzKorrekt = new AnswerOptionModel { Answer = "Autentisering verifierar vem du är, auktorisering avgör vad du får göra" };
+            var aAutnVsAutzFel1 = new AnswerOptionModel { Answer = "De är synonymer och betyder samma sak" };
+            var aAutnVsAutzFel2 = new AnswerOptionModel { Answer = "Autentisering avgör vad du får göra, auktorisering verifierar vem du är" };
+            var aAutnVsAutzFel3 = new AnswerOptionModel { Answer = "Autentisering gäller maskiner, auktorisering gäller människor" };
+
+            var aPamKorrekt = new AnswerOptionModel { Answer = "Ett system för att kontrollera och övervaka åtkomst till privilegierade konton" };
+            var aPamFel1 = new AnswerOptionModel { Answer = "En typ av nästa generations brandvägg" };
+            var aPamFel2 = new AnswerOptionModel { Answer = "En krypteringsalgoritm för administratörslösenord" };
+            var aPamFel3 = new AnswerOptionModel { Answer = "En antiviruslösning för servrar" };
+
             // Lagstiftning
             var aGdprKorrekt = new AnswerOptionModel { Answer = "General Data Protection Regulation" };
             var aGdprFel1 = new AnswerOptionModel { Answer = "Global Data Privacy Rights" };
@@ -270,6 +282,206 @@ namespace Cyberquiz.DAL.Data
             var aRunbookFel1 = new AnswerOptionModel { Answer = "En lista över alla systemadministratörer" };
             var aRunbookFel2 = new AnswerOptionModel { Answer = "En brandväggskonfigurationsfil" };
             var aRunbookFel3 = new AnswerOptionModel { Answer = "En krypteringsnyckel för incidentdata" };
+
+            // Tillagda svarsalternativ för extra frågor
+
+            // TCP/IP extra
+            var aUdpKorrekt = new AnswerOptionModel { Answer = "UDP är anslutningslöst och erbjuder ingen garanterad leverans, till skillnad från TCPs sessionshantering" };
+            var aUdpFel1 = new AnswerOptionModel { Answer = "UDP är säkrare än TCP men långsammare" };
+            var aUdpFel2 = new AnswerOptionModel { Answer = "UDP och TCP är identiska protokoll" };
+            var aUdpFel3 = new AnswerOptionModel { Answer = "UDP garanterar leveransordning men inte säkerhet" };
+
+            var aIpv4v6Korrekt = new AnswerOptionModel { Answer = "IPv4 använder 32-bitarsadresser, IPv6 använder 128-bitarsadresser och erbjuder fler adresser" };
+            var aIpv4v6Fel1 = new AnswerOptionModel { Answer = "IPv6 är äldre än IPv4 och har färre adresser" };
+            var aIpv4v6Fel2 = new AnswerOptionModel { Answer = "IPv4 och IPv6 är kompatibla och fungerar identiskt" };
+            var aIpv4v6Fel3 = new AnswerOptionModel { Answer = "IPv6 använder 64-bitarsadresser och ersätter MAC-adresser" };
+
+            // DNS & DHCP extra
+            var aDhcpKorrekt = new AnswerOptionModel { Answer = "Tilldelar IP-adresser automatiskt till enheter i ett nätverk" };
+            var aDhcpFel1 = new AnswerOptionModel { Answer = "Översätter domännamn till IP-adresser" };
+            var aDhcpFel2 = new AnswerOptionModel { Answer = "Krypterar nätverkstrafik automatiskt" };
+            var aDhcpFel3 = new AnswerOptionModel { Answer = "Filtrerar oönskad nätverkstrafik" };
+
+            var aApostKorrekt = new AnswerOptionModel { Answer = "A-post pekar på en IPv4-adress, AAAA-post pekar på en IPv6-adress" };
+            var aApostFel1 = new AnswerOptionModel { Answer = "A-post och AAAA-post är synonymer för MX-poster" };
+            var aApostFel2 = new AnswerOptionModel { Answer = "A-post gäller e-post, AAAA-post gäller webbservrar" };
+            var aApostFel3 = new AnswerOptionModel { Answer = "AAAA-post är en äldre version av A-post" };
+
+            // Brandväggar extra
+            var aWafKorrekt = new AnswerOptionModel { Answer = "En brandvägg som analyserar HTTP-trafik och skyddar webbapplikationer mot attacker som XSS och SQLi" };
+            var aWafFel1 = new AnswerOptionModel { Answer = "En brandvägg som skyddar trådlösa nätverk" };
+            var aWafFel2 = new AnswerOptionModel { Answer = "En brandvägg som enbart filtrerar IP-adresser" };
+            var aWafFel3 = new AnswerOptionModel { Answer = "En programvara för att övervaka e-posttrafik" };
+
+            var aPaketfiltreringKorrekt = new AnswerOptionModel { Answer = "Nätverkslager (Layer 3)" };
+            var aPaketfiltreringFel1 = new AnswerOptionModel { Answer = "Applikationslager (Layer 7)" };
+            var aPaketfiltreringFel2 = new AnswerOptionModel { Answer = "Transportlager (Layer 4)" };
+            var aPaketfiltreringFel3 = new AnswerOptionModel { Answer = "Datalänklager (Layer 2)" };
+
+            // OWASP extra
+            var aInjectionKorrekt = new AnswerOptionModel { Answer = "Skadlig data skickas till en tolk (t.ex. SQL, LDAP) och exekveras som kommandon" };
+            var aInjectionFel1 = new AnswerOptionModel { Answer = "Angriparen injicerar kod via nätverkspacket" };
+            var aInjectionFel2 = new AnswerOptionModel { Answer = "En attack som injicerar virus i operativsystemet" };
+            var aInjectionFel3 = new AnswerOptionModel { Answer = "Obehörig åtkomst till databaser via svaga lösenord" };
+
+            var aInsecureDesignKorrekt = new AnswerOptionModel { Answer = "Säkerhetsbrister som beror på dålig design och arkitektur snarare än implementationsfel" };
+            var aInsecureDesignFel1 = new AnswerOptionModel { Answer = "Felaktig konfiguration av webbservern" };
+            var aInsecureDesignFel2 = new AnswerOptionModel { Answer = "Användning av föråldrade krypteringsalgoritmer" };
+            var aInsecureDesignFel3 = new AnswerOptionModel { Answer = "Bristande loggning och övervakning" };
+
+            // XSS & Injektioner extra
+            var aXssTyperKorrekt = new AnswerOptionModel { Answer = "Stored XSS, Reflected XSS och DOM-based XSS" };
+            var aXssTyperFel1 = new AnswerOptionModel { Answer = "SQL XSS, HTTP XSS och LDAP XSS" };
+            var aXssTyperFel2 = new AnswerOptionModel { Answer = "Active XSS, Passive XSS och Hybrid XSS" };
+            var aXssTyperFel3 = new AnswerOptionModel { Answer = "Client XSS, Server XSS och Network XSS" };
+
+            var aLdapKorrekt = new AnswerOptionModel { Answer = "Skadliga LDAP-frågor injiceras via inmatningsfält för att manipulera katalogtjänster" };
+            var aLdapFel1 = new AnswerOptionModel { Answer = "En attack som injicerar kod i HTTPS-certifikat" };
+            var aLdapFel2 = new AnswerOptionModel { Answer = "En attack mot DNS-servrar via LDAP-protokollet" };
+            var aLdapFel3 = new AnswerOptionModel { Answer = "En metod för att kringgå LDAP-autentisering med brute force" };
+
+            // Autentisering & Sessions extra
+            var aJwtKorrekt = new AnswerOptionModel { Answer = "En öppen standard för att säkert överföra information som JSON-objekt signerade med en nyckel" };
+            var aJwtFel1 = new AnswerOptionModel { Answer = "En krypteringsstandard för HTTP-cookies" };
+            var aJwtFel2 = new AnswerOptionModel { Answer = "En protokoll för lösenordshashning" };
+            var aJwtFel3 = new AnswerOptionModel { Answer = "En databas för sessionshantering" };
+
+            var aCsrfSkyddKorrekt = new AnswerOptionModel { Answer = "CSRF-tokens (synkroniseringstokens) som valideras vid varje förfrågan" };
+            var aCsrfSkyddFel1 = new AnswerOptionModel { Answer = "HTTPS-kryptering av alla förfrågningar" };
+            var aCsrfSkyddFel2 = new AnswerOptionModel { Answer = "SQL prepared statements" };
+            var aCsrfSkyddFel3 = new AnswerOptionModel { Answer = "Content Security Policy (CSP)" };
+
+            // Symmetrisk kryptering extra
+            var aAesNyckelKorrekt = new AnswerOptionModel { Answer = "128, 192 eller 256 bitar — varav AES-256 ger starkast skydd" };
+            var aAesNyckelFel1 = new AnswerOptionModel { Answer = "64 bitar är den rekommenderade minimumnivån" };
+            var aAesNyckelFel2 = new AnswerOptionModel { Answer = "512 bitar är standard för AES" };
+            var aAesNyckelFel3 = new AnswerOptionModel { Answer = "AES använder inga nycklar" };
+
+            var aDesKorrekt = new AnswerOptionModel { Answer = "Data Encryption Standard — en äldre 56-bitars algoritm som anses osäker på grund av för kort nyckellängd" };
+            var aDesFel1 = new AnswerOptionModel { Answer = "Digital Encryption System — en modern ersättare till AES" };
+            var aDesFel2 = new AnswerOptionModel { Answer = "En asymmetrisk krypteringsstandard med 128-bitars nycklar" };
+            var aDesFel3 = new AnswerOptionModel { Answer = "En hashalgoritm för lösenord utvecklad av NSA" };
+
+            // Asymmetrisk kryptering extra
+            var aRsaKorrekt = new AnswerOptionModel { Answer = "En asymmetrisk krypteringsalgoritm baserad på faktorisering av stora primtal" };
+            var aRsaFel1 = new AnswerOptionModel { Answer = "En symmetrisk krypteringsalgoritm med variabel nyckellängd" };
+            var aRsaFel2 = new AnswerOptionModel { Answer = "En hashalgoritm för digitala signaturer" };
+            var aRsaFel3 = new AnswerOptionModel { Answer = "En protokoll för säker nyckelutbyte utan kryptering" };
+
+            var aCaKorrekt = new AnswerOptionModel { Answer = "En betrodd organisation som utfärdar och signerar digitala certifikat" };
+            var aCaFel1 = new AnswerOptionModel { Answer = "En algoritm för att generera kryptografiska nycklar" };
+            var aCaFel2 = new AnswerOptionModel { Answer = "En databas för att lagra privata nycklar" };
+            var aCaFel3 = new AnswerOptionModel { Answer = "En server som hanterar TLS-handskakningar" };
+
+            // Hashning extra
+            var aSaltingKorrekt = new AnswerOptionModel { Answer = "Slumpmässig data läggs till lösenordet innan hashning för att förhindra regnbågstabeller" };
+            var aSaltingFel1 = new AnswerOptionModel { Answer = "Lösenordet krypteras med en hemlig nyckel innan lagring" };
+            var aSaltingFel2 = new AnswerOptionModel { Answer = "Lösenordet hashas flera gånger för att göra det längre" };
+            var aSaltingFel3 = new AnswerOptionModel { Answer = "En teknik för att komprimera hashvärden" };
+
+            var aMd5Korrekt = new AnswerOptionModel { Answer = "MD5 har kända kollisioner och är för snabb, vilket gör brute-force-attacker effektiva" };
+            var aMd5Fel1 = new AnswerOptionModel { Answer = "MD5 producerar för långa hashvärden för praktisk användning" };
+            var aMd5Fel2 = new AnswerOptionModel { Answer = "MD5 är patentskyddat och får inte användas fritt" };
+            var aMd5Fel3 = new AnswerOptionModel { Answer = "MD5 är för långsam för moderna system" };
+
+            // Malwaretyper extra
+            var aSpywareKorrekt = new AnswerOptionModel { Answer = "Programvara som i hemlighet samlar in information om användaren och skickar den till tredje part" };
+            var aSpywareFel1 = new AnswerOptionModel { Answer = "Programvara som blockerar åtkomst till filer tills en lösensumma betalas" };
+            var aSpywareFel2 = new AnswerOptionModel { Answer = "Programvara som sprider sig automatiskt i nätverk" };
+            var aSpywareFel3 = new AnswerOptionModel { Answer = "Programvara som visar oönskade annonser" };
+
+            var aRootkitKorrekt = new AnswerOptionModel { Answer = "Skadlig programvara som döljer sin närvaro och ger angriparen administratörskontroll" };
+            var aRootkitFel1 = new AnswerOptionModel { Answer = "Ett verktyg för att återställa root-lösenordet i Linux" };
+            var aRootkitFel2 = new AnswerOptionModel { Answer = "En typ av ransomware som krypterar root-partitionen" };
+            var aRootkitFel3 = new AnswerOptionModel { Answer = "En brandväggstyp för skydd mot Linux-attacker" };
+
+            // Attackmetoder extra
+            var aBotnatKorrekt = new AnswerOptionModel { Answer = "Ett nätverk av komprometterade datorer (bots) som kontrolleras av en angripare" };
+            var aBotnatFel1 = new AnswerOptionModel { Answer = "En typ av krypterat nätverk för säker kommunikation" };
+            var aBotnatFel2 = new AnswerOptionModel { Answer = "En nätverkstopologi för distribuerade system" };
+            var aBotnatFel3 = new AnswerOptionModel { Answer = "En teknik för att balansera nätverkstrafik" };
+
+            var aBruteForceKorrekt = new AnswerOptionModel { Answer = "En attack som systematiskt provar alla möjliga kombinationer av lösenord tills rätt hittas" };
+            var aBruteForceFel1 = new AnswerOptionModel { Answer = "En attack som utnyttjar kända sårbarheter i programvara" };
+            var aBruteForceFel2 = new AnswerOptionModel { Answer = "En attack som manipulerar DNS-poster" };
+            var aBruteForceFel3 = new AnswerOptionModel { Answer = "En attack som avlyssnar krypterad nätverkstrafik" };
+
+            // Social Engineering extra
+            var aSmishingKorrekt = new AnswerOptionModel { Answer = "Phishing via SMS-meddelanden" };
+            var aSmishingFel1 = new AnswerOptionModel { Answer = "Phishing via e-post" };
+            var aSmishingFel2 = new AnswerOptionModel { Answer = "Phishing via telefon" };
+            var aSmishingFel3 = new AnswerOptionModel { Answer = "Phishing via sociala medier" };
+
+            var aPretextingKorrekt = new AnswerOptionModel { Answer = "Angriparen skapar ett falskt scenario (pretext) för att lura offret att lämna ut information" };
+            var aPretextingFel1 = new AnswerOptionModel { Answer = "Angriparen lämnar ett infekterat USB-minne på en offentlig plats" };
+            var aPretextingFel2 = new AnswerOptionModel { Answer = "Angriparen skickar mass-e-post med skadliga bilagor" };
+            var aPretextingFel3 = new AnswerOptionModel { Answer = "Angriparen avlyssnar offentliga Wi-Fi-nätverk" };
+
+            // Linux-säkerhet extra
+            var aChownKorrekt = new AnswerOptionModel { Answer = "Ändrar ägaren eller gruppen för en fil eller katalog" };
+            var aChownFel1 = new AnswerOptionModel { Answer = "Ändrar filbehörigheter (läs, skriv, kör)" };
+            var aChownFel2 = new AnswerOptionModel { Answer = "Skapar en ny användare i Linux" };
+            var aChownFel3 = new AnswerOptionModel { Answer = "Visar diskutrymme för filer och kataloger" };
+
+            var aSelinuxKorrekt = new AnswerOptionModel { Answer = "Security-Enhanced Linux — ett säkerhetsramverk med obligatorisk åtkomstkontroll (MAC)" };
+            var aSelinuxFel1 = new AnswerOptionModel { Answer = "En antiviruslösning för Linux-servrar" };
+            var aSelinuxFel2 = new AnswerOptionModel { Answer = "En krypteringsmodul för Linux-filsystem" };
+            var aSelinuxFel3 = new AnswerOptionModel { Answer = "En brandväggskonfiguration för Linux" };
+
+            // Windows-säkerhet extra
+            var aEventLogKorrekt = new AnswerOptionModel { Answer = "Windowsverktyg för att registrera system-, säkerhets- och applikationshändelser för felsökning och revision" };
+            var aEventLogFel1 = new AnswerOptionModel { Answer = "En tjänst för automatisk uppdatering av Windows" };
+            var aEventLogFel2 = new AnswerOptionModel { Answer = "En databas för lagring av användarlösenord" };
+            var aEventLogFel3 = new AnswerOptionModel { Answer = "En inbyggd brandväggsfunktion i Windows" };
+
+            var aApplockerKorrekt = new AnswerOptionModel { Answer = "En Windows-funktion som styr vilka program som får köras baserat på regler" };
+            var aApplockerFel1 = new AnswerOptionModel { Answer = "En antiviruslösning som blockerar skadlig kod i realtid" };
+            var aApplockerFel2 = new AnswerOptionModel { Answer = "En funktion för att kryptera enskilda program" };
+            var aApplockerFel3 = new AnswerOptionModel { Answer = "En inbyggd lösenordshanterare i Windows" };
+
+            // Behörighetshantering extra
+            var aMfaBehKorrekt = new AnswerOptionModel { Answer = "Det kräver att angripare komprometterar flera faktorer för att få åtkomst, vilket kraftigt minskar risken" };
+            var aMfaBehFel1 = new AnswerOptionModel { Answer = "Det eliminerar behovet av lösenord helt" };
+            var aMfaBehFel2 = new AnswerOptionModel { Answer = "Det ökar inloggningstiden men har inga säkerhetsfördelar" };
+            var aMfaBehFel3 = new AnswerOptionModel { Answer = "Det gäller bara för administrativa konton" };
+
+            var aZeroTrustKorrekt = new AnswerOptionModel { Answer = "Ingen användare eller enhet litas på automatiskt — all åtkomst verifieras kontinuerligt oavsett position" };
+            var aZeroTrustFel1 = new AnswerOptionModel { Answer = "Interna nätverksanvändare litas på automatiskt utan verifiering" };
+            var aZeroTrustFel2 = new AnswerOptionModel { Answer = "En modell där alla användare ges noll behörigheter som standard" };
+            var aZeroTrustFel3 = new AnswerOptionModel { Answer = "Ett system där brandväggar hanterar all autentisering" };
+
+            // GDPR extra
+            var aRaderingKorrekt = new AnswerOptionModel { Answer = "Rätten för en person att begära att deras personuppgifter raderas under vissa omständigheter" };
+            var aRaderingFel1 = new AnswerOptionModel { Answer = "Skyldigheten för företag att radera data efter 5 år automatiskt" };
+            var aRaderingFel2 = new AnswerOptionModel { Answer = "Rätten att radera andra personers uppgifter" };
+            var aRaderingFel3 = new AnswerOptionModel { Answer = "En teknik för säker radering av krypterade filer" };
+
+            var aPersonuppgiftsansvarigKorrekt = new AnswerOptionModel { Answer = "Den organisation eller person som bestämmer syfte och medel för behandling av personuppgifter" };
+            var aPersonuppgiftsansvarigFel1 = new AnswerOptionModel { Answer = "En person utsedd av myndigheter för att övervaka GDPR-efterlevnad" };
+            var aPersonuppgiftsansvarigFel2 = new AnswerOptionModel { Answer = "En tredje part som behandlar personuppgifter på uppdrag av ett företag" };
+            var aPersonuppgiftsansvarigFel3 = new AnswerOptionModel { Answer = "Den person vars personuppgifter behandlas" };
+
+            // NIS2 & ISO 27001 extra
+            var aNis2OmfattasKorrekt = new AnswerOptionModel { Answer = "Medelstora och stora organisationer inom kritiska sektorer som energi, transport och hälso- och sjukvård" };
+            var aNis2OmfattasFel1 = new AnswerOptionModel { Answer = "Enbart statliga myndigheter och offentliga organisationer" };
+            var aNis2OmfattasFel2 = new AnswerOptionModel { Answer = "Alla företag med fler än 10 anställda inom EU" };
+            var aNis2OmfattasFel3 = new AnswerOptionModel { Answer = "Bara IT-företag och teknikleverantörer" };
+
+            var aIso27001CertKorrekt = new AnswerOptionModel { Answer = "Organisationen har implementerat och efterlever ett dokumenterat ledningssystem för informationssäkerhet" };
+            var aIso27001CertFel1 = new AnswerOptionModel { Answer = "Organisationen är undantagen från GDPR-krav" };
+            var aIso27001CertFel2 = new AnswerOptionModel { Answer = "Organisationens IT-system godkänts av EU-kommissionen" };
+            var aIso27001CertFel3 = new AnswerOptionModel { Answer = "Organisationen garanteras fri från cyberattacker" };
+
+            // Incident Response extra
+            var aInneslutningKorrekt = new AnswerOptionModel { Answer = "Att begränsa incidentens spridning och isolera påverkade system för att förhindra ytterligare skada" };
+            var aInneslutningFel1 = new AnswerOptionModel { Answer = "Att ta bort all skadlig kod från drabbade system" };
+            var aInneslutningFel2 = new AnswerOptionModel { Answer = "Att dokumentera incidenten för juridiska ändamål" };
+            var aInneslutningFel3 = new AnswerOptionModel { Answer = "Att återställa systemen till normaldrift" };
+
+            var aChainOfCustodyKorrekt = new AnswerOptionModel { Answer = "Dokumentation av vem som hanterat digital bevisning, när och hur, för att säkerställa bevisningens integritet" };
+            var aChainOfCustodyFel1 = new AnswerOptionModel { Answer = "En lista över alla system som påverkats av en incident" };
+            var aChainOfCustodyFel2 = new AnswerOptionModel { Answer = "En metod för att kryptera digital bevisning" };
+            var aChainOfCustodyFel3 = new AnswerOptionModel { Answer = "En protokoll för kommunikation under incidenthantering" };
 
             // ── KATEGORIER & SUBKATEGORIER ───────────────────────────────────────
 
@@ -395,6 +607,80 @@ namespace Cyberquiz.DAL.Data
             var qIrFaser = new QuestionModel { Question = "Vilka är huvudfaserna i incident response-processen?", Category = catLagstiftning, SubCategory = subIncident };
             var qForensik = new QuestionModel { Question = "Vad är digital forensik inom cybersäkerhet?", Category = catLagstiftning, SubCategory = subIncident };
             var qRunbook = new QuestionModel { Question = "Vad är en runbook inom incident response?", Category = catLagstiftning, SubCategory = subIncident };
+
+            // Tillagda frågor (Q4 och Q5 per subkategori)
+
+            // TCP/IP-grunderna extra
+            var qUdpVad = new QuestionModel { Question = "Vad är UDP och hur skiljer det sig från TCP?", Category = catNatverk, SubCategory = subTCPIP };
+            var qIpv4v6 = new QuestionModel { Question = "Vad är den viktigaste skillnaden mellan IPv4 och IPv6?", Category = catNatverk, SubCategory = subTCPIP };
+
+            // DNS & DHCP extra
+            var qDhcpVad = new QuestionModel { Question = "Vad är DHCP och vad används det till?", Category = catNatverk, SubCategory = subDNS };
+            var qDnsApost = new QuestionModel { Question = "Vad är skillnaden mellan en A-post och en AAAA-post i DNS?", Category = catNatverk, SubCategory = subDNS };
+
+            // Brandväggar & IDS/IPS extra
+            var qWafVad = new QuestionModel { Question = "Vad är en WAF (Web Application Firewall)?", Category = catNatverk, SubCategory = subBrandvaggar };
+            var qPaketfiltrering = new QuestionModel { Question = "Vilket OSI-lager arbetar en paketfiltrerande brandvägg primärt på?", Category = catNatverk, SubCategory = subBrandvaggar };
+
+            // OWASP Top 10 extra
+            var qOwaspInjection = new QuestionModel { Question = "Vad innebär 'Injection' i OWASP Top 10?", Category = catWebbsak, SubCategory = subOwasp };
+            var qOwaspInsecureDesign = new QuestionModel { Question = "Vad är 'Insecure Design' enligt OWASP Top 10?", Category = catWebbsak, SubCategory = subOwasp };
+
+            // XSS & Injektioner extra
+            var qXssTyper = new QuestionModel { Question = "Vilka tre typer av XSS-attacker finns det?", Category = catWebbsak, SubCategory = subInjektioner };
+            var qLdapInjektion = new QuestionModel { Question = "Vad är LDAP-injektion?", Category = catWebbsak, SubCategory = subInjektioner };
+
+            // Autentisering & Sessions extra
+            var qJwtVad = new QuestionModel { Question = "Vad är ett JWT (JSON Web Token)?", Category = catWebbsak, SubCategory = subAutentisering };
+            var qCsrfSkydd = new QuestionModel { Question = "Vilken teknik är mest effektiv för att skydda mot CSRF-attacker?", Category = catWebbsak, SubCategory = subAutentisering };
+
+            // Symmetrisk kryptering extra
+            var qAesNyckel = new QuestionModel { Question = "Vilka nyckellängder stöder AES och vilken rekommenderas?", Category = catKrypto, SubCategory = subSymKrypto };
+            var qDesVad = new QuestionModel { Question = "Vad är DES och varför anses det inte längre säkert?", Category = catKrypto, SubCategory = subSymKrypto };
+
+            // Asymmetrisk kryptering & PKI extra
+            var qRsaVad = new QuestionModel { Question = "Vad är RSA?", Category = catKrypto, SubCategory = subAsymKrypto };
+            var qCaVad = new QuestionModel { Question = "Vad är en CA (Certificate Authority)?", Category = catKrypto, SubCategory = subAsymKrypto };
+
+            // Hashning extra
+            var qSaltingVad = new QuestionModel { Question = "Vad är 'salting' vid lagring av lösenord?", Category = catKrypto, SubCategory = subHashning };
+            var qMd5Varfor = new QuestionModel { Question = "Varför rekommenderas inte MD5 för säkerhetsändamål?", Category = catKrypto, SubCategory = subHashning };
+
+            // Malwaretyper extra
+            var qSpywareVad = new QuestionModel { Question = "Vad är spyware?", Category = catMalware, SubCategory = subMalwaretyper };
+            var qRootkitVad = new QuestionModel { Question = "Vad är ett rootkit?", Category = catMalware, SubCategory = subMalwaretyper };
+
+            // Attackmetoder extra
+            var qBotnatVad = new QuestionModel { Question = "Vad är ett botnät?", Category = catMalware, SubCategory = subAttackmetoder };
+            var qBruteForce = new QuestionModel { Question = "Vad är en brute-force-attack?", Category = catMalware, SubCategory = subAttackmetoder };
+
+            // Social Engineering extra
+            var qSmishingVad = new QuestionModel { Question = "Vad är smishing?", Category = catMalware, SubCategory = subSocialEng };
+            var qPretexting = new QuestionModel { Question = "Vad är pretexting inom social engineering?", Category = catMalware, SubCategory = subSocialEng };
+
+            // Linux-säkerhet extra
+            var qChownVad = new QuestionModel { Question = "Vad gör kommandot chown i Linux?", Category = catOS, SubCategory = subLinux };
+            var qSelinuxVad = new QuestionModel { Question = "Vad är SELinux?", Category = catOS, SubCategory = subLinux };
+
+            // Windows-säkerhet extra
+            var qEventLogVad = new QuestionModel { Question = "Vad är Windows Event Log?", Category = catOS, SubCategory = subWindows };
+            var qApplockerVad = new QuestionModel { Question = "Vad är AppLocker i Windows?", Category = catOS, SubCategory = subWindows };
+
+            // Behörighetshantering extra
+            var qMfaBeh = new QuestionModel { Question = "Varför är MFA viktigt för behörighetshantering?", Category = catOS, SubCategory = subBehorighet };
+            var qZeroTrust = new QuestionModel { Question = "Vad innebär Zero Trust-säkerhetsmodellen?", Category = catOS, SubCategory = subBehorighet };
+
+            // GDPR extra
+            var qGdprRadering = new QuestionModel { Question = "Vad innebär rätten till radering ('rätten att bli glömd') enligt GDPR?", Category = catLagstiftning, SubCategory = subGdpr };
+            var qPersonuppgiftsansvarig = new QuestionModel { Question = "Vad är en personuppgiftsansvarig (Data Controller) enligt GDPR?", Category = catLagstiftning, SubCategory = subGdpr };
+
+            // NIS2 & ISO 27001 extra
+            var qNis2Omfattas = new QuestionModel { Question = "Vilka organisationer omfattas av NIS2-direktivet?", Category = catLagstiftning, SubCategory = subNis2 };
+            var qIso27001Cert = new QuestionModel { Question = "Vad innebär ISO 27001-certifiering för en organisation?", Category = catLagstiftning, SubCategory = subNis2 };
+
+            // Incident Response extra
+            var qInneslutning = new QuestionModel { Question = "Vad är inneslutning (containment) i incident response?", Category = catLagstiftning, SubCategory = subIncident };
+            var qChainOfCustody = new QuestionModel { Question = "Vad är chain of custody inom digital forensik?", Category = catLagstiftning, SubCategory = subIncident };
 
             // ── FRÅGA ↔ SVARSALTERNATIV ──────────────────────────────────────────
 
@@ -653,22 +939,22 @@ namespace Cyberquiz.DAL.Data
                 new QuestionAnswerOptionModel { Question = qUacVad, AnswerOption = aUacFel3, IsCorrect = false },
 
                 // RBAC
+                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aRbacKorrekt, IsCorrect = true },
                 new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aLeastPrivKorrekt, IsCorrect = false },
                 new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aUacKorrekt, IsCorrect = false },
                 new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = aSudoKorrekt, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qRbacVad, AnswerOption = new AnswerOptionModel { Answer = "Åtkomstkontroll där behörigheter tilldelas baserat på användarens roll i organisationen" }, IsCorrect = true },
 
                 // Autentisering vs Auktorisering
-                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering verifierar vem du är, auktorisering avgör vad du får göra" }, IsCorrect = true },
-                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "De är synonymer och betyder samma sak" }, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering avgör vad du får göra, auktorisering verifierar vem du är" }, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = new AnswerOptionModel { Answer = "Autentisering gäller maskiner, auktorisering gäller människor" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = aAutnVsAutzKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = aAutnVsAutzFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = aAutnVsAutzFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAutnVsAutz, AnswerOption = aAutnVsAutzFel3, IsCorrect = false },
 
                 // PAM
-                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "Ett system för att kontrollera och övervaka åtkomst till privilegierade konton" }, IsCorrect = true },
-                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En typ av nästa generations brandvägg" }, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En krypteringsalgoritm för administratörslösenord" }, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = new AnswerOptionModel { Answer = "En antiviruslösning för servrar" }, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = aPamKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = aPamFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = aPamFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPamVad, AnswerOption = aPamFel3, IsCorrect = false },
 
                 // GDPR
                 new QuestionAnswerOptionModel { Question = qGdprVad, AnswerOption = aGdprKorrekt, IsCorrect = true },
@@ -722,7 +1008,223 @@ namespace Cyberquiz.DAL.Data
                 new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookKorrekt, IsCorrect = true },
                 new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel1, IsCorrect = false },
                 new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel2, IsCorrect = false },
-                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel3, IsCorrect = false }
+                new QuestionAnswerOptionModel { Question = qRunbook, AnswerOption = aRunbookFel3, IsCorrect = false },
+
+                // UDP
+                new QuestionAnswerOptionModel { Question = qUdpVad, AnswerOption = aUdpKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qUdpVad, AnswerOption = aUdpFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qUdpVad, AnswerOption = aUdpFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qUdpVad, AnswerOption = aUdpFel3, IsCorrect = false },
+
+                // IPv4 vs IPv6
+                new QuestionAnswerOptionModel { Question = qIpv4v6, AnswerOption = aIpv4v6Korrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIpv4v6, AnswerOption = aIpv4v6Fel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIpv4v6, AnswerOption = aIpv4v6Fel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIpv4v6, AnswerOption = aIpv4v6Fel3, IsCorrect = false },
+
+                // DHCP
+                new QuestionAnswerOptionModel { Question = qDhcpVad, AnswerOption = aDhcpKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDhcpVad, AnswerOption = aDhcpFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDhcpVad, AnswerOption = aDhcpFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDhcpVad, AnswerOption = aDhcpFel3, IsCorrect = false },
+
+                // A-post vs AAAA
+                new QuestionAnswerOptionModel { Question = qDnsApost, AnswerOption = aApostKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDnsApost, AnswerOption = aApostFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsApost, AnswerOption = aApostFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDnsApost, AnswerOption = aApostFel3, IsCorrect = false },
+
+                // WAF
+                new QuestionAnswerOptionModel { Question = qWafVad, AnswerOption = aWafKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qWafVad, AnswerOption = aWafFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qWafVad, AnswerOption = aWafFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qWafVad, AnswerOption = aWafFel3, IsCorrect = false },
+
+                // Paketfiltrering OSI-lager
+                new QuestionAnswerOptionModel { Question = qPaketfiltrering, AnswerOption = aPaketfiltreringKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPaketfiltrering, AnswerOption = aPaketfiltreringFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPaketfiltrering, AnswerOption = aPaketfiltreringFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPaketfiltrering, AnswerOption = aPaketfiltreringFel3, IsCorrect = false },
+
+                // Injection (OWASP)
+                new QuestionAnswerOptionModel { Question = qOwaspInjection, AnswerOption = aInjectionKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOwaspInjection, AnswerOption = aInjectionFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspInjection, AnswerOption = aInjectionFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspInjection, AnswerOption = aInjectionFel3, IsCorrect = false },
+
+                // Insecure Design (OWASP)
+                new QuestionAnswerOptionModel { Question = qOwaspInsecureDesign, AnswerOption = aInsecureDesignKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qOwaspInsecureDesign, AnswerOption = aInsecureDesignFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspInsecureDesign, AnswerOption = aInsecureDesignFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qOwaspInsecureDesign, AnswerOption = aInsecureDesignFel3, IsCorrect = false },
+
+                // XSS typer
+                new QuestionAnswerOptionModel { Question = qXssTyper, AnswerOption = aXssTyperKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qXssTyper, AnswerOption = aXssTyperFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qXssTyper, AnswerOption = aXssTyperFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qXssTyper, AnswerOption = aXssTyperFel3, IsCorrect = false },
+
+                // LDAP-injektion
+                new QuestionAnswerOptionModel { Question = qLdapInjektion, AnswerOption = aLdapKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qLdapInjektion, AnswerOption = aLdapFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qLdapInjektion, AnswerOption = aLdapFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qLdapInjektion, AnswerOption = aLdapFel3, IsCorrect = false },
+
+                // JWT
+                new QuestionAnswerOptionModel { Question = qJwtVad, AnswerOption = aJwtKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qJwtVad, AnswerOption = aJwtFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qJwtVad, AnswerOption = aJwtFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qJwtVad, AnswerOption = aJwtFel3, IsCorrect = false },
+
+                // CSRF-skydd
+                new QuestionAnswerOptionModel { Question = qCsrfSkydd, AnswerOption = aCsrfSkyddKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qCsrfSkydd, AnswerOption = aCsrfSkyddFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCsrfSkydd, AnswerOption = aCsrfSkyddFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCsrfSkydd, AnswerOption = aCsrfSkyddFel3, IsCorrect = false },
+
+                // AES nyckellängd
+                new QuestionAnswerOptionModel { Question = qAesNyckel, AnswerOption = aAesNyckelKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qAesNyckel, AnswerOption = aAesNyckelFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAesNyckel, AnswerOption = aAesNyckelFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qAesNyckel, AnswerOption = aAesNyckelFel3, IsCorrect = false },
+
+                // DES
+                new QuestionAnswerOptionModel { Question = qDesVad, AnswerOption = aDesKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qDesVad, AnswerOption = aDesFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDesVad, AnswerOption = aDesFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qDesVad, AnswerOption = aDesFel3, IsCorrect = false },
+
+                // RSA
+                new QuestionAnswerOptionModel { Question = qRsaVad, AnswerOption = aRsaKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qRsaVad, AnswerOption = aRsaFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRsaVad, AnswerOption = aRsaFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRsaVad, AnswerOption = aRsaFel3, IsCorrect = false },
+
+                // CA
+                new QuestionAnswerOptionModel { Question = qCaVad, AnswerOption = aCaKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qCaVad, AnswerOption = aCaFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCaVad, AnswerOption = aCaFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qCaVad, AnswerOption = aCaFel3, IsCorrect = false },
+
+                // Salting
+                new QuestionAnswerOptionModel { Question = qSaltingVad, AnswerOption = aSaltingKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSaltingVad, AnswerOption = aSaltingFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSaltingVad, AnswerOption = aSaltingFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSaltingVad, AnswerOption = aSaltingFel3, IsCorrect = false },
+
+                // MD5
+                new QuestionAnswerOptionModel { Question = qMd5Varfor, AnswerOption = aMd5Korrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qMd5Varfor, AnswerOption = aMd5Fel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMd5Varfor, AnswerOption = aMd5Fel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMd5Varfor, AnswerOption = aMd5Fel3, IsCorrect = false },
+
+                // Spyware
+                new QuestionAnswerOptionModel { Question = qSpywareVad, AnswerOption = aSpywareKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSpywareVad, AnswerOption = aSpywareFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSpywareVad, AnswerOption = aSpywareFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSpywareVad, AnswerOption = aSpywareFel3, IsCorrect = false },
+
+                // Rootkit
+                new QuestionAnswerOptionModel { Question = qRootkitVad, AnswerOption = aRootkitKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qRootkitVad, AnswerOption = aRootkitFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRootkitVad, AnswerOption = aRootkitFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qRootkitVad, AnswerOption = aRootkitFel3, IsCorrect = false },
+
+                // Botnät
+                new QuestionAnswerOptionModel { Question = qBotnatVad, AnswerOption = aBotnatKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qBotnatVad, AnswerOption = aBotnatFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBotnatVad, AnswerOption = aBotnatFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBotnatVad, AnswerOption = aBotnatFel3, IsCorrect = false },
+
+                // Brute force
+                new QuestionAnswerOptionModel { Question = qBruteForce, AnswerOption = aBruteForceKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qBruteForce, AnswerOption = aBruteForceFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBruteForce, AnswerOption = aBruteForceFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qBruteForce, AnswerOption = aBruteForceFel3, IsCorrect = false },
+
+                // Smishing
+                new QuestionAnswerOptionModel { Question = qSmishingVad, AnswerOption = aSmishingKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSmishingVad, AnswerOption = aSmishingFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSmishingVad, AnswerOption = aSmishingFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSmishingVad, AnswerOption = aSmishingFel3, IsCorrect = false },
+
+                // Pretexting
+                new QuestionAnswerOptionModel { Question = qPretexting, AnswerOption = aPretextingKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPretexting, AnswerOption = aPretextingFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPretexting, AnswerOption = aPretextingFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPretexting, AnswerOption = aPretextingFel3, IsCorrect = false },
+
+                // chown
+                new QuestionAnswerOptionModel { Question = qChownVad, AnswerOption = aChownKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qChownVad, AnswerOption = aChownFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChownVad, AnswerOption = aChownFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChownVad, AnswerOption = aChownFel3, IsCorrect = false },
+
+                // SELinux
+                new QuestionAnswerOptionModel { Question = qSelinuxVad, AnswerOption = aSelinuxKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qSelinuxVad, AnswerOption = aSelinuxFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSelinuxVad, AnswerOption = aSelinuxFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qSelinuxVad, AnswerOption = aSelinuxFel3, IsCorrect = false },
+
+                // Windows Event Log
+                new QuestionAnswerOptionModel { Question = qEventLogVad, AnswerOption = aEventLogKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qEventLogVad, AnswerOption = aEventLogFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qEventLogVad, AnswerOption = aEventLogFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qEventLogVad, AnswerOption = aEventLogFel3, IsCorrect = false },
+
+                // AppLocker
+                new QuestionAnswerOptionModel { Question = qApplockerVad, AnswerOption = aApplockerKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qApplockerVad, AnswerOption = aApplockerFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qApplockerVad, AnswerOption = aApplockerFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qApplockerVad, AnswerOption = aApplockerFel3, IsCorrect = false },
+
+                // MFA behörighet
+                new QuestionAnswerOptionModel { Question = qMfaBeh, AnswerOption = aMfaBehKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qMfaBeh, AnswerOption = aMfaBehFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMfaBeh, AnswerOption = aMfaBehFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qMfaBeh, AnswerOption = aMfaBehFel3, IsCorrect = false },
+
+                // Zero Trust
+                new QuestionAnswerOptionModel { Question = qZeroTrust, AnswerOption = aZeroTrustKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qZeroTrust, AnswerOption = aZeroTrustFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qZeroTrust, AnswerOption = aZeroTrustFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qZeroTrust, AnswerOption = aZeroTrustFel3, IsCorrect = false },
+
+                // GDPR radering
+                new QuestionAnswerOptionModel { Question = qGdprRadering, AnswerOption = aRaderingKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qGdprRadering, AnswerOption = aRaderingFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdprRadering, AnswerOption = aRaderingFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qGdprRadering, AnswerOption = aRaderingFel3, IsCorrect = false },
+
+                // Personuppgiftsansvarig
+                new QuestionAnswerOptionModel { Question = qPersonuppgiftsansvarig, AnswerOption = aPersonuppgiftsansvarigKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qPersonuppgiftsansvarig, AnswerOption = aPersonuppgiftsansvarigFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPersonuppgiftsansvarig, AnswerOption = aPersonuppgiftsansvarigFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qPersonuppgiftsansvarig, AnswerOption = aPersonuppgiftsansvarigFel3, IsCorrect = false },
+
+                // NIS2 vilka omfattas
+                new QuestionAnswerOptionModel { Question = qNis2Omfattas, AnswerOption = aNis2OmfattasKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qNis2Omfattas, AnswerOption = aNis2OmfattasFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qNis2Omfattas, AnswerOption = aNis2OmfattasFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qNis2Omfattas, AnswerOption = aNis2OmfattasFel3, IsCorrect = false },
+
+                // ISO 27001 certifiering
+                new QuestionAnswerOptionModel { Question = qIso27001Cert, AnswerOption = aIso27001CertKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qIso27001Cert, AnswerOption = aIso27001CertFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIso27001Cert, AnswerOption = aIso27001CertFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qIso27001Cert, AnswerOption = aIso27001CertFel3, IsCorrect = false },
+
+                // Inneslutning
+                new QuestionAnswerOptionModel { Question = qInneslutning, AnswerOption = aInneslutningKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qInneslutning, AnswerOption = aInneslutningFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qInneslutning, AnswerOption = aInneslutningFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qInneslutning, AnswerOption = aInneslutningFel3, IsCorrect = false },
+
+                // Chain of custody
+                new QuestionAnswerOptionModel { Question = qChainOfCustody, AnswerOption = aChainOfCustodyKorrekt, IsCorrect = true },
+                new QuestionAnswerOptionModel { Question = qChainOfCustody, AnswerOption = aChainOfCustodyFel1, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChainOfCustody, AnswerOption = aChainOfCustodyFel2, IsCorrect = false },
+                new QuestionAnswerOptionModel { Question = qChainOfCustody, AnswerOption = aChainOfCustodyFel3, IsCorrect = false }
             );
 
             await context.SaveChangesAsync();
