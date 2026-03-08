@@ -50,10 +50,28 @@ namespace Cyberquiz.BLL.Services
             var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
             return answers.Select(ans => MapToSubmitAnswerRequestDto(ans));
         }
+        
         // Metod för att ta bort alla svar och framsteg för en användare (GDPR/admin)
         public async Task DeleteAllProgressForUserAsync(string userName)
         {
+            // Anropar metod i repo med användarnamn som argument
             await _progressRepo.DeleteByUserAsync(userName);
+        }
+
+        // Metod för att behålla de X senaste resultaten och ta bort resten (DB-rensning)
+        public async Task KeepRecentProgressForUserAsync(string userName, int maxSavedInstances)
+        {
+            // Anropar metod i repo för att hämta framsteg med användarnamn som argument
+            var allProgress = await _progressRepo.GetAllByUserAsync(userName);
+            var progressToDelete = allProgress
+                .OrderByDescending(p => p.CompletedAt) // sorterar efter datum 
+                .Skip(maxSavedInstances) // och tar bort de äldsta utifrån maxSavedInstances
+                .ToList(); // konverterar till lista för att kunna iterera (foreach) över den
+            foreach (var progress in progressToDelete)
+            {
+                // Anropar metod i repo för att ta bort framsteg med användarnamn och maxSavedInstances som argument
+                await _progressRepo.DeleteOldestByUserAsync(progress.UserName, maxSavedInstances);
+            }
         }
 
         // Metod för att beräkna användarens framgångsprocent inom en underkategori
