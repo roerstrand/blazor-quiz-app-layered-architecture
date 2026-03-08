@@ -37,7 +37,7 @@ namespace Cyberquiz.API.Controllers
             var q = await _questionService.GetNextQuestionAsync(userName, subCategoryId);
             if (q is null) return NotFound();
 
-            //return Ok(q);
+            return Ok(q);
         }
 
         // POST api/questions/answer
