@@ -35,9 +35,10 @@ namespace Cyberquiz.API.Controllers
 
         // GET Endpoint som hämtar alla de svar en användare lämnat i en underkategori 
         [HttpGet("subcategory/{subCategoryId:int}/answers")]
-        public async Task<ActionResult<IEnumerable<SubmitAnswerRequestDto>>> GetAnswersByUserAndSubCategory(int subCategoryId)
+        public async Task<ActionResult<IEnumerable<SubmitAnswerRequestDto>>> GetAnswersByUserAndSubCategory(
+            int subCategoryId)
         {
-            var userName = User.Identity?.Name ?? "null"; // Ändrat från usre till null så att vi inte går vidare utan användare
+            var userName = User.Identity?.Name ?? "null"; 
             if (userName == null)
             {
                 return BadRequest("Användaren kunde inte hittas.");

@@ -42,7 +42,8 @@ namespace Cyberquiz.API.Controllers
 
         // POST api/questions/answer
         [HttpPost("answer")]
-        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer ([FromBody] SubmitAnswerRequestDto request)
+        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer 
+            ([FromBody] SubmitAnswerRequestDto request)
         {
             if (request is null) return BadRequest();
             var userName = User.Identity?.Name ?? "user";
