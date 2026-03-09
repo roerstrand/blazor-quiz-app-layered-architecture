@@ -15,7 +15,7 @@ namespace Cyberquiz.DAL.Repositories
         }
 
         // Hämtar en enskild fråga med alla svarsalternativ
-        public async Task<QuestionModel?> GetByIdAsync(int id) // Döpa om till GetQuestionByIdAsync
+        public async Task<QuestionModel?> GetQuestionByIdAsync(int id) // Döpa om till GetQuestionByIdAsync
         {
             return await _context.Questions
                 .AsNoTracking()
@@ -25,7 +25,7 @@ namespace Cyberquiz.DAL.Repositories
         }
 
         // Hämtar alla frågor kopplade till en subkategori — används bl.a. för 80%-beräkning i BLL
-        public async Task<IEnumerable<QuestionModel>> GetBySubCategoryAsync(int subCategoryId)
+        public async Task<IEnumerable<QuestionModel>> GetQuestionsBySubCategoryAsync(int subCategoryId)
         {
             return await _context.Questions
                 .AsNoTracking()

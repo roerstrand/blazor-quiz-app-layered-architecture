@@ -22,7 +22,7 @@ namespace Cyberquiz.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int id)
         {
-            var result = await _questionService.GetByIdAsync(id);
+            var result = await _questionService.GetQuestionByIdAsync(id);
             if (result == null) return NotFound();
 
             return Ok(result);
