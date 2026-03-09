@@ -125,7 +125,7 @@ else
     private void GoToSubCategories(int categoryId)
         => Nav.NavigateTo($"/categories/{categoryId}/subcategories");
 
-    private void OpenSubCategory(SubCategoryDto s)
+    private void OpenSubCategory(SubCategoryDto s) //ta bort?
     {
         if (s.IsLocked) return;
 

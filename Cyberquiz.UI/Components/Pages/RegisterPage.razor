@@ -1,0 +1,250 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using Cyberquiz.UI.Components.Account
+@using Cyberquiz.UI.Data
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<RegisterPage> Logger
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@rendermode InteractiveServer
+
+<PageTitle>Registrera - Cyberquiz</PageTitle>
+
+<div class="register-container">
+    <div class="register-card">
+        <!-- Header -->
+        <div class="register-header text-center mb-4">
+            <i class="bi bi-person-plus-fill text-primary" style="font-size: 4rem;"></i>
+            <h1 class="mt-3">Skapa konto</h1>
+            <p class="text-muted">Börja din cybersäkerhetsresa</p>
+        </div>
+
+        <!-- Error Message -->
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @Message
+                <button type="button" class="btn-close" @onclick="ClearMessage"></button>
+            </div>
+        }
+
+        <!-- Register Form -->
+        <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger mb-3" role="alert" />
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label for="username" class="form-label">
+                    <i class="bi bi-person-fill me-2"></i>Användarnamn
+                </label>
+                <InputText @bind-Value="Input.UserName" 
+                           id="username" 
+                           class="form-control form-control-lg" 
+                           autocomplete="username" 
+                           placeholder="Välj ett användarnamn" />
+                <ValidationMessage For="() => Input.UserName" class="text-danger" />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock-fill me-2"></i>Lösenord
+                </label>
+                <InputText type="password" 
+                           @bind-Value="Input.Password" 
+                           id="password" 
+                           class="form-control form-control-lg" 
+                           autocomplete="new-password" 
+                           placeholder="Välj ett säkert lösenord" />
+                <small class="text-muted">Minst 6 tecken</small>
+                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">
+                    <i class="bi bi-lock-fill me-2"></i>Bekräfta lösenord
+                </label>
+                <InputText type="password"
+                           @bind-Value="Input.ConfirmPassword"
+                           id="confirmPassword"
+                           class="form-control form-control-lg"
+                           autocomplete="new-password"
+                           placeholder="Bekräfta ditt lösenord" />
+                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                    class="btn btn-primary btn-lg w-100 mb-3"
+                    disabled="@isRegistering">
+                @if (isRegistering)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    <span>Skapar konto...</span>
+                }
+                else
+                {
+                    <i class="bi bi-person-check-fill me-2"></i>
+                    <span>Skapa konto</span>
+                }
+            </button>
+        </EditForm>
+
+        <!-- Divider -->
+        <div class="divider my-4">
+            <span>eller</span>
+        </div>
+
+        <!-- Links -->
+        <div class="text-center">
+            <p class="mb-0">
+                Har du redan ett konto?
+                <a href="/login" class="fw-bold text-decoration-none">
+                    Logga in här
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+<style>
+    .register-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .register-header i {
+        animation: bounce 2s infinite;
+    }
+
+    @@keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #6c757d;
+    }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+</style>
+
+@code {
+    private IEnumerable<IdentityError>? identityErrors;
+    private bool isRegistering = false;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? Message => identityErrors is null
+        ? null
+        : $"Fel: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    protected override void OnInitialized()
+    {
+        Input ??= new();
+    }
+
+    public async Task RegisterUser(EditContext editContext)
+    {
+        isRegistering = true;
+
+        try
+        {
+            var user = CreateUser();
+            await UserStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
+            var result = await UserManager.CreateAsync(user, Input.Password);
+
+            if (!result.Succeeded)
+            {
+                identityErrors = result.Errors;
+                return;
+            }
+
+            Logger.LogInformation("User {UserName} created a new account.", Input.UserName);
+
+            await SignInManager.SignInAsync(user, isPersistent: false);
+            RedirectManager.RedirectTo(ReturnUrl ?? "/categories");
+        }
+        finally
+        {
+            isRegistering = false;
+        }
+    }
+
+    private void ClearMessage()
+    {
+        identityErrors = null;
+    }
+
+    private ApplicationUser CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<ApplicationUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'.");
+        }
+    }
+
+    private sealed class InputModel
+    {
+        [Required(ErrorMessage = "Användarnamn krävs")]
+        [StringLength(50, ErrorMessage = "Användarnamnet får vara max {1} tecken.")]
+        [Display(Name = "Användarnamn")]
+        public string UserName { get; set; } = "";
+
+        [Required(ErrorMessage = "Lösenord krävs")]
+        [StringLength(100, ErrorMessage = "Lösenordet måste vara minst {2} tecken.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Lösenord")]
+        public string Password { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Bekräfta lösenord")]
+        [Compare("Password", ErrorMessage = "Lösenorden matchar inte.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+}
