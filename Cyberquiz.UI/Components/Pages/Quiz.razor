@@ -169,8 +169,8 @@ else
 
         if (question == null) //kanske inte behövs
         {
-            var progress = await apiservice.getuserprogressasync(subcategoryid);
-            _quizresult = progress.firstordefault(p => p.subcategoryid == subcategoryid);
+            var progress = await ApiService.GetUserProgressAsync(SubCategoryId);
+            _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
         }
 
         selectedAnswerId = null;
