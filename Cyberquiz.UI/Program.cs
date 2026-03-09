@@ -8,7 +8,7 @@ using Cyberquiz.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var connectionString = builder.Configuration.GetConnectionString("AuthDbConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // Auth-databas (Identity/användare) — hanteras enbart av UI

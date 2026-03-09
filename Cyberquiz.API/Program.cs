@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var connectionString = builder.Configuration.GetConnectionString("AppDbConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // Endast quiz-databasen (kategorier, frågor, svar, progress)
