@@ -1,9 +1,12 @@
 ﻿@page "/categories/{CategoryId:int}/subcategories"
 @using Cyberquiz.Shared.DTOs
 @using Cyberquiz.UI.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
+
+@attribute [Authorize]
 
 <h3>Subkategorier</h3>
 

@@ -3,10 +3,12 @@
 
 @using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
+@attribute [Authorize]
 
 <h3>Quiz</h3>
 

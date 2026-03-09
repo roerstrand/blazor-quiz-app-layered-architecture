@@ -2,9 +2,12 @@
 @using Cyberquiz.Shared.DTOs
 @using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager Nav
 @inject ApiService ApiService
 @rendermode InteractiveServer
+
+@attribute [Authorize]
 
 <h3>Kategorier</h3>
 
