@@ -34,7 +34,7 @@ namespace Cyberquiz.API.Controllers
         {
             var userName = User.Identity?.Name ?? "user";
 
-            var q = await _questionService.GetNextQuestionAsync(userName, subCategoryId);
+            var q = await _questionService.GetNextQuestionAsync(subCategoryId, userName);
             if (q is null) return NotFound();
 
             return Ok(q);
@@ -46,7 +46,7 @@ namespace Cyberquiz.API.Controllers
         {
             if (request is null) return BadRequest();
             var userName = User.Identity?.Name ?? "user";
-            var result = await _questionService.SubmitAnswerAsync(userName, request);
+            var result = await _questionService.SubmitAnswerAsync(request, userName);
             return Ok(result);
         }
         
