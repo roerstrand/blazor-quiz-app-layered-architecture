@@ -12,27 +12,25 @@
 
 @if (_loading)
 {
-    <p>Loading...</p>
+    <p>Laddar...</p>
 }
 else if (question == null)
 {
     <div class="alert alert-info">
-        <p>Du är klar med alla frågor i den här subkategorin! ✅</p>
-        @if(_quizResult == null)
+        <h4>Quizet är klart ✅</h4>
+
+        @if (_quizResult != null)
         {
-            <p>Resultat kunde inte hämtas</p>
-        }
-        else if (_quizResult.Score == 0)
-        {
-            <p>Tyvärr du fick 0 poäng</p>
+            <p>Du fick <strong>@_quizResult.Score</strong> av <strong>@_quizResult.TotalQuestions</strong> rätt.</p>
         }
         else
         {
-            <p>Ditt resultat: <strong>@_quizResult.Score</strong>/ @_quizResult.TotalQuestions frågor rätt</p>
+            <p>Alla frågor är besvarade.</p>
         }
-        
 
-        <button class="btn btn-secondary" @onclick="GoBack">Tillbaka</button>
+        <button class="btn btn-secondary" @onclick="GoBack">
+            Tillbaka till kategorier
+        </button>
     </div>
 }
 else
@@ -92,14 +90,14 @@ else
                 }
             </div>
         }
-        @* <div class="d-flex gap-2 justify-content-center mt-4">
+        <div class="d-flex gap-2 justify-content-center mt-4">
             <button class="btn btn-primary" @onclick="RestartQuiz">
                 Starta om
             </button>
             <button class="btn btn-secondary" @onclick="GoBack">
                 Tillbaka
             </button>
-        </div> *@
+        </div>
     </div>
 }
 
@@ -169,11 +167,11 @@ else
 
         question = await ApiService.GetNextQuestionAsync(SubCategoryId);
 
-        // if (question == null) //Kanske inte behövs
-        // {
-        //     var progress = await ApiService.GetUserProgressAsync(SubCategoryId);
-        //     _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
-        // }
+        if (question == null) //kanske inte behövs
+        {
+            var progress = await apiservice.getuserprogressasync(subcategoryid);
+            _quizresult = progress.firstordefault(p => p.subcategoryid == subcategoryid);
+        }
 
         selectedAnswerId = null;
         answered = false;
