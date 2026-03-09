@@ -46,7 +46,7 @@ namespace Cyberquiz.API.Controllers
         {
             if (request is null) return BadRequest();
             var userName = User.Identity?.Name ?? "user";
-            var result = await _questionService.SubmitAnswerAsync(userName, request);
+            var result = await _questionService.SubmitAnswerAsync(request, userName);
             return Ok(result);
         }
         
