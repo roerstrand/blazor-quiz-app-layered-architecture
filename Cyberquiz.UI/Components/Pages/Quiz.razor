@@ -171,7 +171,7 @@ else
 
         if (question == null) //kanske inte behövs
         {
-            var progress = await ApiService.GetUserProgressAsync(SubCategoryId);
+            var progress = await ApiService.GetUserProgressAsync();
             _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
         }
 

@@ -23,8 +23,7 @@ namespace Cyberquiz.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CategoryDto>>> GetCategories()
         {
-            var userName = User.Identity?.Name ?? "user";
-            var data = await _categoryService.GetAllCategoriesAsync(userName);
+            var data = await _categoryService.GetAllCategoriesAsync();
             return Ok(data);
         }
         
@@ -33,8 +32,7 @@ namespace Cyberquiz.API.Controllers
         [HttpGet("{categoryId:int}/subcategories")]
         public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategories (int categoryId)
         {
-            var userName = User.Identity?.Name ?? "user";
-            var data = await _categoryService.GetSubCategoryByIdAsync(userName, categoryId);
+            var data = await _categoryService.GetSubCategoryByIdAsync(categoryId);
             return Ok(data);
         }
         

@@ -22,7 +22,7 @@ namespace Cyberquiz.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int id)
         {
-            var result = await _questionService.GetByIdAsync(id);
+            var result = await _questionService.GetQuestionByIdAsync(id);
             if (result == null) return NotFound();
 
             return Ok(result);
@@ -34,7 +34,7 @@ namespace Cyberquiz.API.Controllers
         {
             var userName = User.Identity?.Name ?? "user";
 
-            var q = await _questionService.GetNextQuestionAsync(subCategoryId, userName);
+            var q = await _questionService.GetNextQuestionInSubCategoryAsync(subCategoryId, userName);
             if (q is null) return NotFound();
 
             return Ok(q);
@@ -42,7 +42,8 @@ namespace Cyberquiz.API.Controllers
 
         // POST api/questions/answer
         [HttpPost("answer")]
-        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer ([FromBody] SubmitAnswerRequestDto request)
+        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer 
+            ([FromBody] SubmitAnswerRequestDto request)
         {
             if (request is null) return BadRequest();
             var userName = User.Identity?.Name ?? "user";

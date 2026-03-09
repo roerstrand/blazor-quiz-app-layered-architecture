@@ -19,6 +19,7 @@ namespace Cyberquiz.DAL.Repositories
             return await _context.Categories
                 .AsNoTracking()
                 .Include(c => c.SubCategories)
+                    .ThenInclude(sc => sc.Questions)
                 .ToListAsync();
         }
 
@@ -27,6 +28,7 @@ namespace Cyberquiz.DAL.Repositories
             return await _context.Categories
                 .AsNoTracking()
                 .Include(c => c.SubCategories)
+                    .ThenInclude(sc => sc.Questions)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -35,6 +37,7 @@ namespace Cyberquiz.DAL.Repositories
             return await _context.SubCategories
                 .AsNoTracking()
                 .Include(sc => sc.Category)
+                .Include(sc => sc.Questions)
                 .OrderBy(sc => sc.CategoryId)
                 .ThenBy(sc => sc.Order)
                 .ToListAsync();
@@ -45,6 +48,7 @@ namespace Cyberquiz.DAL.Repositories
             return await _context.SubCategories
                 .AsNoTracking()
                 .Include(sc => sc.Category)
+                .Include(sc => sc.Questions)
                 .FirstOrDefaultAsync(sc => sc.Id == id);
         }
     }
