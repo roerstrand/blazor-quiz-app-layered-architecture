@@ -37,14 +37,14 @@ namespace Cyberquiz.BLL.Services
             await _progressRepo.SaveProgressAsync(progressModel);
         }
 
-        // Metod för ENDPOINT "progress/answer" som sparar användarens svar
+        // Metod för ENDPOINT [HttpPost("answer")] som sparar användarens svar 
         public async Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer)
         {
             var answerModel = MapToUserAnswerModel(answer);
             await _progressRepo.SaveUserAnswerAsync(answerModel);
         }
 
-        // Metod för ENDPOINT "subcategory/{subCategoryId:int}/answers"
+        // Metod för ENDPOINT [HttpGet("subcategory/{subCategoryId:int}/answers")]
         // ...som hämtar alla svar som sparats för en användare inom en underkategori
         // ...och filtrerar med LINQ-select för den aktuella användaren och underkategorin
         public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(

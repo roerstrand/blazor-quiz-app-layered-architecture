@@ -33,8 +33,8 @@ namespace Cyberquiz.BLL.Services
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
         public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName) // Dela upp metoden på QuestionService och ProgressService?
         {
-            // Hämta alla frågor inom underkategorin
-            var allQuestions = await _questionRepo.GetBySubCategoryAsync(subCategoryId);
+            // Hämta alla frågor inom underkategorin 
+            var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
             // Hämta användarens framsteg hittills inom underkategorin
             var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
             // Hämta de frågor som användaren redan har svarat på i underkategorin
