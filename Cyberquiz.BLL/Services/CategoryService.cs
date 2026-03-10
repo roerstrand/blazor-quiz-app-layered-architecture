@@ -14,13 +14,14 @@ namespace Cyberquiz.BLL.Services
             _categoryRepo = categoryRepo;
         }
         // Anropar metoder i repo
-        public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync(string userName)
         {
             // Anropar repo 
             var categories = await _categoryRepo.GetAllCategoriesAsync();
             // Mappa varje CategoryModel till CategoryDto
             return categories.Select(cs => MapToCategoryDto(cs));
         }
+        // Metod som inte behövs?
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int categoryId)
         {
