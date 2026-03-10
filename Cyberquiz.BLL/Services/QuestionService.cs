@@ -47,7 +47,7 @@ namespace Cyberquiz.BLL.Services
 
         // Flytta till ProgressService? Eller dela upp logiken så att QuestionService bara hämtar frågan och ProgressService hanterar användarens svar och framsteg?
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
