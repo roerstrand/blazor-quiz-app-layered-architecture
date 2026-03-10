@@ -18,7 +18,9 @@ namespace Cyberquiz.BLL.Services
         // Metod för ENDPOINT "questions/{id:int}" som hämtar en enskild fråga med svarsalternativ
         public async Task<QuestionDto?> GetQuestionByIdAsync(int id)
         {
+            // Anropar repo med frågans id som argument
             var question = await _questionRepo.GetQuestionByIdAsync(id);
+            // Returnerar DTO för frågan eller null om frågan inte hittas
             return question == null ? null : MapToQuestionDto(question);
         }
 
@@ -51,11 +53,12 @@ namespace Cyberquiz.BLL.Services
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
+            // Om frågan inte hittas
             if (question == null)
             {
                 throw new Exception("Frågan kunde inte hittas.");
             }
-            // Kolla om användaren valt rätta svaret till den frågan
+            // (Annars) Kolla om användaren valt rätta svaret till den frågan
             var correctAnswerOption = question.QuestionAnswerOptions?
                 .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
             if (correctAnswerOption == null) 
@@ -64,7 +67,7 @@ namespace Cyberquiz.BLL.Services
             }
             // Annars hämta svarets id
             bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;
-            // Spara användarens svar
+            // Spara användarens svar enligt modell
             var userAnswer = new UserAnswerModel
             {
                 UserName = userName,
