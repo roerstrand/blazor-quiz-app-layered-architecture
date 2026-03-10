@@ -7,6 +7,10 @@ namespace Cyberquiz.BLL.Services
 {
     // Reglerar åtkomst
     // Använder ResultsService för att hämta information om användarens resultat
+    // Innehåller fem metoder för att samarbeta med Endpoints i ProgressController i API-lagret
+    // Innehåller två metoder med affärslogik för att beräkna användarens framgångsprocent och avgöra om en underkategori är godkänd
+    // Innehåller två metoder för att hantera GDPR och databasrensning, som inte är kopplade till några endpoints
+    // Innehåller just nu även mapping-metoder för att konvertera mellan Model och Dto (eventuellt flytta till egen Mapper-klass)
     public class ProgressService : IProgressService
     {
         private readonly IProgressRepository _progressRepo;
