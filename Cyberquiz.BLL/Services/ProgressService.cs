@@ -23,40 +23,47 @@ namespace Cyberquiz.BLL.Services
         // Metod för ENDPOINT "progress/subcategory/{subCategoryId:int}" som hämtar användarens framsteg inom en underkategori
         public async Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
+            // Anropar metod i repo, användarnamn och underkategori-id som argument
             var progress = await _progressRepo.GetByUserAndSubCategoryAsync(userName, subCategoryId);
-            return progress == null ? null : MapToUserProgressDto(progress);
+            // Mappar Dto till Model
+            return progress == null ? null : MapToUserProgressDto(progress); 
         }
 
         // Metod för ENDPOINT "progress/user/{userName}" som hämtar alla framsteg för en användare
         public async Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName)
         {
+            // Anropar metod i repo, användarnamn som argument
             var progressList = await _progressRepo.GetAllByUserAsync(userName);
-            return progressList.Select(pl => MapToUserProgressDto(pl)); // Mappar om hela listan av dto's till model
+            // Mappar om hela listan av dto's till model
+            return progressList.Select(pl => MapToUserProgressDto(pl)); 
         }
 
         // Metod för ENDPOINT "progress" som sparar användarens framsteg
         public async Task SaveProgressAsync(UserProgressDto progress)
         {
+            // Mappar Dto till Model
             var progressModel = MapToUserProgressModel(progress);
-            await _progressRepo.SaveProgressAsync(progressModel);
+            // Anropar metod i repo, modell som argument
+            await _progressRepo.SaveProgressAsync(progressModel); 
         }
 
         // Metod för ENDPOINT [HttpPost("answer")] som sparar användarens svar 
         public async Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer)
         {
+            // Mappar Dto till Model
             var answerModel = MapToUserAnswerModel(answer);
-            await _progressRepo.SaveUserAnswerAsync(answerModel);
-        }
+            // Anropar metod i repo, modell som argument
+            await _progressRepo.SaveUserAnswerAsync(answerModel);         }
 
         // Metod för ENDPOINT [HttpGet("subcategory/{subCategoryId:int}/answers")]
         // ...som hämtar alla svar som sparats för en användare inom en underkategori
         // ...och filtrerar med LINQ-select för den aktuella användaren och underkategorin
-        public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(
-            string userName, int subCategoryId)
+        public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
-            var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName,
-                subCategoryId);
-            return answers.Select(ans => MapToSubmitAnswerRequestDto(ans));
+            // Anropar metod i repo, användarnamn och underkategori-id som argument
+            var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            // Mappar om hela listan av dto's till model
+            return answers.Select(ans => MapToSubmitAnswerRequestDto(ans)); 
         }
         
         // Metod för att ta bort alla svar och framsteg för en användare (GDPR/admin)
@@ -85,21 +92,22 @@ namespace Cyberquiz.BLL.Services
         // Metod för att beräkna användarens framgångsprocent inom en underkategori
         public async Task<double> CalculateSuccessRateAsync(string userName, int subCategoryId)
         {
-            var answers = await _progressRepo
-                .GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
-
+            // Anropar metod i repo, användarnamn och underkategori-id som argument
+            var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            // Om inga svar för användaren och underkategorin finns, returnera 0% framgång
             if (!answers.Any())
                 return 0;
 
-            double correct = answers.Count(a => a.IsCorrect);
-            double total = answers.Count();
+            double correct = answers.Count(a => a.IsCorrect); // Antal rätta svar 
+            double total = answers.Count(); // Totala antalet svar
 
-            return (correct / total) * 100;
+            return (correct / total) * 100; // Returnerar beräkning
         }
 
         // Metod för att avgöra om en underkategori är godkänd baserat på framgångsprocenten
         public async Task<bool> IsSubCategoryCompletedAsync(string userName, int subCategoryId)
         {
+            // Anropar metod ovan, med användarnamn och underkategori-id som argument
             double successRate = await CalculateSuccessRateAsync(userName, subCategoryId);
             return successRate >= 80; // 80% godkänd-gräns (funkar dåligt om vi endast har fyra frågor per kategori - kan få antingen 75% eller 100%)
         }
