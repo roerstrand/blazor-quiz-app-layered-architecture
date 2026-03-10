@@ -65,7 +65,24 @@ namespace Cyberquiz.BLL.Services
             // Mappar om hela listan av dto's till model
             return answers.Select(ans => MapToSubmitAnswerRequestDto(ans)); 
         }
-        
+
+        // Metod för att hämta alla frågor som användaren har svarat på inom en underkategori (för att kunna filtrera bort dem när nästa fråga hämtas)
+        public async Task<HashSet<int>> GetAnsweredQuestionIdsAsync(string userName, int subCategoryId)
+        {
+            // Anropa metod i repo, användarnamn och underkategori-id som argument
+            var userAnswers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            // Returnerar en hashset med alla fråge-id:n som användaren har svarat på inom underkategorin, så att det går snabbt att kolla om en fråga redan är besvarad eller inte
+            return userAnswers
+                .Select(a => a.QuestionId)
+                .ToHashSet();
+        }
+
+        // Metod för att spara användarens svar (för att kunna visa det i användarprofilen och för att beräkna framgångsprocenten)
+        public async Task SaveUserAnswerAsync(UserAnswerModel answer)
+        {
+            await _progressRepo.SaveUserAnswerAsync(answer);
+        }
+
         // Metod för att ta bort alla svar och framsteg för en användare (GDPR/admin)
         public async Task DeleteAllProgressForUserAsync(string userName)
         {

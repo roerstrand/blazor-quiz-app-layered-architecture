@@ -13,11 +13,11 @@ namespace Cyberquiz.BLL.Services
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
-        private readonly IProgressRepository _progressRepo; 
-        public QuestionService(IQuestionRepository questionRepo, IProgressRepository progressRepo)
+        private readonly object _progressService;
+
+        public QuestionService(IQuestionRepository questionRepo)
         {
             _questionRepo = questionRepo;
-            _progressRepo = progressRepo;
         }
 
         // Metod för ENDPOINT "questions/{id:int}" som hämtar en enskild fråga med svarsalternativ
@@ -42,14 +42,20 @@ namespace Cyberquiz.BLL.Services
         {
             // Hämta alla frågor inom underkategorin
             var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
-            // Hämta användarens framsteg hittills inom underkategorin
-            var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
             // Hämta de frågor som användaren redan har svarat på i underkategorin
-            var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
+            var answeredQuestionIds = await _progressService.GetAnsweredQuestionIdsAsync(userName, subCategoryId);
             // Hitta nästa (= första) frågan som användaren inte har svarat på
             var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
             // Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
-            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
+            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Om inga svar 
+            //// Hämta användarens framsteg hittills inom underkategorin
+            //var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            //// Hämta de frågor som användaren redan har svarat på i underkategorin
+            //var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
+            //// Hitta nästa (= första) frågan som användaren inte har svarat på
+            //var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
+            //// Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
+            //return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
         } // Om null så måste Controllern plocka upp det och meddela användaren
 
         // Flytta till ProgressService? Eller dela upp logiken så att QuestionService bara hämtar frågan och ProgressService hanterar användarens svar och framsteg?
@@ -82,7 +88,7 @@ namespace Cyberquiz.BLL.Services
                 AnsweredAt = DateTime.UtcNow,
             };
             // ...och uppdatera framsteg
-            await _progressRepo.SaveUserAnswerAsync(userAnswer); // Flytta till ProgressService? 
+            await _progressService.SaveUserAnswerAsync(userAnswer);
             // ... samt returnera resultatet till användaren
             return new SubmitResponseDto
             {

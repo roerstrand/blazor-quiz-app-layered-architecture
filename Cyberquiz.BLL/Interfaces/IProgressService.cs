@@ -1,4 +1,5 @@
-﻿using Cyberquiz.Shared.DTOs;
+﻿using Cyberquiz.DAL.Models;
+using Cyberquiz.Shared.DTOs;
 
 namespace Cyberquiz.BLL.Interfaces
 {
@@ -9,8 +10,9 @@ namespace Cyberquiz.BLL.Interfaces
         Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName);
 
         Task SaveProgressAsync(UserProgressDto progress);
-
         Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer);
+        Task<HashSet<int>> GetAnsweredQuestionIdsAsync(string userName, int subCategoryId);
+        Task SaveUserAnswerAsync(UserAnswerModel answer);
 
         Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
