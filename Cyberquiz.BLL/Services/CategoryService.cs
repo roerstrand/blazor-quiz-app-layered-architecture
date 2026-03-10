@@ -16,25 +16,33 @@ namespace Cyberquiz.BLL.Services
         // Anropar metoder i repo
         public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
         {
+            // Anropar repo 
             var categories = await _categoryRepo.GetAllCategoriesAsync();
+            // Mappa varje CategoryModel till CategoryDto
             return categories.Select(cs => MapToCategoryDto(cs));
         }
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int categoryId)
         {
+            // Anropar repo med kategori-id som argument
             var category = await _categoryRepo.GetCategoryByIdAsync(categoryId);
+            // Om category inte finns, returnera null, annars mappa till CategoryDto
             return category == null ? null : MapToCategoryDto(category);
         }
 
         public async Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync()
         {
+            // Anropa repo 
             var subCategories = await _categoryRepo.GetAllSubCategoriesAsync();
+            // Mappa varje SubCategoryModel till SubCategoryDto
             return subCategories.Select(scs => MapToSubCategoryDto(scs));
         }
 
         public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(int id)
         {
+            // Anropar repo med underkategori-id som argument
             var subCategory = await _categoryRepo.GetSubCategoryByIdAsync(id);
+            // Om subCategory inte finns, returnera null, annars mappa till SubCategoryDto
             return subCategory == null ? null : MapToSubCategoryDto(subCategory);
         }
 
