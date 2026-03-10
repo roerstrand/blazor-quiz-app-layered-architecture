@@ -24,9 +24,9 @@ namespace Cyberquiz.BLL.Services
 
         // METOD SOM INTE ANVÄNDS I NUVARANDE VERSION
         //// Metod för ENDPOINT "subcategory/{subCategoryId:int}/questions" som hämtar alla frågor inom en underkategori
-        //public async Task<IEnumerable<QuestionDto>> GetBySubCategoryAsync(int subCategoryId, string userName)
+        //public async Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId, string userName)
         //{
-        //    var questions = await _questionRepo.GetBySubCategoryAsync(subCategoryId, userName);
+        //    var questions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId, userName);
         //    return questions.Select(qs => MapToQuestionDto(qs));
         //}
 
@@ -47,7 +47,7 @@ namespace Cyberquiz.BLL.Services
 
         // Flytta till ProgressService? Eller dela upp logiken så att QuestionService bara hämtar frågan och ProgressService hanterar användarens svar och framsteg?
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SaveUserAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
