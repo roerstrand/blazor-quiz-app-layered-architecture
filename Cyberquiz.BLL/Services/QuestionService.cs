@@ -5,28 +5,36 @@ using Cyberquiz.Shared.DTOs;
 
 namespace Cyberquiz.BLL.Services
 {
+    // Hanterar logik för frågor och svarsalternativ
+    // Kontrollerar om användaren svarar rätt eller fel på en fråga
+    // Tar emot requests från API-lagret, anropar metoder i repo-lagret och returnerar DTOs till API-lagret
+    // Innehåller tre metoder för att samarbeta med Endpoints i QuestionController i API-lagret
+    // Innehåller just nu även en mapping-metod för att konvertera mellan Model och Dto (eventuellt flytta till egen Mapper-klass)
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
-        private readonly IProgressRepository _progressRepo; 
-        public QuestionService(IQuestionRepository questionRepo, IProgressRepository progressRepo)
+        private readonly IProgressService _progressService;
+
+        public QuestionService(IQuestionRepository questionRepo, IProgressService progressService)
         {
             _questionRepo = questionRepo;
-            _progressRepo = progressRepo;
+            _progressService = progressService;
         }
 
         // Metod för ENDPOINT "questions/{id:int}" som hämtar en enskild fråga med svarsalternativ
         public async Task<QuestionDto?> GetQuestionByIdAsync(int id)
         {
+            // Anropar repo med frågans id som argument
             var question = await _questionRepo.GetQuestionByIdAsync(id);
+            // Returnerar DTO för frågan eller null om frågan inte hittas
             return question == null ? null : MapToQuestionDto(question);
         }
 
         // METOD SOM INTE ANVÄNDS I NUVARANDE VERSION
         //// Metod för ENDPOINT "subcategory/{subCategoryId:int}/questions" som hämtar alla frågor inom en underkategori
-        //public async Task<IEnumerable<QuestionDto>> GetBySubCategoryAsync(int subCategoryId, string userName)
+        //public async Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId, string userName)
         //{
-        //    var questions = await _questionRepo.GetBySubCategoryAsync(subCategoryId, userName);
+        //    var questions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId, userName);
         //    return questions.Select(qs => MapToQuestionDto(qs));
         //}
 
@@ -34,28 +42,35 @@ namespace Cyberquiz.BLL.Services
         public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName) // Dela upp metoden på QuestionService och ProgressService?
         {
             // Hämta alla frågor inom underkategorin
-            var allQuestions = await _questionRepo.GetBySubCategoryAsync(subCategoryId);
-            // Hämta användarens framsteg hittills inom underkategorin
-            var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
             // Hämta de frågor som användaren redan har svarat på i underkategorin
-            var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
+            var answeredQuestionIds = await _progressService.GetAnsweredQuestionIdsAsync(userName, subCategoryId);
             // Hitta nästa (= första) frågan som användaren inte har svarat på
             var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
             // Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
-            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
+            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Om inga svar 
+            //// Hämta användarens framsteg hittills inom underkategorin
+            //var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            //// Hämta de frågor som användaren redan har svarat på i underkategorin
+            //var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
+            //// Hitta nästa (= första) frågan som användaren inte har svarat på
+            //var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
+            //// Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
+            //return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
         } // Om null så måste Controllern plocka upp det och meddela användaren
 
         // Flytta till ProgressService? Eller dela upp logiken så att QuestionService bara hämtar frågan och ProgressService hanterar användarens svar och framsteg?
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SubmitAnswerAsync(string userName, SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
             // Hämta frågan
-            var question = await _questionRepo.GetByIdAsync(request.QuestionId);
+            var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
+            // Om frågan inte hittas
             if (question == null)
             {
                 throw new Exception("Frågan kunde inte hittas.");
             }
-            // Kolla om användaren valt rätta svaret till den frågan
+            // (Annars) Kolla om användaren valt rätta svaret till den frågan
             var correctAnswerOption = question.QuestionAnswerOptions?
                 .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
             if (correctAnswerOption == null) 
@@ -64,7 +79,7 @@ namespace Cyberquiz.BLL.Services
             }
             // Annars hämta svarets id
             bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;
-            // Spara användarens svar
+            // Spara användarens svar enligt modell
             var userAnswer = new UserAnswerModel
             {
                 UserName = userName,
@@ -74,7 +89,7 @@ namespace Cyberquiz.BLL.Services
                 AnsweredAt = DateTime.UtcNow,
             };
             // ...och uppdatera framsteg
-            await _progressRepo.SaveUserAnswerAsync(userAnswer);
+            await _progressService.SaveUserAnswerAsync(userAnswer);
             // ... samt returnera resultatet till användaren
             return new SubmitResponseDto
             {
