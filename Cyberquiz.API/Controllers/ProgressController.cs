@@ -1,16 +1,15 @@
 ﻿using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; // Uttonad - Används inte?
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cyberquiz.API.Controllers
 {
     [ApiController]
     [Route("api/progress")]
-
     public class ProgressController : ControllerBase
     {
-
+        
         private readonly IProgressService _progressService;
 
         public ProgressController(IProgressService progressService)
@@ -25,11 +24,20 @@ namespace Cyberquiz.API.Controllers
         public async Task<ActionResult<List<UserProgressDto>>> GetProgress()
         {
             var userName = User.Identity?.Name ?? null;
-            if (userName == null) return BadRequest("Hittade ingen inloggad användare");
-
             var data = await _progressService.GetAllByUserAsync(userName);
+            if (data == null) return BadRequest(string.Empty);
             return Ok(data);
+        }
 
+        // GET Endpoint som hämtar alla de svar en användare lämnat i en underkategori 
+        [HttpGet("subcategory/{subCategoryId:int}/answers")]
+        public async Task<ActionResult<IEnumerable<SubmitAnswerRequestDto>>> GetAnswersByUserAndSubCategory(
+            int subCategoryId)
+        {
+            var userName = User.Identity?.Name ?? null;
+            var answers = await _progressService.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
+            if (answers == null) return BadRequest(string.Empty);
+            return Ok(answers);
         }
 
         // GET api/progress/subcategory/{subCategoryId}/completed
@@ -37,11 +45,10 @@ namespace Cyberquiz.API.Controllers
         public async Task<ActionResult<bool>> isSubCategoryCompleted(int subCategoryId)
         {
             var userName = User.Identity?.Name ?? null;
-            if (userName == null) return BadRequest("Hittade ingen inloggad användare");
-
+            if (userName == null) return BadRequest("Användaren kunde inte hittas.");
             var completed = await _progressService.IsSubCategoryCompletedAsync(userName, subCategoryId);
             return Ok(completed);
         }
-
+        
     }
 }

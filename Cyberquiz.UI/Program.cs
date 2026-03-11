@@ -44,11 +44,19 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-// HTTP-klient för anrop till API (quiz, frågor, progress)
+// ✅ FIX 3: HTTP-klient MED cookie support för API-anrop
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7237";
 builder.Services.AddHttpClient<ApiService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    // ✅ KRITISKT: Skicka authentication cookies till API
+    UseCookies = true,
+    UseDefaultCredentials = true,
+    // Tillåt cookies att skickas cross-domain
+    CookieContainer = new System.Net.CookieContainer()
 });
 
 var app = builder.Build();
@@ -77,6 +85,7 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+// ✅ FIX 4: Rätt ordning är viktigt!
 app.UseAuthentication();
 app.UseAuthorization();
 

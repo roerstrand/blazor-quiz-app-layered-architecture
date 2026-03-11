@@ -15,13 +15,13 @@ namespace Cyberquiz.DAL.Repositories
         }
 
         // Hämtar en enskild fråga med alla svarsalternativ
-        public async Task<QuestionModel?> GetQuestionByIdAsync(int id) // Döpa om till GetQuestionByIdAsync
+        public async Task<QuestionModel?> GetQuestionByIdAsync(int questionId) // Döpa om till questionId
         {
             return await _context.Questions
                 .AsNoTracking()
                 .Include(q => q.QuestionAnswerOptions)
                     .ThenInclude(qao => qao.AnswerOption)
-                .FirstOrDefaultAsync(q => q.Id == id);
+                .FirstOrDefaultAsync(q => q.Id == questionId);
         }
 
         // Hämtar alla frågor kopplade till en subkategori — används bl.a. för 80%-beräkning i BLL
