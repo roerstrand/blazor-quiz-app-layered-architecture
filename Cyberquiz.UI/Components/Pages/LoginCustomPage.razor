@@ -7,7 +7,7 @@
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
-@inject ILogger<LoginPage> Logger
+@inject ILogger<LoginCustomPage> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @rendermode InteractiveServer
@@ -44,10 +44,10 @@
                 <label for="username" class="form-label">
                     <i class="bi bi-person-fill me-2"></i>Användarnamn
                 </label>
-                <InputText @bind-Value="Input.UserName" 
-                           id="username" 
-                           class="form-control form-control-lg" 
-                           autocomplete="username" 
+                <InputText @bind-Value="Input.UserName"
+                           id="username"
+                           class="form-control form-control-lg"
+                           autocomplete="username"
                            placeholder="Ange ditt användarnamn" />
                 <ValidationMessage For="() => Input.UserName" class="text-danger" />
             </div>
@@ -57,11 +57,11 @@
                 <label for="password" class="form-label">
                     <i class="bi bi-lock-fill me-2"></i>Lösenord
                 </label>
-                <InputText type="password" 
-                           @bind-Value="Input.Password" 
-                           id="password" 
-                           class="form-control form-control-lg" 
-                           autocomplete="current-password" 
+                <InputText type="password"
+                           @bind-Value="Input.Password"
+                           id="password"
+                           class="form-control form-control-lg"
+                           autocomplete="current-password"
                            placeholder="Ange ditt lösenord" />
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
