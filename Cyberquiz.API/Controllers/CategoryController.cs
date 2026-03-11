@@ -1,7 +1,7 @@
 ﻿
 using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
-using Microsoft.AspNetCore.Authorization; // Uttonad - Används inte?
+using Microsoft.AspNetCore.Authorization; 
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cyberquiz.API.Controllers
