@@ -1,5 +1,5 @@
 ﻿using Cyberquiz.Shared.DTOs;
-
+using System.Net;
 
 namespace Cyberquiz.UI.Services
 {
@@ -17,8 +17,8 @@ namespace Cyberquiz.UI.Services
             => await _http.GetFromJsonAsync<List<CategoryDto>>("api/categories") ?? new();
 
         // GET api/categories/{categoryId}/subcategories
-        public async Task<List<SubCategoryDto>> GetSubCategoriesByCategoryIdAsync(int categoryId)
-            => await _http.GetFromJsonAsync<List<SubCategoryDto>>($"api/categories/{categoryId}/subcategories") ?? new();
+            public async Task<List<SubCategoryDto>> GetSubCategoriesAsync()
+            => await _http.GetFromJsonAsync<List<SubCategoryDto>>("api/categories/subcategories") ?? new();
 
         // GET api/quiz/subcategory/{subCategoryId}/next
         public async Task<QuestionDto?> GetNextQuestionAsync(int subCategoryId)
@@ -37,10 +37,30 @@ namespace Cyberquiz.UI.Services
         // POST api/quiz/answer
         public async Task<SubmitResponseDto?> SubmitAnswerWithFeedbackAsync(SubmitAnswerRequestDto request)
         {
-            var response = await _http.PostAsJsonAsync("api/quiz/answer", request);
-            if (!response.IsSuccessStatusCode) return null;
+            try
+            {
+                Console.WriteLine($"🔵 Submitting answer: QuestionId={request.QuestionId}, AnswerOptionId={request.AnswerOptionId}");
+                
+                var response = await _http.PostAsJsonAsync("api/quiz/answer", request);
+                
+                Console.WriteLine($"🔵 Response status: {response.StatusCode}");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"🔴 API Error: {response.StatusCode} - {errorContent}");
+                    return null;
+                }
 
-            return await response.Content.ReadFromJsonAsync<SubmitResponseDto>();
+                var result = await response.Content.ReadFromJsonAsync<SubmitResponseDto>();
+                Console.WriteLine($"🟢 Success! IsCorrect={result?.IsCorrect}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"🔴 Exception: {ex.Message}");
+                return null;
+            }
         }
 
         // GET api/progress/profile

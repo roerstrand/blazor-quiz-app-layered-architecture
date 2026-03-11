@@ -11,8 +11,11 @@
 @attribute [Authorize]
 
 <h3>Quiz</h3>
-
-@if (_loading)
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <pre style="color:red; white-space:pre-wrap;">@_error</pre>
+}
+else if (_loading)
 {
     <p>Laddar...</p>
 }
@@ -157,6 +160,7 @@ else
     private SubmitResponseDto? result;
     private bool _loading;
     private UserProgressDto? _quizResult;
+    private string? _error;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -171,7 +175,7 @@ else
 
         if (question == null) //kanske inte behövs
         {
-            var progress = await ApiService.GetUserProgressAsync(SubCategoryId);
+            var progress = await ApiService.GetUserProgressAsync();
             _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
         }
 
@@ -184,19 +188,30 @@ else
 
     private async Task SubmitAnswer()
     {
-        if (question is null || !selectedAnswerId.HasValue) return;
-
-        var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
+        try
         {
-            SubCategoryId = SubCategoryId,
-            QuestionId = question.Id,
-            AnswerOptionId = selectedAnswerId.Value
-        });
+            if (question is null || !selectedAnswerId.HasValue) return;
 
-        if (res is null) return;
+            var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
+            {
+                SubCategoryId = SubCategoryId,
+                QuestionId = question.Id,
+                AnswerOptionId = selectedAnswerId.Value
+            });
 
-        result = res;
-        answered = true;
+            if (res is null)
+            {
+                _error = "API returnerade null.";
+                return;
+            }
+
+            result = res;
+            answered = true;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.ToString();
+        }
     }
 
     private async Task NextQuestion()

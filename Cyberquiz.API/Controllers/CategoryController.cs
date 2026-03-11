@@ -29,12 +29,12 @@ namespace Cyberquiz.API.Controllers
         }
         
 
-        // GET api/categories/{categoryId}/subcategories
-        [HttpGet("{categoryId:int}/subcategories")]
-        public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategories (int categoryId)
+        // GET api/categories/subcategories
+        [HttpGet("subcategories")]  // ✅ Ingen categoryId
+        public async Task<ActionResult<List<SubCategoryDto>>> GetAllSubCategories()
         {
             var userName = User.Identity?.Name ?? "user";
-            var data = await _categoryService.GetSubCategoryByIdAsync(userName, categoryId);
+            var data = await _categoryService.GetAllSubCategoriesAsync();
             return Ok(data);
         }
         

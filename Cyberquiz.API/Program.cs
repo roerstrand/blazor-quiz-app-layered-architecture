@@ -27,13 +27,18 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// ✅ FIX: CORS med AllowCredentials
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:7108")
+        policy.WithOrigins(
+                "https://localhost:7108",  // UI HTTPS
+                "http://localhost:5108"    // UI HTTP (backup)
+            )
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials(); // ✅ KRITISKT: Tillåt cookies!
     });
 });
 
@@ -42,16 +47,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
-//Komentera bort för swagger
-//Migrera och seed quiz-databasen vid uppstart
+// Migrera och seed quiz-databasen vid uppstart
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     if (app.Environment.IsDevelopment())
-
-        // TA BORT EnsureDeleteAsync EFTER TEST/INNAN PRODUCTION, ANNARS KOMMER ALLA ANVÄNDARES PROGRESS OCH SVAR ATT RADERAS VID VARJE START
+    {
+        // ⚠️ TA BORT EFTER TEST - Raderar allt vid varje start!
         await db.Database.EnsureDeletedAsync();
+    }
     await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(db);
 }
@@ -64,7 +68,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ✅ CORS måste vara FÖRE MapControllers
 app.UseCors();
+
 app.MapControllers();
 
 app.Run();
