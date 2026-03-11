@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Cyberquiz.UI.Components.Account.Pages
 @inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
 <div style="text-align:center; margin-top:100px;">
@@ -23,6 +24,17 @@
 </div>
 
 @code {
+    //Om användaren redan är inloggad, skicka dem direkt till kategorisidan
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            Nav.NavigateTo("/categories");
+        }
+    }
 
     void GoToLogin()
     {
