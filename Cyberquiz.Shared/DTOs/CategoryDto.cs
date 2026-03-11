@@ -12,6 +12,7 @@ namespace Cyberquiz.Shared.DTOs
 
         public int CompletedSubCategories { get; set; } //Visar hur många SubCategoryn som är avklarade i Categoryn
         public int TotalSubCategories { get; set; } //Visar hur många SubCategoryn det finns i Categoryn
+        public int QuestionCount { get; set; } //Visar totalt antal frågor i Categoryn
         public List<SubCategoryDto> SubCategories { get; set; } = new(); //Visar en lista av SubCategoryn i Categoryn
 
     }

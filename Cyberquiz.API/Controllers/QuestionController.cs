@@ -22,7 +22,7 @@ namespace Cyberquiz.API.Controllers
         public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int questionId)
         {
             var userName = User.Identity?.Name ?? null;
-            var result = await _questionService.GetQuestionByIdAsync(questionId, userName);  // Visar bara om ngn är inloggad
+            var result = await _questionService.GetQuestionByIdAsync(questionId);  // Visar bara om ngn är inloggad
             if (result == null) return NotFound();
             return Ok(result);
         }
@@ -48,6 +48,5 @@ namespace Cyberquiz.API.Controllers
         }
         
 
-        
     }
 }

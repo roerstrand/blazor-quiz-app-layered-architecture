@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cyberquiz.UI.Migrations.AuthDb
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260310204947_AddCreatedAtToUser")]
-    partial class AddCreatedAtToUser
+    [Migration("20260311162103_UpdateToIdentityV3")]
+    partial class UpdateToIdentityV3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -8,7 +8,7 @@ namespace Cyberquiz.API.Controllers
 {
     [ApiController]
     [Route("api/categories")]
-    
+
     public class CategoryController : ControllerBase
     {
 
@@ -20,33 +20,39 @@ namespace Cyberquiz.API.Controllers
         }
 
         // GET api/categories/
-        [HttpGet] 
+        [HttpGet]
         public async Task<ActionResult<List<CategoryDto>>> GetCategories()
         {
             var userName = User.Identity?.Name ?? null;
-            var data = await _categoryService.GetAllCategoriesAsync(userName); // Visar bara om ngn är inloggad
+            var data = await _categoryService.GetAllCategoriesAsync(); // Visar bara om ngn är inloggad
             if (data == null) return NotFound("Kategorier kunde inte hämtas");
             return Ok(data);
         }
 
         // GET api/categories/{categoryId}/subcategories
-        //[HttpGet("{categoryId:int}/subcategories")]
-        //public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategories(int categoryId)
-        //{
-        //    var userName = User.Identity?.Name ?? null;
-        //    var data = await _categoryService.GetSubCategoryByIdAsync(userName, categoryId); // Visar bara om ngn är inloggad
-        //    if (data == null) return NotFound("Underkategorier kunde inte hämtas.");
+        [HttpGet("{categoryId:int}/subcategories")]
+        public async Task<ActionResult<List<SubCategoryDto>>> GetSubCategories(int categoryId)
+        {
+            var userName = User.Identity?.Name ?? null;
 
-        //}
+            if (userName == null) return NotFound();
+
+            var data = await _categoryService.GetSubCategoryByIdAsync(userName,
+                categoryId); // Visar bara om ngn är inloggad
+            if (data == null) return NotFound("Underkategorier kunde inte hämtas.");
+            return Ok(data);
+        }
+
         // GET api/categories/subcategories
-        [HttpGet("subcategories")]  // ✅ Ingen categoryId
+        [HttpGet("subcategories")] // ✅ Ingen categoryId
         public async Task<ActionResult<List<SubCategoryDto>>> GetAllSubCategories()
         {
             var userName = User.Identity?.Name ?? null;
             var data = await _categoryService.GetAllSubCategoriesAsync();
             return Ok(data);
         }
-        
+
+
 
     }
 }
