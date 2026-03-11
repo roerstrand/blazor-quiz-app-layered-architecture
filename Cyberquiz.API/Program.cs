@@ -64,11 +64,11 @@ context.Response.ContentType = "application/json";
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (app.Environment.IsDevelopment())
-    {
-        // ⚠️ TA BORT EFTER TEST - Raderar allt vid varje start!
-        await db.Database.EnsureDeletedAsync();
-    }
+    //if (app.Environment.IsDevelopment())
+    //{
+    //    // ⚠️ TA BORT EFTER TEST - Raderar allt vid varje start!
+    //    await db.Database.EnsureDeletedAsync();
+    //}
     await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(db);
 }

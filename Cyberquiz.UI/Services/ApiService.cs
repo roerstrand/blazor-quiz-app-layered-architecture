@@ -21,9 +21,9 @@ namespace Cyberquiz.UI.Services
         => await _http.GetFromJsonAsync<List<SubCategoryDto>>("api/categories/subcategories") ?? new();
 
         // GET api/quiz/subcategory/{subCategoryId}/next
-        public async Task<QuestionDto?> GetNextQuestionAsync(int subCategoryId)
+        public async Task<QuestionDto?> GetNextQuestionAsync(int subCategoryId, string? userName)
         {
-            var res = await _http.GetAsync($"api/quiz/subcategory/{subCategoryId}/next");
+            var res = await _http.GetAsync($"api/quiz/subcategory/{subCategoryId}/next?userName={userName}");
 
             if (res.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null; // inga fler frågor
@@ -64,7 +64,7 @@ namespace Cyberquiz.UI.Services
         }
 
         // GET api/progress/profile
-        public async Task<List<UserProgressDto>> GetUserProgressAsync()
-            => await _http.GetFromJsonAsync<List<UserProgressDto>>("api/progress/profile") ?? new();
+        public async Task<List<UserProgressDto>> GetUserProgressAsync(string? userName)
+            => await _http.GetFromJsonAsync<List<UserProgressDto>>($"api/progress/profile?userName={userName}") ?? new();
     }
 }

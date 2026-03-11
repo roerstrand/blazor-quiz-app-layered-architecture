@@ -63,23 +63,14 @@ namespace Cyberquiz.BLL.Services
             }
             // (Annars) Kolla om användaren valt rätta svaret till den frågan
             var correctAnswerOption = question.QuestionAnswerOptions?
-                .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
+                .FirstOrDefault(qao => qao.IsCorrect);
             if (correctAnswerOption == null)
             {
                 throw new Exception("Rätt svar kunde inte hittas.");
             }
-            // Annars hämta svarets id
-            bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;
-            // Spara användarens svar enligt modell
-            var userAnswer = new UserAnswerModel
-            {
-                UserName = userName,
-                QuestionId = request.QuestionId,
-                AnswerOptionId = request.AnswerOptionId,
-                IsCorrect = isCorrect,
-                AnsweredAt = DateTime.UtcNow,
-            };
-            // ...och uppdatera framsteg
+            bool isCorrect = request.AnswerOptionId == correctAnswerOption.AnswerOptionId;
+
+            request.IsCorrect = isCorrect;
 
             await _progressService.SaveUserAnswerAsync(request, userName);
             // ... samt returnera resultatet till användaren

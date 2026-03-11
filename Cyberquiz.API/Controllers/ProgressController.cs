@@ -21,9 +21,8 @@ namespace Cyberquiz.API.Controllers
 
         [HttpGet("profile")]
 
-        public async Task<ActionResult<List<UserProgressDto>>> GetProgress()
+        public async Task<ActionResult<List<UserProgressDto>>> GetProgress([FromQuery] string? userName)
         {
-            var userName = User.Identity?.Name ?? null;
             var data = await _progressService.GetAllByUserAsync(userName);
             if (data == null) return BadRequest(string.Empty);
             return Ok(data);
@@ -32,9 +31,8 @@ namespace Cyberquiz.API.Controllers
         // GET Endpoint som hämtar alla de svar en användare lämnat i en underkategori 
         [HttpGet("subcategory/{subCategoryId:int}/answers")]
         public async Task<ActionResult<IEnumerable<SubmitAnswerRequestDto>>> GetAnswersByUserAndSubCategory(
-            int subCategoryId)
+            int subCategoryId, [FromQuery] string? userName)
         {
-            var userName = User.Identity?.Name ?? null;
             if (userName == null) return NotFound();
 
             var answers = await _progressService.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
@@ -44,9 +42,8 @@ namespace Cyberquiz.API.Controllers
 
         // GET api/progress/subcategory/{subCategoryId}/completed
         [HttpGet("subcategory/{subCategoryId:int}/completed")]
-        public async Task<ActionResult<bool>> isSubCategoryCompleted(int subCategoryId)
+        public async Task<ActionResult<bool>> isSubCategoryCompleted(int subCategoryId, [FromQuery] string? userName)
         {
-            var userName = User.Identity?.Name ?? null;
             if (userName == null) return BadRequest("Användaren kunde inte hittas.");
             var completed = await _progressService.IsSubCategoryCompletedAsync(userName, subCategoryId);
             return Ok(completed);
