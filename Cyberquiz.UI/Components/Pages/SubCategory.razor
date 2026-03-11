@@ -56,7 +56,8 @@ else
 }
 
 @code {
-    [Parameter] public int CategoryId { get; set; }
+    [Parameter] 
+    public int CategoryId { get; set; }
     private List<SubCategoryDto>? _subs;
 
     protected override async Task OnParametersSetAsync()

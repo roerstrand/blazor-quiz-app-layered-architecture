@@ -20,9 +20,9 @@ namespace Cyberquiz.API.Controllers
         }
 
         [HttpGet("{id:int}")] // Varje fråga kommer med fyra svaralternativ pga repots metod
-        public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int questionId) 
+        public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int questionId)
         {
-            var userName = User.Identity?.Name ?? "user"; // Lagt till för att reglera åtkomst
+            var userName = User.Identity!.Name;
             var result = await _questionService.GetQuestionByIdAsync(questionId, userName);  // Visar bara om ngn är inloggad
             if (result == null) return NotFound();
             return Ok(result);
@@ -31,7 +31,7 @@ namespace Cyberquiz.API.Controllers
         [HttpGet("subcategory/{subCategoryId:int}/next")]
         public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId)
         {
-            var userName = User.Identity?.Name ?? "user";
+            var userName = User.Identity!.Name;
             var q = await _questionService.GetNextQuestionInSubCategoryAsync(subCategoryId, userName); // Visar bara om ngn är inloggad
             if (q is null) return NotFound();
             return Ok(q);
@@ -43,7 +43,7 @@ namespace Cyberquiz.API.Controllers
             ([FromBody] SubmitAnswerRequestDto request)
         {
             if (request is null) return BadRequest();
-            var userName = User.Identity?.Name ?? "user";
+            var userName = User.Identity!.Name;
             var result = await _questionService.SaveUserAnswerAsync(request, userName);
             return Ok(result);
         }
