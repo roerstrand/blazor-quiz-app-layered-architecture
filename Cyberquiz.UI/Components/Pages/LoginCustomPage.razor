@@ -10,7 +10,6 @@
 @inject ILogger<LoginCustomPage> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@rendermode InteractiveServer
 
 <PageTitle>Logga in - Cyberquiz</PageTitle>
 
@@ -35,7 +34,7 @@
         }
 
         <!-- Login Form -->
-        <EditForm EditContext="editContext" method="post" OnSubmit="LoginUser" FormName="login">
+        <EditForm EditContext="editContext" method="post" OnValidSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger mb-3" role="alert" />
 
@@ -174,64 +173,45 @@
     private EditContext editContext = default!;
     private bool isLoggingIn = false;
 
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    protected override Task OnInitializedAsync()
     {
         Input ??= new();
         editContext = new EditContext(Input);
 
-        if (HttpMethods.IsGet(HttpContext.Request.Method))
-        {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-        }
+        return Task.CompletedTask;
     }
 
     public async Task LoginUser()
     {
-        if (!editContext.Validate())
-        {
-            return;
-        }
 
         isLoggingIn = true;
         errorMessage = null;
 
         try
         {
-            var result = await SignInManager.PasswordSignInAsync(
-                Input.UserName,
-                Input.Password,
-                Input.RememberMe,
-                lockoutOnFailure: false);
+            var user = await UserManager.FindByNameAsync(Input.UserName);
 
-            if (result.Succeeded)
+            if (user != null && await UserManager.CheckPasswordAsync(user, Input.Password))
             {
-                Logger.LogInformation("User {UserName} logged in.", Input.UserName);
-                RedirectManager.RedirectTo(ReturnUrl ?? "/categories");
-            }
-            else if (result.RequiresTwoFactor)
-            {
-                RedirectManager.RedirectTo(
-                    "Account/LoginWith2fa",
-                    new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-            }
-            else if (result.IsLockedOut)
-            {
-                Logger.LogWarning("User {UserName} account locked out.", Input.UserName);
-                RedirectManager.RedirectTo("Account/Lockout");
+                await HttpContext!.SignInAsync(
+                    IdentityConstants.ApplicationScheme,
+                    await SignInManager.CreateUserPrincipalAsync(user));
+                NavigationManager.NavigateTo(ReturnUrl ?? "/categories", true);
             }
             else
             {
                 errorMessage = "Felaktigt användarnamn eller lösenord.";
             }
+
         }
         catch (Exception ex)
         {

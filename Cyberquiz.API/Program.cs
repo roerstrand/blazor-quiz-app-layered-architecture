@@ -27,18 +27,16 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// ✅ FIX: CORS med AllowCredentials
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowUI", policy =>
     {
         policy.WithOrigins(
-                "https://localhost:7108",  // UI HTTPS
-                "http://localhost:5108"    // UI HTTP (backup)
+                "https://localhost:7107",
+                "http://localhost:5247"
             )
-            .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials(); // ✅ KRITISKT: Tillåt cookies!
+            .AllowAnyMethod();
     });
 });
 

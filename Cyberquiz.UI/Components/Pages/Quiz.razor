@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
 @inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
 @rendermode InteractiveServer
 
 @attribute [Authorize]
@@ -192,11 +193,15 @@ else
         {
             if (question is null || !selectedAnswerId.HasValue) return;
 
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userName = authState.User.Identity?.Name;
+
             var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
             {
                 SubCategoryId = SubCategoryId,
                 QuestionId = question.Id,
-                AnswerOptionId = selectedAnswerId.Value
+                AnswerOptionId = selectedAnswerId.Value,
+                UserName = userName
             });
 
             if (res is null)

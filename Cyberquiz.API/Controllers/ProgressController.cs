@@ -35,6 +35,8 @@ namespace Cyberquiz.API.Controllers
             int subCategoryId)
         {
             var userName = User.Identity?.Name ?? null;
+            if (userName == null) return NotFound();
+
             var answers = await _progressService.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
             if (answers == null) return BadRequest(string.Empty);
             return Ok(answers);
