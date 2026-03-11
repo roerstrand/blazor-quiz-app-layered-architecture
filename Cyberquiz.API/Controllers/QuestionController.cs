@@ -36,17 +36,39 @@ namespace Cyberquiz.API.Controllers
             return Ok(q);
         }
 
-        // POST api/questions/answer
-        [HttpPost("answer")]
-        public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer 
-            ([FromBody] SubmitAnswerRequestDto request)
+        //// POST api/questions/answer
+        //[HttpPost("answer")]
+        //public async Task<ActionResult<SubmitResponseDto>> SubmitAnswer 
+        //    ([FromBody] SubmitAnswerRequestDto request)
+        //{
+        //    if (request is null) return BadRequest();
+        //    var userName = User.Identity?.Name ?? null;
+        //    var result = await _questionService.SaveUserAnswerAsync(request, userName);
+        //    return Ok(result);
+        //}
+
+        // POST api/quiz/validate - Validerar svar
+        [HttpPost("validate")]
+        public async Task<ActionResult<AnswerValidationDto>> ValidateAnswer(
+            [FromBody] SubmitAnswerRequestDto request)
         {
             if (request is null) return BadRequest();
-            var userName = User.Identity?.Name ?? null;
-            var result = await _questionService.SaveUserAnswerAsync(request, userName);
-            return Ok(result);
-        }
-        
 
-    }
+            try
+            {
+                var (isCorrect, correctAnswerOptionId) = await _questionService.ValidateAnswerAsync(
+                    request.QuestionId,
+                    request.AnswerOptionId);
+
+                return Ok(new AnswerValidationDto
+                {
+                    IsCorrect = isCorrect,
+                    CorrectAnswerOptionId = correctAnswerOptionId
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 }
