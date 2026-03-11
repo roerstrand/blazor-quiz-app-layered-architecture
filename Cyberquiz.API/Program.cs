@@ -32,14 +32,14 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.AllowAnyOrigin();
             //WithOrigins(
             //    "https://localhost:7108",  // UI HTTPS
             //    "http://localhost:5108"    // UI HTTP (backup)
             //)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials(); // ✅ KRITISKT: Tillåt cookies!
+            //.AllowAnyMethod()
+            //.AllowAnyHeader()
+            //.AllowCredentials(); // ✅ KRITISKT: Tillåt cookies!
     });
 });
 
