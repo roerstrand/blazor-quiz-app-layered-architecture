@@ -80,7 +80,8 @@ namespace Cyberquiz.BLL.Services
                 AnsweredAt = DateTime.UtcNow,
             };
             // ...och uppdatera framsteg
-            await _progressService.SaveUserAnswerAsync(userAnswer);
+
+            await _progressService.SaveUserAnswerAsync(request, userName);
             // ... samt returnera resultatet till användaren
             return new SubmitResponseDto
             {
