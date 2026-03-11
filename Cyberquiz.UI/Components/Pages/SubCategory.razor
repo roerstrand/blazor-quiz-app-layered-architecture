@@ -8,7 +8,7 @@
 
 @attribute [Authorize]
 
-<h3>Subkategorier för kategori: @_categoryName</h3>
+<h3>Subkategorier för @_categoryName</h3>
 
 @if (!string.IsNullOrWhiteSpace(_error))
 {
@@ -28,15 +28,6 @@ else if (_filteredSubs.Count == 0)
 }
 else
 {
-    <!-- DEBUG INFO -->
-    <div class="alert alert-info mb-3">
-        <strong>Debug:</strong><br/>
-        CategoryId från URL: @CategoryId<br/>
-        Kategorinamn: @_categoryName<br/>
-        Totalt subkategorier från API: @(_allSubs?.Count ?? 0)<br/>
-        Filtrerade subkategorier: @_filteredSubs.Count
-    </div>
-
     @foreach (var s in _filteredSubs.OrderBy(x => x.Order))
     {
         <div class="card p-3 mb-3">
@@ -75,34 +66,22 @@ else
 @code {
     [Parameter] public int CategoryId { get; set; }
     
-    private List<SubCategoryDto>? _allSubs;  // Alla från API
-    private List<CategoryDto>? _allCategories;  // För att hitta kategorinamn
+    private List<SubCategoryDto>? _allSubs;
+    private List<CategoryDto>? _allCategories;
     private string? _categoryName;
     private string? _error;
     private bool _isLoading = true;
 
-    // ✅ Filtrerad lista baserat på CategoryName
     private List<SubCategoryDto> _filteredSubs
     {
         get
         {
             if (_allSubs == null || string.IsNullOrEmpty(_categoryName))
-            {
-                Console.WriteLine("⚠️ Cannot filter: _allSubs or _categoryName is null");
                 return new List<SubCategoryDto>();
-            }
 
-            var filtered = _allSubs
-                .Where(s => s.CategoryName == _categoryName)
+            return _allSubs
+                .Where(s => s.CategoryName.Equals(_categoryName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
-
-            Console.WriteLine($"🔍 Filtering: CategoryName='{_categoryName}' → {filtered.Count} results");
-            
-            // Debug: Visa alla CategoryNames
-            var uniqueCategories = _allSubs.Select(s => s.CategoryName).Distinct();
-            Console.WriteLine($"📋 Available CategoryNames: {string.Join(", ", uniqueCategories)}");
-
-            return filtered;
         }
     }
 
@@ -113,41 +92,20 @@ else
 
         try
         {
-            Console.WriteLine($"🔵 Loading data for CategoryId: {CategoryId}");
-            
-            // ✅ 1. Hämta alla kategorier först
             _allCategories = await ApiService.GetCategoriesAsync();
-            Console.WriteLine($"   Loaded {_allCategories.Count} categories");
             
-            // ✅ 2. Hitta rätt kategorinamn
             var category = _allCategories.FirstOrDefault(c => c.Id == CategoryId);
             if (category == null)
             {
                 _error = $"Kategori med Id {CategoryId} hittades inte.";
-                Console.WriteLine($"🔴 Category not found: {CategoryId}");
                 return;
             }
             
             _categoryName = category.Name;
-            Console.WriteLine($"   Found category: '{_categoryName}'");
-            
-            // ✅ 3. Hämta alla subkategorier
             _allSubs = await ApiService.GetSubCategoriesAsync();
-            Console.WriteLine($"   Loaded {_allSubs.Count} total subcategories");
-            
-            // ✅ 4. Visa debug info om filtrering
-            Console.WriteLine($"🟢 Filtering {_allSubs.Count} subs by CategoryName='{_categoryName}'");
-            Console.WriteLine($"   Result: {_filteredSubs.Count} subcategories");
-            
-            // Debug: Visa varje subkategori och dess CategoryName
-            foreach (var sub in _allSubs.Take(5))  // Visa bara första 5
-            {
-                Console.WriteLine($"   - SubCat: '{sub.Name}' belongs to '{sub.CategoryName}'");
-            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"🔴 Error: {ex.Message}");
             _error = ex.ToString();
         }
         finally
