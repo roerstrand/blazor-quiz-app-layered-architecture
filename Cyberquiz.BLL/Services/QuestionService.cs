@@ -39,7 +39,7 @@ namespace Cyberquiz.BLL.Services
         //}
 
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
-        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId)
+        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName)
         {
             // Hämta alla frågor inom underkategorin
             var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
@@ -52,7 +52,7 @@ namespace Cyberquiz.BLL.Services
         } 
 
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo?
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
@@ -64,9 +64,9 @@ namespace Cyberquiz.BLL.Services
             // (Annars) Kolla om användaren valt rätta svaret till den frågan
             var correctAnswerOption = question.QuestionAnswerOptions?
                 .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
-            if (correctAnswerOption == null) 
-            { 
-                throw new Exception("Rätt svar kunde inte hittas."); 
+            if (correctAnswerOption == null)
+            {
+                throw new Exception("Rätt svar kunde inte hittas.");
             }
             // Annars hämta svarets id
             bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;

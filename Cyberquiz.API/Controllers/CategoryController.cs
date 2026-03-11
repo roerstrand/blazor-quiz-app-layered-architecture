@@ -37,8 +37,7 @@ namespace Cyberquiz.API.Controllers
 
             if (userName == null) return NotFound();
 
-            var data = await _categoryService.GetSubCategoryByIdAsync(userName,
-                categoryId); // Visar bara om ngn är inloggad
+            var data = await _categoryService.GetSubCategoryByIdAsync(categoryId); // Visar bara om ngn är inloggad
             if (data == null) return NotFound("Underkategorier kunde inte hämtas.");
             return Ok(data);
         }

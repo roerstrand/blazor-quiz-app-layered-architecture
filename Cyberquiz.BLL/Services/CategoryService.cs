@@ -39,10 +39,10 @@ namespace Cyberquiz.BLL.Services
             return subCategories.Select(scs => MapToSubCategoryDto(scs));
         }
 
-        public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(string username, int id)
+        public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(int subCategoryId)
         {
             // Anropar repo med underkategori-id som argument
-            var subCategory = await _categoryRepo.GetSubCategoryByIdAsync(id);
+            var subCategory = await _categoryRepo.GetSubCategoryByIdAsync(subCategoryId);
             // Om subCategory inte finns, returnera null, annars mappa till SubCategoryDto
             return subCategory == null ? null : MapToSubCategoryDto(subCategory);
         }
