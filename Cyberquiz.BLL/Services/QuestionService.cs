@@ -52,7 +52,7 @@ namespace Cyberquiz.BLL.Services
         }
 
         // Metod för ENDPOINT "answer" som tar emot och validerar användarens svar
-        public async Task<(bool isCorrect, int CorrectAnswerOptionId)> ValidateAnswerAsync(int questionId, int answerOptionId) 
+        public async Task<(bool IsCorrect, int CorrectAnswerOptionId)> ValidateAnswerAsync(int questionId, int answerOptionId) 
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(questionId);

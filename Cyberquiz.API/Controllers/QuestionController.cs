@@ -71,4 +71,5 @@ namespace Cyberquiz.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+    }
 }
