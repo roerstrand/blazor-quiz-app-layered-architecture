@@ -22,24 +22,24 @@ namespace Cyberquiz.BLL.Services
         }
 
         // Metod för ENDPOINT "questions/{id:int}" som hämtar en enskild fråga med svarsalternativ
-        public async Task<QuestionDto?> GetQuestionByIdAsync(int questionId, string userName)
+        public async Task<QuestionDto?> GetQuestionByIdAsync(int questionId)
         {
             // Anropar repo med frågans id som argument (repot packar varje fråga med fyra svaralternativ)
-            var question = await _questionRepo.GetQuestionByIdAsync(questionId, userName);
+            var question = await _questionRepo.GetQuestionByIdAsync(questionId);
             // Returnerar DTO för frågan eller null om frågan inte hittas
             return question == null ? null : MapToQuestionDto(question);
         }
 
         // METOD SOM INTE ANVÄNDS I NUVARANDE VERSION
         //// Metod för ENDPOINT "subcategory/{subCategoryId:int}/questions" som hämtar alla frågor inom en underkategori
-        //public async Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId, string userName)
+        //public async Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId)
         //{
-        //    var questions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId, userName);
+        //    var questions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
         //    return questions.Select(qs => MapToQuestionDto(qs));
         //}
 
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
-        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName) // Dela upp metoden på QuestionService och ProgressService?
+        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId)
         {
             // Hämta alla frågor inom underkategorin
             var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
@@ -49,19 +49,10 @@ namespace Cyberquiz.BLL.Services
             var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
             // Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
             return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Om inga svar 
-            //// Hämta användarens framsteg hittills inom underkategorin
-            //var userProgress = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
-            //// Hämta de frågor som användaren redan har svarat på i underkategorin
-            //var answeredQuestionIds = userProgress.Select(up => up.QuestionId).ToHashSet();
-            //// Hitta nästa (= första) frågan som användaren inte har svarat på
-            //var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
-            //// Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
-            //return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Vet programmet vad det ska göra när en underkategori är klar? Slussa tillbaka till Categori-översikt?
-        } // Om null så måste Controllern plocka upp det och meddela användaren
+        } 
 
-        // Flytta till ProgressService? Eller dela upp logiken så att QuestionService bara hämtar frågan och ProgressService hanterar användarens svar och framsteg?
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
-        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request) // Ska detta skickas till SaveUserAnswerAsync i IProgressRepo? 
         {
             // Hämta frågan
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
