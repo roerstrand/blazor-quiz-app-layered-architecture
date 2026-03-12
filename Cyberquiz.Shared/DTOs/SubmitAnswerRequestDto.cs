@@ -10,5 +10,7 @@ namespace Cyberquiz.Shared.DTOs
         public int QuestionId { get; set; }
         public int AnswerOptionId { get; set; }
         public string? UserName { get; set; }
+        public bool IsCorrect { get; set; }
+        public int ProgressId { get; set; }
     }
 }

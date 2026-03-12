@@ -51,35 +51,23 @@ namespace Cyberquiz.BLL.Services
             return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Om inga svar 
         }
 
-        // Metod för ENDPOINT "answer" som tar emot och validerar användarens svar
-        public async Task<(bool IsCorrect, int CorrectAnswerOptionId)> ValidateAnswerAsync(int questionId, int answerOptionId) 
+        // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
+        public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName)
         {
             // Hämta frågan
-            var question = await _questionRepo.GetQuestionByIdAsync(questionId);
+            var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
             // Om frågan inte hittas
             if (question == null) throw new Exception("Frågan kunde inte hittas.");
-            // (Annars) Kolla om användaren valt rätta svaret till den frågan
+            // Hitta rätt svar
             var correctAnswerOption = question.QuestionAnswerOptions?
-                .FirstOrDefault(qao => qao.AnswerOptionId == request.AnswerOptionId);
-            if (correctAnswerOption == null)
-            {
-                throw new Exception("Rätt svar kunde inte hittas.");
-            }
-            // Annars hämta svarets id
-            bool isCorrect = correctAnswerOption.AnswerOptionId == request.AnswerOptionId;
-            // Spara användarens svar enligt modell
-            var userAnswer = new UserAnswerModel
-            {
-                UserName = userName,
-                QuestionId = request.QuestionId,
-                AnswerOptionId = request.AnswerOptionId,
-                IsCorrect = isCorrect,
-                AnsweredAt = DateTime.UtcNow,
-            };
-            // ...och uppdatera framsteg
+                .FirstOrDefault(qao => qao.IsCorrect);
+            if (correctAnswerOption == null) throw new Exception("Rätt svar kunde inte hittas.");
+
+            bool isCorrect = request.AnswerOptionId == correctAnswerOption.AnswerOptionId;
+            request.IsCorrect = isCorrect;
 
             await _progressService.SaveUserAnswerAsync(request, userName);
-            // ... samt returnera resultatet till användaren
+
             return new SubmitResponseDto
             {
                 IsCorrect = isCorrect,

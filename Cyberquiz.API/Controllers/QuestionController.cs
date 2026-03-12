@@ -21,16 +21,14 @@ namespace Cyberquiz.API.Controllers
         [HttpGet("{id:int}")] // Varje fråga kommer med fyra svaralternativ pga repots metod
         public async Task<ActionResult<QuestionDto>> GetQuestionByIdAsync(int questionId)
         {
-            var userName = User.Identity?.Name ?? null;
             var result = await _questionService.GetQuestionByIdAsync(questionId);  // Visar bara om ngn är inloggad
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpGet("subcategory/{subCategoryId:int}/next")]
-        public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId)
+        public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId, [FromQuery] string? userName)
         {
-            var userName = User.Identity?.Name ?? null;
             var q = await _questionService.GetNextQuestionInSubCategoryAsync(subCategoryId, userName); // Visar bara om ngn är inloggad
             if (q is null) return NotFound();
             return Ok(q);
@@ -49,25 +47,6 @@ namespace Cyberquiz.API.Controllers
             var result = await _questionService.SaveUserAnswerAsync(request, userName);
 
             return Ok(result);
-        }
-
-
-            try
-            {
-                var (isCorrect, correctAnswerOptionId) = await _questionService.ValidateAnswerAsync(
-                    request.QuestionId,
-                    request.AnswerOptionId);
-
-                return Ok(new AnswerValidationDto
-                {
-                    IsCorrect = isCorrect,
-                    CorrectAnswerOptionId = correctAnswerOptionId
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
     }
 }

@@ -162,9 +162,12 @@ else
     private bool _loading;
     private UserProgressDto? _quizResult;
     private string? _error;
+    private string? _userName;
 
     protected override async Task OnParametersSetAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _userName = authState.User.Identity?.Name;
         await LoadQuestion();
     }
 
@@ -172,11 +175,11 @@ else
     {
         _loading = true;
 
-        question = await ApiService.GetNextQuestionAsync(SubCategoryId);
+        question = await ApiService.GetNextQuestionAsync(SubCategoryId, _userName);
 
         if (question == null) //kanske inte behövs
         {
-            var progress = await ApiService.GetUserProgressAsync();
+            var progress = await ApiService.GetUserProgressAsync(_userName);
             _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
         }
 
@@ -193,15 +196,12 @@ else
         {
             if (question is null || !selectedAnswerId.HasValue) return;
 
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userName = authState.User.Identity?.Name;
-
             var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
             {
                 SubCategoryId = SubCategoryId,
                 QuestionId = question.Id,
                 AnswerOptionId = selectedAnswerId.Value,
-                UserName = userName
+                UserName = _userName
             });
 
             if (res is null)

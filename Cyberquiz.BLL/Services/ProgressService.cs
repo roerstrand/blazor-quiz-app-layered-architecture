@@ -186,7 +186,8 @@ namespace Cyberquiz.BLL.Services
             return new UserAnswerModel
             {
                 QuestionId = dto.QuestionId,
-                AnswerOptionId = dto.AnswerOptionId
+                AnswerOptionId = dto.AnswerOptionId,
+                IsCorrect = dto.IsCorrect
             };
         }
     }

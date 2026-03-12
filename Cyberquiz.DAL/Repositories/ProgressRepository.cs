@@ -37,6 +37,27 @@ namespace Cyberquiz.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<UserProgressModel?> GetByIdAsync(int id)
+        {
+            return await _context.UserProgress
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task UpdateProgressAsync(UserProgressModel progress)
+        {
+            _context.UserProgress.Update(progress);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<HashSet<int>> GetAnsweredQuestionIdsBySessionAsync(int progressId)
+        {
+            return (await _context.UserAnswers
+                .Where(a => a.UserProgressId == progressId)
+                .Select(a => a.QuestionId)
+                .ToListAsync())
+                .ToHashSet();
+        }
+
         public async Task SaveUserAnswerAsync(UserAnswerModel answer)
         {
             _context.UserAnswers.Add(answer);

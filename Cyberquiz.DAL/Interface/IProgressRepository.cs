@@ -19,6 +19,15 @@ namespace Cyberquiz.DAL.Interface
         // Hämtar alla svar en användare lämnat för en subkategori
         Task<IEnumerable<UserAnswerModel>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
+        // Hämtar ett specifikt progress-record på id
+        Task<UserProgressModel?> GetByIdAsync(int id);
+
+        // Uppdaterar ett befintligt progress-record (score, totalquestions)
+        Task UpdateProgressAsync(UserProgressModel progress);
+
+        // Hämtar besvarade fråge-id:n för en specifik session
+        Task<HashSet<int>> GetAnsweredQuestionIdsBySessionAsync(int progressId);
+
         // Tar bort all data för en användare (GDPR/admin)
         Task DeleteByUserAsync(string userName);
 
