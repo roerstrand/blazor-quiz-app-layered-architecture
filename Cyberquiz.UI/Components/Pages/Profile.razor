@@ -247,7 +247,7 @@
 
         await LoadProgressAsync();
     }
-    private async Task LoadProgressAsync()
+    private async Task LoadProgressAsync() //Hämta progression
     {
         isLoading = true;
         try
@@ -345,7 +345,7 @@
             isSaving = false;
         }
     }
-    private async Task AskAiCoach()
+    private async Task AskAiCoach() //metod för att fråga AI om feedback
     {
         aiLoading = true;
         aiError = null;
