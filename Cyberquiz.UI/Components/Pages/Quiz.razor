@@ -97,7 +97,7 @@ else
             </div>
         }
         <div class="d-flex gap-2 justify-content-center mt-4">
-            <button class="btn btn-primary" @onclick="RestartQuiz">
+            <button class="btn btn-primary" @onclick="async () => await RestartQuiz()">
                 Starta om
             </button>
             <button class="btn btn-secondary" @onclick="GoBack">
@@ -163,11 +163,13 @@ else
     private UserProgressDto? _quizResult;
     private string? _error;
     private string? _userName;
+    private int _progressId;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         _userName = authState.User.Identity?.Name;
+        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId);
         await LoadQuestion();
     }
 
@@ -175,12 +177,12 @@ else
     {
         _loading = true;
 
-        question = await ApiService.GetNextQuestionAsync(SubCategoryId, _userName);
+        question = await ApiService.GetNextQuestionAsync(SubCategoryId, _progressId);
 
-        if (question == null) //kanske inte behövs
+        if (question == null)
         {
             var progress = await ApiService.GetUserProgressAsync(_userName);
-            _quizResult = progress.FirstOrDefault(p => p.SubCategoryId == SubCategoryId);
+            _quizResult = progress.FirstOrDefault(p => p.Id == _progressId);
         }
 
         selectedAnswerId = null;
@@ -201,7 +203,8 @@ else
                 SubCategoryId = SubCategoryId,
                 QuestionId = question.Id,
                 AnswerOptionId = selectedAnswerId.Value,
-                UserName = _userName
+                UserName = _userName,
+                ProgressId = _progressId
             });
 
             if (res is null)
@@ -223,9 +226,10 @@ else
     {
         await LoadQuestion();
     }
-    private void RestartQuiz() // KANSKE INTE ANVÄNDAS
+    private async Task RestartQuiz()
     {
-        Nav.NavigateTo($"/quiz/{SubCategoryId}", forceLoad: true); // Force reload to reset state
+        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId);
+        await LoadQuestion();
     }
 
     private string GetOptionClass(int optionId)

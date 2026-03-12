@@ -7,7 +7,8 @@ namespace Cyberquiz.BLL.Interfaces
     {
         Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId);
         Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName);
-        Task<HashSet<int>> GetAnsweredQuestionIdsAsync(string userName, int subCategoryId);
+        Task<int> StartSessionAsync(string userName, int subCategoryId);
+        Task<HashSet<int>> GetAnsweredQuestionIdsAsync(int progressId);
         Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer, string userName);
         Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
         Task<double> CalculateSuccessRateAsync(string userName, int subCategoryId);

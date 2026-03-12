@@ -27,9 +27,9 @@ namespace Cyberquiz.API.Controllers
         }
 
         [HttpGet("subcategory/{subCategoryId:int}/next")]
-        public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId, [FromQuery] string? userName)
+        public async Task<ActionResult<QuestionDto>> GetNextQuestionAsync(int subCategoryId, [FromQuery] int progressId)
         {
-            var q = await _questionService.GetNextQuestionInSubCategoryAsync(subCategoryId, userName); // Visar bara om ngn är inloggad
+            var q = await _questionService.GetNextQuestionInSubCategoryAsync(subCategoryId, progressId);
             if (q is null) return NotFound();
             return Ok(q);
         }

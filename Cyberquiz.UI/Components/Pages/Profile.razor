@@ -211,7 +211,7 @@
         isLoading = true;
         try
         {
-            categories = await ApiService.GetCategoriesAsync();
+            categories = await ApiService.GetCategoriesAsync(currentUsername);
         }
         catch (Exception e)
         {

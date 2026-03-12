@@ -13,17 +13,25 @@ namespace Cyberquiz.UI.Services
         }
 
         // GET api/categories
-        public async Task<List<CategoryDto>> GetCategoriesAsync()
-            => await _http.GetFromJsonAsync<List<CategoryDto>>("api/categories") ?? new();
+        public async Task<List<CategoryDto>> GetCategoriesAsync(string? userName = null)
+            => await _http.GetFromJsonAsync<List<CategoryDto>>($"api/categories?userName={userName}") ?? new();
 
         // GET api/categories/{categoryId}/subcategories
         public async Task<List<SubCategoryDto>> GetSubCategoriesAsync()
         => await _http.GetFromJsonAsync<List<SubCategoryDto>>("api/categories/subcategories") ?? new();
 
-        // GET api/quiz/subcategory/{subCategoryId}/next
-        public async Task<QuestionDto?> GetNextQuestionAsync(int subCategoryId, string? userName)
+        // POST api/progress/session
+        public async Task<int> StartSessionAsync(string userName, int subCategoryId)
         {
-            var res = await _http.GetAsync($"api/quiz/subcategory/{subCategoryId}/next?userName={userName}");
+            var res = await _http.PostAsync($"api/progress/session?userName={userName}&subCategoryId={subCategoryId}", null);
+            if (!res.IsSuccessStatusCode) return 0;
+            return await res.Content.ReadFromJsonAsync<int>();
+        }
+
+        // GET api/quiz/subcategory/{subCategoryId}/next
+        public async Task<QuestionDto?> GetNextQuestionAsync(int subCategoryId, int progressId)
+        {
+            var res = await _http.GetAsync($"api/quiz/subcategory/{subCategoryId}/next?progressId={progressId}");
 
             if (res.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null; // inga fler frågor

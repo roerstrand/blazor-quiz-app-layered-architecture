@@ -40,6 +40,15 @@ namespace Cyberquiz.API.Controllers
             return Ok(answers);
         }
 
+        // POST api/progress/session — startar ett nytt quiz-försök och returnerar progressId
+        [HttpPost("session")]
+        public async Task<ActionResult<int>> StartSession([FromQuery] string? userName, [FromQuery] int subCategoryId)
+        {
+            if (string.IsNullOrEmpty(userName)) return Unauthorized();
+            var progressId = await _progressService.StartSessionAsync(userName, subCategoryId);
+            return Ok(progressId);
+        }
+
         // GET api/progress/subcategory/{subCategoryId}/completed
         [HttpGet("subcategory/{subCategoryId:int}/completed")]
         public async Task<ActionResult<bool>> isSubCategoryCompleted(int subCategoryId, [FromQuery] string? userName)

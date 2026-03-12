@@ -6,7 +6,7 @@ namespace Cyberquiz.BLL.Interfaces
     {
         Task<QuestionDto?> GetQuestionByIdAsync(int questionId);
         //Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId, string userName); // METOD ANVÄNDS INTE I NUVARANDE VERSION
-        Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName);
+        Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, int progressId);
         Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName);
     }
 }

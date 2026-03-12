@@ -21,10 +21,9 @@ namespace Cyberquiz.API.Controllers
 
         // GET api/categories/
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetCategories()
+        public async Task<ActionResult<List<CategoryDto>>> GetCategories([FromQuery] string? userName)
         {
-            var userName = User.Identity?.Name ?? null;
-            var data = await _categoryService.GetAllCategoriesAsync(); // Visar bara om ngn är inloggad
+            var data = await _categoryService.GetAllCategoriesAsync(userName);
             if (data == null) return NotFound("Kategorier kunde inte hämtas");
             return Ok(data);
         }

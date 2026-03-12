@@ -60,40 +60,43 @@ namespace Cyberquiz.BLL.Services
             return answers.Select(ans => MapToSubmitAnswerRequestDto(ans)); 
         }
 
-        // Metod för att hämta alla frågor som användaren har svarat på inom en underkategori (för att kunna filtrera bort dem när nästa fråga hämtas)
-        public async Task<HashSet<int>> GetAnsweredQuestionIdsAsync(string userName, int subCategoryId)
+        // Startar en ny session (nytt UserProgress-record) och returnerar dess id
+        public async Task<int> StartSessionAsync(string userName, int subCategoryId)
         {
-            // Anropa metod i repo, användarnamn och underkategori-id som argument
-            var userAnswers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
-            // Returnerar en hashset med alla fråge-id:n som användaren har svarat på inom underkategorin, så att det går snabbt att kolla om en fråga redan är besvarad eller inte
-            return userAnswers
-                .Select(a => a.QuestionId)
-                .ToHashSet();
+            var progress = new UserProgressModel
+            {
+                UserName = userName,
+                SubCategoryId = subCategoryId,
+                Score = 0,
+                TotalQuestions = 0,
+                CompletedAt = DateTime.UtcNow
+            };
+            await _progressRepo.SaveProgressAsync(progress);
+            return progress.Id;
         }
 
-        // Metod för att spara användarens svar (för att kunna visa det i användarprofilen och för att beräkna framgångsprocenten)
+        // Hämtar besvarade fråge-id:n för en specifik session
+        public async Task<HashSet<int>> GetAnsweredQuestionIdsAsync(int progressId)
+        {
+            return await _progressRepo.GetAnsweredQuestionIdsBySessionAsync(progressId);
+        }
+
+        // Sparar svar och uppdaterar score för sessionen
         public async Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer, string userName)
         {
-            var progress = await _progressRepo.GetByUserAndSubCategoryAsync(userName, answer.SubCategoryId);
-
-            if (progress == null)
-            {
-                progress = new UserProgressModel
-                {
-                    UserName = userName,
-                    SubCategoryId = answer.SubCategoryId,
-                    Score = 0,
-                    TotalQuestions = 0,
-                    CompletedAt = DateTime.UtcNow
-                };
-                await _progressRepo.SaveProgressAsync(progress);
-            }
+            var progress = await _progressRepo.GetByIdAsync(answer.ProgressId);
+            if (progress == null) throw new Exception("Session hittades inte.");
 
             var answerModel = MapToUserAnswerModel(answer);
             answerModel.UserName = userName;
             answerModel.UserProgressId = progress.Id;
-
+            answerModel.AnsweredAt = DateTime.UtcNow;
             await _progressRepo.SaveUserAnswerAsync(answerModel);
+
+            progress.TotalQuestions++;
+            if (answer.IsCorrect) progress.Score++;
+            progress.CompletedAt = DateTime.UtcNow;
+            await _progressRepo.UpdateProgressAsync(progress);
         }
 
         // Metod för att ta bort alla svar och framsteg för en användare (GDPR/admin)
@@ -134,12 +137,14 @@ namespace Cyberquiz.BLL.Services
             return (correct / total) * 100; // Returnerar beräkning
         }
 
-        // Metod för att avgöra om en underkategori är godkänd baserat på framgångsprocenten
+        // Avgör om en underkategori är godkänd — kollar om NÅGOT försök nådde ≥80%
         public async Task<bool> IsSubCategoryCompletedAsync(string userName, int subCategoryId)
         {
-            // Anropar metod ovan, med användarnamn och underkategori-id som argument
-            double successRate = await CalculateSuccessRateAsync(userName, subCategoryId);
-            return successRate >= 80; // 80% godkänd-gräns (funkar dåligt om vi endast har fyra frågor per kategori - kan få antingen 75% eller 100%)
+            var allProgress = await _progressRepo.GetAllByUserAsync(userName);
+            return allProgress.Any(p =>
+                p.SubCategoryId == subCategoryId &&
+                p.TotalQuestions > 0 &&
+                (double)p.Score / p.TotalQuestions * 100 >= 80);
         }
 
         // Mapping från Model till Dto

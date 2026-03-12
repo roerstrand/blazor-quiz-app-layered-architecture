@@ -7,19 +7,39 @@ namespace Cyberquiz.BLL.Services
 {
     public class CategoryService : ICategoryService
     {
-        // Injicerar repo
         private readonly ICategoryRepository _categoryRepo;
-        public CategoryService(ICategoryRepository categoryRepo)
+        private readonly IProgressService _progressService;
+
+        public CategoryService(ICategoryRepository categoryRepo, IProgressService progressService)
         {
             _categoryRepo = categoryRepo;
+            _progressService = progressService;
         }
-        // Anropar metoder i repo
-        public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
+
+        public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync(string? userName)
         {
-            // Anropar repo 
             var categories = await _categoryRepo.GetAllCategoriesAsync();
-            // Mappa varje CategoryModel till CategoryDto
-            return categories.Select(cs => MapToCategoryDto(cs));
+            var result = new List<CategoryDto>();
+
+            foreach (var category in categories)
+            {
+                var dto = MapToCategoryDto(category);
+
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    var subs = dto.SubCategories.OrderBy(s => s.Order).ToList();
+                    for (int i = 0; i < subs.Count; i++)
+                    {
+                        subs[i].IsCompleted = await _progressService.IsSubCategoryCompletedAsync(userName, subs[i].Id);
+                        subs[i].IsLocked = i > 0 && !subs[i - 1].IsCompleted;
+                    }
+                    dto.CompletedSubCategories = subs.Count(s => s.IsCompleted);
+                }
+
+                result.Add(dto);
+            }
+
+            return result;
         }
         // Metod som inte behövs?
 

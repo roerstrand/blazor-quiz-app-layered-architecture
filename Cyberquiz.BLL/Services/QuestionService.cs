@@ -39,16 +39,12 @@ namespace Cyberquiz.BLL.Services
         //}
 
         // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
-        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, string userName)
+        public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, int progressId)
         {
-            // Hämta alla frågor inom underkategorin
             var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
-            // Hämta de frågor som användaren redan har svarat på i underkategorin
-            var answeredQuestionIds = await _progressService.GetAnsweredQuestionIdsAsync(userName, subCategoryId);
-            // Hitta nästa (= första) frågan som användaren inte har svarat på
+            var answeredQuestionIds = await _progressService.GetAnsweredQuestionIdsAsync(progressId);
             var nextQuestion = allQuestions.FirstOrDefault(q => !answeredQuestionIds.Contains(q.Id));
-            // Returnera DTO för nästa fråga eller null om alla frågor redan är besvarade
-            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion); // Om inga svar 
+            return nextQuestion == null ? null : MapToQuestionDto(nextQuestion);
         }
 
         // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
