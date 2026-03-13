@@ -144,7 +144,7 @@
                         }
                     </button>
 
-                    @* ✅ Visa error alert om det finns fel *@
+                    @*  Visa error alert om det finns fel *@
                     @if (!string.IsNullOrWhiteSpace(aiError))
                     {
                         <div class="alert alert-danger mt-3" role="alert">
@@ -192,7 +192,7 @@
                                 <p class="card-text text-muted small">@category.Description</p>
                             }
                             <p class="card-text">
-                                <strong>Progress:</strong> @category.CompletedSubCategories / @category.TotalSubCategories completed
+                                <strong>Progression:</strong> @category.CompletedSubCategories / @category.TotalSubCategories avklarade
                             </p>
 
                             @if (category.SubCategories != null && category.SubCategories.Any())
