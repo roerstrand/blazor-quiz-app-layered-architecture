@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "API + UI",
+    "Projects": [
+      {
+        "Path": "Cyberquiz.API\\Cyberquiz.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Cyberquiz.UI\\Cyberquiz.UI.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

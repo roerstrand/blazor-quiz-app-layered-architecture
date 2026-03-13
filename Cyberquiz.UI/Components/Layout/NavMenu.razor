@@ -1,91 +1,62 @@
-﻿@implements IDisposable
+@rendermode InteractiveServer
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
+@inject JwtTokenStore TokenStore
+@inject JwtAuthStateProvider AuthStateProvider
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">
-            <img src="/image/CyberQuiz.png" alt="Cyberquiz Logo" style="height:32px; width:200"/>
-        </a>
-    </div>
+<div class="sidebar-brand">
+    <div class="brand-logo-sm"><span class="brand-hack">Hack</span><span class="brand-proof">Proof</span></div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<div class="nav-section">
+    <AuthorizeView>
+        <Authorized>
+            <div class="nav-label">Menu</div>
+            <nav class="nav flex-column px-2">
+                <NavLink class="nav-link" href="/categories">
+                    <span class="nav-icon">📚</span> Categories
+                </NavLink>
+                <NavLink class="nav-link" href="/profile">
+                    <span class="nav-icon">👤</span> Profile
+                </NavLink>
+            </nav>
+        </Authorized>
+        <NotAuthorized>
+            <div class="nav-label">Account</div>
+            <nav class="nav flex-column px-2">
+                <NavLink class="nav-link" href="/Account/Login">
+                    <span class="nav-icon">🔑</span> Log in
+                </NavLink>
+                <NavLink class="nav-link" href="/Account/Register">
+                    <span class="nav-icon">✚</span> Register
+                </NavLink>
+            </nav>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <!--  Home  -->
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Hem
-            </NavLink>
-        </div>
-
-        <AuthorizeView> 
-            <Authorized>
-                <!--  Categories  -->
-                @* <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="categories">
-                        <span class="bi bi-grid-3x3-gap-nav-menu" aria-hidden="true"></span> Kategorier
-                    </NavLink>
-                </div> *@
-
-                <!--  Profile -->
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="profile">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Profil: @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-
-                <!-- Logout -->
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logga ut
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <!--  Register  -->
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Registrera
-                    </NavLink>
-                </div>
-
-                <!-- Login -->
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Logga in
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
+<div class="sidebar-footer">
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">@(context.User.Identity?.Name?.Substring(0,1).ToUpper())</div>
+                <span class="sidebar-user-name">@context.User.Identity?.Name</span>
+            </div>
+            <button class="nav-link nav-logout-btn" @onclick="Logout">
+                <span class="nav-icon">🚪</span> Log out
+            </button>
+        </Authorized>
+    </AuthorizeView>
 </div>
 
 @code {
-    private string? currentUrl;
-
-    protected override void OnInitialized()
+    private void Logout()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
+        TokenStore.Clear();
+        AuthStateProvider.NotifyAuthStateChanged();
+        NavigationManager.NavigateTo("/");
     }
 
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
+    public void Dispose() { }
 }
-    
