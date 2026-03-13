@@ -1,7 +1,6 @@
 ﻿@page "/quiz/{SubCategoryId:int}"
 @using Cyberquiz.Shared.DTOs
 
-@using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
 @using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
@@ -74,7 +73,7 @@ else
             <button class="btn btn-secondary"
                     style="margin-left:8px;"
                     disabled="@(!answered)"
-                    @onclick="NextQuestion">
+                    @onclick="LoadQuestion">
                 Nästa
             </button>
         </div>
@@ -126,26 +125,26 @@ else
         user-select: none;
     }
 
-        .answer-card.selected {
-            border-color: #7c3aed;
-            background: #f3f0ff;
-        }
+    .answer-card.selected {
+        border: #7c3aed;
+        background: #f3f0ff;
+    }
 
-        .answer-card.correct {
-            border-color: #16a34a;
-            background: #dcfce7;
-        }
+    .answer-card.correct {
+        border-color: #16a34a;
+        background: #dcfce7;
+    }
 
-        .answer-card.incorrect {
-            border-color: #dc2626;
-            background: #fee2e2;
-        }
+    .answer-card.incorrect {
+        border-color: #dc2626;
+        background: #fee2e2;
+    }
 
-        .answer-card.disabled {
-            cursor: not-allowed;
-            opacity: 0.95;
-            pointer-events: none;
-        }
+    .answer-card.disabled {
+        cursor: not-allowed;
+        opacity: 0.95;
+        pointer-events: none;
+    }
 
     .answer-text {
         font-weight: 600;
@@ -167,13 +166,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        _userName = authState.User.Identity?.Name;
-        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId);
-        await LoadQuestion();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync(); // Säkerställ att användaren är autentiserad
+        _userName = authState.User.Identity?.Name; // Hämta användarnamnet från autentiseringsstatet
+
+        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId); // Starta en ny quiz-session och få progressId
+        await LoadQuestion(); 
     }
 
-    private async Task LoadQuestion()
+    private async Task LoadQuestion() // Ladda fråga baserat på SubCategoryId
     {
         _loading = true;
 
@@ -185,14 +185,14 @@ else
             _quizResult = progress.FirstOrDefault(p => p.Id == _progressId);
         }
 
-        selectedAnswerId = null;
-        answered = false;
-        result = null;
+        selectedAnswerId = null; // Återställ valt svar
+        answered = false; // Återställ svarstatus
+        result = null; // Återställ resultat
 
         _loading = false;
     }
 
-    private async Task SubmitAnswer()
+    private async Task SubmitAnswer() // Skicka det valda svaret till API:et och få feedback
     {
         try
         {
@@ -222,17 +222,13 @@ else
         }
     }
 
-    private async Task NextQuestion()
-    {
-        await LoadQuestion();
-    }
-    private async Task RestartQuiz()
+    private async Task RestartQuiz() // Starta om quizet genom att starta en ny session och ladda första frågan
     {
         _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId);
         await LoadQuestion();
     }
 
-    private string GetOptionClass(int optionId)
+    private string GetOptionClass(int optionId) // CSS klass för svar
     {
         if (result is null)
         {
@@ -250,13 +246,13 @@ else
         return "";
     }
 
-    private string GetCorrectAnswerText()
+    private string GetCorrectAnswerText() // Hämta texten för det korrekta svaret
     {
         if (question?.AnswerOptions is null || result is null) return "(okänt)";
         return question.AnswerOptions.FirstOrDefault(o => o.Id == result.CorrectAnswerOptionId)?.Answer ?? "(okänt)";
     }
 
-    private void GoBack()
+    private void GoBack() // Navigera tillbaka till kategorisidan
     {
         Nav.NavigateTo("/categories");
     }

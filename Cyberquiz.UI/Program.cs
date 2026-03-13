@@ -51,6 +51,11 @@ builder.Services.AddHttpClient<ApiService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+builder.Services.AddHttpClient<AiCoachApiService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["AiCoachApiBaseUrl"] ?? "https://localhost:7237");
+});
+
 var app = builder.Build();
 
 // Migrera och seed auth-databasen vid uppstart

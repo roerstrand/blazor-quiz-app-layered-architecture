@@ -1,4 +1,4 @@
-﻿namespace Cyberquiz.UI.Services
+﻿namespace Cyberquiz.BLL.Interfaces
 {
     public interface IOpenAiClient
     {
