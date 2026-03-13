@@ -122,9 +122,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync(); // Säkerställ att användaren är autentiserad
-        var userName = authState.User.Identity?.Name; // Hämta användarnamnet från autentiseringsstatet
-        _categories = await ApiService.GetCategoriesAsync(userName);
+        _categories = await ApiService.GetCategoriesAsync();
     }
 
     private void GoToSubCategories(int categoryId) // Navigera till subkategorier för vald kategori

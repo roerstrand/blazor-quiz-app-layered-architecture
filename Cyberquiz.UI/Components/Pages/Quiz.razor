@@ -161,15 +161,11 @@ else
     private bool _loading;
     private UserProgressDto? _quizResult;
     private string? _error;
-    private string? _userName;
     private int _progressId;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync(); // Säkerställ att användaren är autentiserad
-        _userName = authState.User.Identity?.Name; // Hämta användarnamnet från autentiseringsstatet
-
-        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId); // Starta en ny quiz-session och få progressId
+        _progressId = await ApiService.StartSessionAsync(SubCategoryId); // Starta en ny quiz-session och få progressId
         await LoadQuestion(); 
     }
 
@@ -181,7 +177,7 @@ else
 
         if (question == null)
         {
-            var progress = await ApiService.GetUserProgressAsync(_userName);
+            var progress = await ApiService.GetUserProgressAsync();
             _quizResult = progress.FirstOrDefault(p => p.Id == _progressId);
         }
 
@@ -203,7 +199,6 @@ else
                 SubCategoryId = SubCategoryId,
                 QuestionId = question.Id,
                 AnswerOptionId = selectedAnswerId.Value,
-                UserName = _userName,
                 ProgressId = _progressId
             });
 
@@ -224,7 +219,7 @@ else
 
     private async Task RestartQuiz() // Starta om quizet genom att starta en ny session och ladda första frågan
     {
-        _progressId = await ApiService.StartSessionAsync(_userName!, SubCategoryId);
+        _progressId = await ApiService.StartSessionAsync(SubCategoryId);
         await LoadQuestion();
     }
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cyberquiz.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/quiz")]
     public class QuestionController : ControllerBase
@@ -41,7 +42,7 @@ namespace Cyberquiz.API.Controllers
         {
             if (request is null) return BadRequest();
 
-            var userName = request.UserName;
+            var userName = User.Identity?.Name;
             if (string.IsNullOrEmpty(userName)) return Unauthorized();
 
             var result = await _questionService.SaveUserAnswerAsync(request, userName);

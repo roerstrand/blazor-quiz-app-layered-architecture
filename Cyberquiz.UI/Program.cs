@@ -44,6 +44,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+builder.Services.AddScoped<TokenProvider>();
+
 // HTTP-klient för anrop till API (quiz, frågor, progress)
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7237";
 builder.Services.AddHttpClient<ApiService>(client =>

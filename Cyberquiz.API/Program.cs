@@ -4,7 +4,10 @@ using Cyberquiz.BLL.Services;
 using Cyberquiz.DAL.Data;
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,22 @@ builder.Services.AddHttpClient<IAiClient, AiClient>(client =>
     client.BaseAddress = new Uri("http://localhost:11434/");
     client.Timeout = TimeSpan.FromMinutes(4);
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -93,6 +112,9 @@ app.UseHttpsRedirection();
 
 // ✅ CORS måste vara FÖRE MapControllers
 app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

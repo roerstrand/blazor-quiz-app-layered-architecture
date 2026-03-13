@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs.AI_DTOs;
 
@@ -15,9 +16,12 @@ namespace Cyberquiz.API.Controllers
             _aiCoachService = aiCoachService;
         }
 
-        [HttpGet("{userName}")]
-        public async Task<ActionResult<AiFeedbackDto>> GetFeedback(string userName)
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<AiFeedbackDto>> GetFeedback()
         {
+            var userName = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userName)) return Unauthorized();
             var result = await _aiCoachService.GetUserAnalysisAsync(userName);
             return Ok(result);
         }
