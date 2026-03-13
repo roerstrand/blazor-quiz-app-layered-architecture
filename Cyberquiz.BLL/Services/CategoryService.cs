@@ -89,6 +89,7 @@ namespace Cyberquiz.BLL.Services
                 Name = model.Name,
                 CategoryName = model.Category?.Name ?? string.Empty,
                 Order = model.Order,
+                Description = model.Description,
                 QuestionCount = model.QuestionCount
             };
         }
