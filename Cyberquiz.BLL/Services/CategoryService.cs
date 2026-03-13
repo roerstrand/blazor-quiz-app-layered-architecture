@@ -41,7 +41,6 @@ namespace Cyberquiz.BLL.Services
 
             return result;
         }
-        // Metod som inte behövs?
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int categoryId)
         {
@@ -51,12 +50,43 @@ namespace Cyberquiz.BLL.Services
             return category == null ? null : MapToCategoryDto(category);
         }
 
-        public async Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync()
+        public async Task<IEnumerable<SubCategoryDto>> GetAllSubCategoriesAsync(string? userName)
         {
-            // Anropa repo 
             var subCategories = await _categoryRepo.GetAllSubCategoriesAsync();
-            // Mappa varje SubCategoryModel till SubCategoryDto
-            return subCategories.Select(scs => MapToSubCategoryDto(scs));
+            var result = new List<SubCategoryDto>();
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                // Om ingen användare, returnera utan låslogik
+                return subCategories.Select(scs => MapToSubCategoryDto(scs));
+            }
+
+            // Gruppera 
+            var groupedByCategory = subCategories
+                .Where(s => s.Category != null) // Filtrera bort subkategorier utan kategori
+                .GroupBy(s => s.Category!.Name)
+                .OrderBy(g => g.Key);
+
+            foreach (var categoryGroup in groupedByCategory)
+            {
+                // Sortera subkategorier inom kategorin efter Order
+                var subs = categoryGroup.OrderBy(s => s.Order).ToList();
+
+                for (int i = 0; i < subs.Count; i++)
+                {
+                    var dto = MapToSubCategoryDto(subs[i]);
+
+                    // Beräkna IsCompleted
+                    dto.IsCompleted = await _progressService.IsSubCategoryCompletedAsync(userName, dto.Id);
+
+                    //första i varje kategori är inte låst, resten är låsta om föregående inte är completed
+                    dto.IsLocked = i > 0 && !result[result.Count - 1].IsCompleted;
+
+                    result.Add(dto);
+                }
+            }
+
+            return result;
         }
 
         public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(int subCategoryId)
@@ -90,6 +120,7 @@ namespace Cyberquiz.BLL.Services
                 Name = model.Name,
                 CategoryName = model.Category?.Name ?? string.Empty,
                 Order = model.Order,
+                Description = model.Description,
                 QuestionCount = model.QuestionCount
             };
         }

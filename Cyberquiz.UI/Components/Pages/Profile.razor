@@ -311,11 +311,8 @@
 
             if (result.Succeeded)
             {
-                await SignInManager.RefreshSignInAsync(user);
-                currentUsername = UsernameInput.NewUsername;
-                UsernameInput.NewUsername = string.Empty;
-                successMessage = "Your username has been updated.";
-                Logger.LogInformation("User {UserName} changed their username.", currentUsername);
+                Logger.LogInformation("User {UserName} changed their username.", UsernameInput.NewUsername);
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
             else
             {
@@ -351,10 +348,8 @@
 
             if (result.Succeeded)
             {
-                await SignInManager.RefreshSignInAsync(user);
-                PasswordInput = new();
-                successMessage = "Your password has been changed.";
                 Logger.LogInformation("User {UserName} changed their password.", currentUsername);
+                NavigationManager.NavigateTo("/", forceLoad: true);
             }
             else
             {
