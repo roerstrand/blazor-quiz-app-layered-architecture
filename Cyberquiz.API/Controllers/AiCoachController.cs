@@ -15,10 +15,10 @@ namespace Cyberquiz.API.Controllers
             _aiCoachService = aiCoachService;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<AiFeedbackDto>> GetFeedback(string userId)
+        [HttpGet("{userName}")]
+        public async Task<ActionResult<AiFeedbackDto>> GetFeedback(string userName)
         {
-            var result = await _aiCoachService.GetUserAnalysisAsync(userId);
+            var result = await _aiCoachService.GetUserAnalysisAsync(userName);
             return Ok(result);
         }
     }

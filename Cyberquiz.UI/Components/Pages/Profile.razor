@@ -17,6 +17,7 @@
 @inject IdentityRedirectManager RedirectManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject AiCoachApiService AiCoachApiService
+@rendermode InteractiveServer
 @attribute [Authorize]
 
 
@@ -117,32 +118,48 @@
 
                     <button type="button"
                             class="btn btn-primary"
-                            disabled="@(!aiActive || aiLoading)" )
+                            disabled="@(aiLoading || !aiActive)"
                             @onclick="AskAiCoach">
-                        @(aiLoading ? "Analyserar..." : "Analysera min progression")
+                        @if (aiLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Analyserar...</span>
+                        }
+                        else if (!aiActive)
+                        {
+                            <i class="bi bi-x-circle me-2"></i>
+                            <span>AI Coach ej tillgänglig</span>
+                        }
+                        else
+                        {
+                            <span>Analysera min progression</span>
+                        }
                     </button>
-                    
+
+                    @* ✅ Visa error alert om det finns fel *@
                     @if (!string.IsNullOrWhiteSpace(aiError))
                     {
                         <div class="alert alert-danger mt-3" role="alert">
-                            @aiError
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Fel:</strong> @aiError
                         </div>
                     }
-                    
-                    
+
+                    @*  Visa success feedback om AI svarade *@
                     @if (aiFeedback != null && !string.IsNullOrWhiteSpace(aiFeedback.Feedback))
                     {
-                        aiActive = true;
                         <div class="alert alert-info mt-3" role="alert">
-                            <h6>AI Coach Feedback:</h6>
-                            <p>@aiFeedback.Feedback</p>
+                            <h6><i class="bi bi-robot me-2"></i>AI Coach Feedback:</h6>
+                            <p class="mb-0">@aiFeedback.Feedback</p>
                         </div>
                     }
-                    else if (!aiLoading && aiFeedback == null && string.IsNullOrWhiteSpace(aiError))
+
+                    @* Visa "inte tillgänglig" om ingen feedback och inget error (initial state) *@
+                    @if (!aiLoading && aiFeedback == null && string.IsNullOrWhiteSpace(aiError) && !aiActive)
                     {
-                        aiActive = false;
-                        <div class="text-danger mt-3">
-                            <small>AI coach är inte tillgänglig just nu</small>
+                        <div class="alert alert-warning mt-3" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <small>AI coach är inte tillgänglig just nu. Försök igen senare.</small>
                         </div>
                     }
                 </div>
@@ -362,11 +379,13 @@
         aiLoading = true;
         aiError = null;
         aiFeedback = null;
+
         try
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
                 aiError = "Ingen inloggad användare hittades.";
+                aiActive = false;
                 return;
             }
 
@@ -374,12 +393,25 @@
 
             if (aiFeedback is null || string.IsNullOrWhiteSpace(aiFeedback.Feedback))
             {
-                aiError = "Kunde inte få feedback från AI.";
+                aiError = "Kunde inte få feedback från AI. Kontrollera att Ollama körs.";
+                aiActive = false;  // AI failade
             }
+            else
+            {
+                aiActive = true;  // AI fungerade
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            aiError = "Kunde inte ansluta till AI Coach";
+            aiActive = false;  
+            
         }
         catch (Exception ex)
         {
-            aiError = ex.Message;
+            aiError = $"Ett oväntat fel uppstod: {ex.Message}";
+            aiActive = false; 
+            
         }
         finally
         {
