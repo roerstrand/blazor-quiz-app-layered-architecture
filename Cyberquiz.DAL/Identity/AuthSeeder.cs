@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Cyberquiz.UI.Data
+namespace Cyberquiz.DAL.Identity
 {
     public static class AuthSeeder
     {

@@ -1,155 +1,120 @@
-﻿@page "/quiz/{SubCategoryId:int}"
+@page "/quiz/{SubCategoryId:int}"
 @using Cyberquiz.Shared.DTOs
-
-@using Cyberquiz.UI.Services
 @using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
 @inject NavigationManager Nav
-@inject AuthenticationStateProvider AuthStateProvider
 @rendermode InteractiveServer
-
 @attribute [Authorize]
 
-<h3>Quiz</h3>
 @if (!string.IsNullOrWhiteSpace(_error))
 {
-    <pre style="color:red; white-space:pre-wrap;">@_error</pre>
+    <div class="alert alert-danger">@_error</div>
 }
 else if (_loading)
 {
-    <p>Laddar...</p>
+    <div class="d-flex align-items-center gap-2 text-muted">
+        <div class="spinner-border spinner-border-sm"></div>
+        <span>Loading question...</span>
+    </div>
 }
 else if (question == null)
 {
-    <div class="alert alert-info">
-        <h4>Quizet är klart ✅</h4>
+    <div class="quiz-container">
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div style="font-size:3rem;" class="mb-3">🎉</div>
+                <h2 class="mb-2">Quiz complete!</h2>
 
-        @if (_quizResult != null)
-        {
-            <p>Du fick <strong>@_quizResult.Score</strong> av <strong>@_quizResult.TotalQuestions</strong> rätt.</p>
-        }
-        else
-        {
-            <p>Alla frågor är besvarade.</p>
-        }
+                @if (_quizResult != null)
+                {
+                    var pct = _quizResult.TotalQuestions > 0
+                        ? (int)((double)_quizResult.Score / _quizResult.TotalQuestions * 100)
+                        : 0;
 
-        <button class="btn btn-secondary" @onclick="GoBack">
-            Tillbaka till kategorier
-        </button>
+                    <p class="text-muted mb-3">
+                        You got <strong>@_quizResult.Score</strong> of <strong>@_quizResult.TotalQuestions</strong> correct (@pct%)
+                    </p>
+
+                    <div class="progress mb-4" style="height:10px;">
+                        <div class="progress-bar @(pct >= 80 ? "bg-success" : pct >= 50 ? "bg-warning" : "bg-danger")"
+                             style="width:@(pct)%"></div>
+                    </div>
+
+                    @if (pct >= 80)
+                    {
+                        <div class="alert alert-success">✅ Passed! You unlocked the next level.</div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">⚠️ You need at least 80% to unlock the next level.</div>
+                    }
+                }
+
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <button class="btn btn-primary" @onclick="RestartQuiz">Try again</button>
+                    <button class="btn btn-outline-secondary" @onclick="GoBack">Back</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
 else
 {
-    <div class="card p-3">
-        <p><strong>@question.Question</strong></p>
-
-        <div class="answers-grid">
-            @foreach (var option in (question.AnswerOptions ?? new List<AnswerOptionDto>()))
-            {
-                var id = $"q{question.Id}_opt{option.Id}";
-                var css = GetOptionClass(option.Id);
-
-                <label class="answer-card @css @(answered ? "disabled" : "")" for="@id">
-                    <input type="radio"
-                           id="@id"
-                           name="answer"
-                           value="@option.Id"
-                           checked="@(selectedAnswerId == option.Id)"
-                           @onchange="() => selectedAnswerId = option.Id"
-                           disabled="@answered" />
-
-                    <span class="answer-text">@option.Answer</span>
-                </label>
-            }
-        </div>
-
-        <div style="margin-top:12px;">
-            <button class="btn btn-primary"
-                    disabled="@(!selectedAnswerId.HasValue || answered)"
-                    @onclick="SubmitAnswer">
-                Svara
-            </button>
-
-            <button class="btn btn-secondary"
-                    style="margin-left:8px;"
-                    disabled="@(!answered)"
-                    @onclick="LoadQuestion">
-                Nästa
-            </button>
-        </div>
-
-        @if (result != null)
-        {
-            <div class="mt-3">
-                @if (result.IsCorrect)
-                {
-                    <div class="alert alert-success">
-                        <p>Rätt svar!</p>
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-danger">
-                        <p>Fel svar. Rätt svar var: @GetCorrectAnswerText()</p>
-                    </div>
-                }
+    <div class="quiz-container">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="text-muted small fw-bold">QUESTION</span>
+                <button class="btn btn-outline-secondary btn-sm" @onclick="GoBack">Cancel</button>
             </div>
-        }
-        <div class="d-flex gap-2 justify-content-center mt-4">
-            <button class="btn btn-primary" @onclick="async () => await RestartQuiz()">
-                Starta om
-            </button>
-            <button class="btn btn-secondary" @onclick="GoBack">
-                Tillbaka
-            </button>
+            <div class="card-body p-4">
+                <p class="quiz-question">@question.Question</p>
+
+                <div class="answers-grid">
+                    @foreach (var option in question.AnswerOptions ?? [])
+                    {
+                        var optId = option.Id;
+                        <label class="answer-card @GetOptionClass(optId) @(answered ? "disabled" : "")">
+                            <input type="radio"
+                                   name="answer"
+                                   value="@optId"
+                                   checked="@(selectedAnswerId == optId)"
+                                   @onchange="() => selectedAnswerId = optId"
+                                   disabled="@answered" />
+                            <span class="answer-text">@option.Answer</span>
+                        </label>
+                    }
+                </div>
+
+                @if (result != null)
+                {
+                    @if (result.IsCorrect)
+                    {
+                        <div class="alert alert-success py-2 mt-2">✓ Correct!</div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger py-2 mt-2">
+                            ✗ Wrong. Correct answer: <strong>@GetCorrectAnswerText()</strong>
+                        </div>
+                    }
+                }
+
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-primary"
+                            disabled="@(!selectedAnswerId.HasValue || answered)"
+                            @onclick="SubmitAnswer">
+                        Submit
+                    </button>
+                    <button class="btn btn-secondary"
+                            disabled="@(!answered)"
+                            @onclick="LoadQuestion">
+                        Next →
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 }
-
-<style>
-    .answers-grid {
-        display: grid;
-        gap: 12px;
-        margin-top: 12px;
-    }
-
-    .answer-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        padding: 12px 14px;
-        background: white;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .answer-card.selected {
-        border: #7c3aed;
-        background: #f3f0ff;
-    }
-
-    .answer-card.correct {
-        border-color: #16a34a;
-        background: #dcfce7;
-    }
-
-    .answer-card.incorrect {
-        border-color: #dc2626;
-        background: #fee2e2;
-    }
-
-    .answer-card.disabled {
-        cursor: not-allowed;
-        opacity: 0.95;
-        pointer-events: none;
-    }
-
-    .answer-text {
-        font-weight: 600;
-    }
-</style>
 
 @code {
     [Parameter] public int SubCategoryId { get; set; }
@@ -165,93 +130,59 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _progressId = await ApiService.StartSessionAsync(SubCategoryId); // Starta en ny quiz-session och få progressId
-        await LoadQuestion(); 
+        _progressId = await ApiService.StartSessionAsync(SubCategoryId);
+        await LoadQuestion();
     }
 
-    private async Task LoadQuestion() // Ladda fråga baserat på SubCategoryId
+    private async Task LoadQuestion()
     {
         _loading = true;
-
         question = await ApiService.GetNextQuestionAsync(SubCategoryId, _progressId);
-
         if (question == null)
         {
             var progress = await ApiService.GetUserProgressAsync();
             _quizResult = progress.FirstOrDefault(p => p.Id == _progressId);
         }
-
-        selectedAnswerId = null; // Återställ valt svar
-        answered = false; // Återställ svarstatus
-        result = null; // Återställ resultat
-
+        selectedAnswerId = null;
+        answered = false;
+        result = null;
         _loading = false;
     }
 
-    private async Task SubmitAnswer() // Skicka det valda svaret till API:et och få feedback
+    private async Task SubmitAnswer()
     {
+        if (question is null || !selectedAnswerId.HasValue) return;
         try
         {
-            if (question is null || !selectedAnswerId.HasValue) return;
-
-            var res = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
+            result = await ApiService.SubmitAnswerWithFeedbackAsync(new SubmitAnswerRequestDto
             {
                 SubCategoryId = SubCategoryId,
                 QuestionId = question.Id,
                 AnswerOptionId = selectedAnswerId.Value,
                 ProgressId = _progressId
             });
-
-            if (res is null)
-            {
-                _error = "API returnerade null.";
-                return;
-            }
-
-            result = res;
-            answered = true;
+            if (result != null) answered = true;
+            else _error = "Could not submit answer.";
         }
-        catch (Exception ex)
-        {
-            _error = ex.ToString();
-        }
+        catch (Exception ex) { _error = ex.Message; }
     }
 
-    private async Task RestartQuiz() // Starta om quizet genom att starta en ny session och ladda första frågan
+    private async Task RestartQuiz()
     {
         _progressId = await ApiService.StartSessionAsync(SubCategoryId);
         await LoadQuestion();
     }
 
-    private string GetOptionClass(int optionId) // CSS klass för svar
+    private string GetOptionClass(int optionId)
     {
-        if (result is null)
-        {
-            if (selectedAnswerId.HasValue && selectedAnswerId.Value == optionId)
-                return "selected";
-            return "";
-        }
-
-        if (optionId == result.CorrectAnswerOptionId)
-            return "correct";
-
-        if (!result.IsCorrect && selectedAnswerId.HasValue && optionId == selectedAnswerId.Value)
-            return "incorrect";
-
+        if (result is null) return selectedAnswerId == optionId ? "selected" : "";
+        if (optionId == result.CorrectAnswerOptionId) return "correct";
+        if (!result.IsCorrect && selectedAnswerId == optionId) return "incorrect";
         return "";
     }
 
-    private string GetCorrectAnswerText() // Hämta texten för det korrekta svaret
-    {
-        if (question?.AnswerOptions is null || result is null) return "(okänt)";
-        return question.AnswerOptions.FirstOrDefault(o => o.Id == result.CorrectAnswerOptionId)?.Answer ?? "(okänt)";
-    }
+    private string GetCorrectAnswerText()
+        => question?.AnswerOptions?.FirstOrDefault(o => o.Id == result?.CorrectAnswerOptionId)?.Answer ?? "(unknown)";
 
-    private void GoBack() // Navigera tillbaka till kategorisidan
-    {
-        Nav.NavigateTo("/categories");
-    }
+    private void GoBack() => Nav.NavigateTo("/categories");
 }
-
-
-

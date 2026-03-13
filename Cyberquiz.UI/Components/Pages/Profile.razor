@@ -1,372 +1,274 @@
-﻿@page "/profile"
+@page "/profile"
 @using System.ComponentModel.DataAnnotations
-@using Cyberquiz.Shared.DTOs.AI_DTOs
-@using Cyberquiz.UI.Components.Account
-@using Cyberquiz.UI.Components.Account.Shared
-@using Cyberquiz.UI.Data
-@using Cyberquiz.UI.Services
 @using Cyberquiz.Shared.DTOs
+@using Cyberquiz.Shared.DTOs.AI_DTOs
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Identity
-
-@inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
 @inject ApiService ApiService
-@inject ILogger<Profile> Logger
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
-@inject AuthenticationStateProvider AuthStateProvider
 @inject AiCoachApiService AiCoachApiService
+@inject JwtTokenStore TokenStore
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 @attribute [Authorize]
 
+<div class="page-header">
+    <h1>Profile</h1>
+    <p>Logged in as <strong>@currentUsername</strong></p>
+</div>
 
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:1000px;">
 
-<h1>Profil</h1>
+    <!-- AI Coach -->
+    <div class="card" style="grid-column:1/-1;">
+        <div class="card-header d-flex align-items-center gap-2">
+            <span>🤖</span> AI Coach
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-3">
+                Our AI analyses your progress and provides personal feedback on your strengths and weaknesses.
+            </p>
 
-<div class="row">
-    <div class="col-lg-6">
-        <section class="mb-4">
-            @if (!string.IsNullOrEmpty(successMessage))
+            <button class="btn btn-primary"
+                    disabled="@(aiLoading || !aiActive)"
+                    @onclick="AskAiCoach">
+                @if (aiLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                    <span>Analysing...</span>
+                }
+                else if (!aiActive)
+                {
+                    <span>AI Coach unavailable</span>
+                }
+                else
+                {
+                    <span>Analyse my progress</span>
+                }
+            </button>
+
+            @if (!string.IsNullOrWhiteSpace(aiError))
             {
-                <div class="alert alert-success" role="alert">@successMessage</div>
+                <div class="alert alert-danger mt-3">@aiError</div>
             }
-            <h2>Välkommen, @currentUsername</h2>
-            
-            <hr />
-        </section>
 
-        <section>
-            @if (!string.IsNullOrEmpty(errorMessage))
+            @if (aiFeedback != null && !string.IsNullOrWhiteSpace(aiFeedback.Feedback))
             {
-                <div class="alert alert-danger" role="alert">@errorMessage</div>
+                <div class="alert alert-info mt-3">
+                    <strong>Feedback</strong>
+                    <p class="mb-0 mt-1">@aiFeedback.Feedback</p>
+                </div>
             }
-            <EditForm Model="UsernameInput" method="post" OnValidSubmit="OnValidSubmitUsernameAsync" FormName="change-username">
-                <DataAnnotationsValidator />
-                <h2>Byt användarnamn</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-                
-                <div class="form-floating mb-3">
-                    <input type="text" value="@currentUsername" id="current-username" class="form-control" placeholder="Nuvarande användarnamn" disabled />
-                    <label for="current-username" class="form-label"></label>
-                </div>
-                
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="UsernameInput.NewUsername" id="UsernameInput.NewUsername" class="form-control" autocomplete="username" aria-required="true" placeholder="Nytt användarnamn" />
-                    <label for="UsernameInput.NewUsername" class="form-label"></label>
-                    <ValidationMessage For="() => UsernameInput.NewUsername" class="text-danger" />
-                </div>
-                
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary" disabled="@isSaving">
-                        @if (isSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2"></span>
-                        }
-                        Uppdatera användarnamn
-                    </button>
-                </div>
-            </EditForm>
-        </section>
-
-        <hr class="my-4" />
-
-        <section>
-            <EditForm Model="PasswordInput" method="post" OnValidSubmit="OnValidSubmitPasswordAsync" FormName="change-password">
-                <DataAnnotationsValidator />
-                <h2>Byt lösenord</h2>
-                <hr />
-                <ValidationSummary class="text-danger" role="alert" />
-
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.CurrentPassword" id="PasswordInput.CurrentPassword" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Nuvarande lösenord" />
-                    <label for="PasswordInput.CurrentPassword" class="form-label"></label>
-                    <ValidationMessage For="() => PasswordInput.CurrentPassword" class="text-danger" />
-                </div>
-
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.NewPassword" id="PasswordInput.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Nytt lösenord" />
-                    <label for="PasswordInput.NewPassword" class="form-label"></label>
-                    <ValidationMessage For="() => PasswordInput.NewPassword" class="text-danger" />
-                </div>
-
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="PasswordInput.ConfirmPassword" id="PasswordInput.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Bekräfta nytt lösenord" />
-                    <label for="PasswordInput.ConfirmPassword" class="form-label"></label>
-                    <ValidationMessage For="() => PasswordInput.ConfirmPassword" class="text-danger" />
-                </div>
-
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary" disabled="@isSaving">
-                        @if (isSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2"></span>
-                        }
-                        Uppdatera lösenord
-                    </button>
-                </div>
-            </EditForm>
-        </section>
+        </div>
     </div>
-    
-    <div class="col-lg-4 col-lg-offset-2">
-    
-        <section>
-            <h3>Din progression</h3>
-            <hr />
-            
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">AI Coach Feedback</h5>
-                    <p class="text-muted small mb-2">
-                        Få feedback från vår AI coach
-                    </p>
 
-                    <button type="button"
-                            id="AI-btn"
-                            class="btn btn-primary"
-                            disabled="@(aiLoading || !aiActive)"
-                            @onclick="AskAiCoach">
-                        @if (aiLoading)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2"></span>
-                            <span>Analyserar...</span>
-                        }
-                        else if (!aiActive)
-                        {
-                            <i class="bi bi-x-circle me-2"></i>
-                            <span>AI Coach ej tillgänglig</span>
-                        }
-                        else
-                        {
-                            <span>Analysera min progression</span>
-                        }
+    <!-- GDPR -->
+    <div class="gdpr-card" style="grid-column:1/-1;">
+        <div class="gdpr-card-left">
+            <div class="gdpr-icon">⚖️</div>
+            <div>
+                <div class="gdpr-title">Right to be forgotten</div>
+                <div class="gdpr-subtitle">Article 17, EU General Data Protection Regulation (GDPR)</div>
+            </div>
+        </div>
+        <div class="gdpr-body">
+            <p class="gdpr-desc">
+                You have the right to request the deletion of your personal data. This includes all your quiz history,
+                answers and progress linked to your account.
+            </p>
+
+            @if (!string.IsNullOrEmpty(deleteMessage))
+            {
+                <div class="alert @(deleteError ? "alert-danger" : "alert-success") py-2 mb-3">@deleteMessage</div>
+            }
+
+            <div class="gdpr-actions">
+                <div class="gdpr-action-row">
+                    <div>
+                        <div class="gdpr-action-label">Clear old data</div>
+                        <div class="gdpr-action-desc">Keeps your 3 most recent sessions and deletes the rest.</div>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm"
+                            disabled="@deleteLoading"
+                            @onclick="KeepRecent">
+                        @if (deleteLoading && deleteAction == "keep")
+                        { <span class="spinner-border spinner-border-sm me-1"></span> }
+                        Clear old history
                     </button>
+                </div>
 
-                    @*  Visa error alert om det finns fel *@
-                    @if (!string.IsNullOrWhiteSpace(aiError))
-                    {
-                        <div class="alert alert-danger mt-3" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <strong>Fel:</strong> @aiError
-                        </div>
-                    }
-                    @if (aiFeedback != null && !string.IsNullOrWhiteSpace(aiFeedback.Feedback))
-                    {
-                        <div class="alert alert-info mt-3" role="alert">
-                            <h6><i class="bi bi-robot me-2"></i>AI Coach Feedback:</h6>
-                            <p class="mb-0">@aiFeedback.Feedback</p>
-                        </div>
-                    }
+                <hr class="gdpr-divider" />
 
-                    @* Visa "inte tillgänglig" om ingen feedback och inget error (initial state) *@
-                    @if (!aiLoading && aiFeedback == null && string.IsNullOrWhiteSpace(aiError) && !aiActive)
+                <div class="gdpr-action-row">
+                    <div>
+                        <div class="gdpr-action-label text-danger">Delete all my data</div>
+                        <div class="gdpr-action-desc">All your progress and quiz history will be permanently deleted. This cannot be undone.</div>
+                    </div>
+                    @if (!confirmDeleteAll)
                     {
-                        <div class="alert alert-warning mt-3" role="alert">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <small>AI coach är inte tillgänglig just nu. Försök igen senare.</small>
+                        <button class="btn btn-danger btn-sm"
+                                disabled="@deleteLoading"
+                                @onclick="() => confirmDeleteAll = true">
+                            Delete my data
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-danger small fw-semibold">Confirm deletion</span>
+                            <button class="btn btn-danger btn-sm"
+                                    disabled="@deleteLoading"
+                                    @onclick="DeleteAll">
+                                @if (deleteLoading && deleteAction == "all")
+                                { <span class="spinner-border spinner-border-sm me-1"></span> }
+                                Yes, delete everything
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    @onclick="() => confirmDeleteAll = false">
+                                Cancel
+                            </button>
                         </div>
                     }
                 </div>
             </div>
+        </div>
+    </div>
 
-            @if (isLoading)
-            {
-                <div class="text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2">Loading your progress...</p>
-                </div>
-            }
-            else if (categories != null && categories.Any())
-            {
-                @foreach (var category in categories)
+    <!-- Progression -->
+    <div style="grid-column:1/-1;">
+        <h2 class="mb-3">Your progress</h2>
+
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center gap-2 text-muted">
+                <span class="spinner-border spinner-border-sm"></span>
+                <span>Loading progress...</span>
+            </div>
+        }
+        else if (categories is { Count: > 0 })
+        {
+            <div class="profile-summary">
+                <span>✅ <strong>@TotalCompleted</strong> complete</span>
+                <span class="divider"></span>
+                <span>⏳ <strong>@TotalRemaining</strong> remaining</span>
+            </div>
+
+            <div class="profile-progress-grid">
+                @for (int i = 0; i < categories.Count; i++)
                 {
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">@category.Name</h5>
-                            @if (!string.IsNullOrEmpty(category.Description))
-                            {
-                                <p class="card-text text-muted small">@category.Description</p>
-                            }
-                            <p class="card-text">
-                                <strong>Progression:</strong> @category.CompletedSubCategories / @category.TotalSubCategories avklarade
-                            </p>
+                    var category = categories[i];
+                    var pct = category.TotalSubCategories > 0
+                        ? (int)((double)category.CompletedSubCategories / category.TotalSubCategories * 100)
+                        : 0;
+                    var color = _catColors[i % _catColors.Length];
 
-                            @if (category.SubCategories != null && category.SubCategories.Any())
-                            {
-                                <ul class="list-unstyled mb-0">
-                                    @foreach (var sub in category.SubCategories)
-                                    {
-                                        <li class="small">
-                                            @if (sub.IsCompleted)
-                                            {
-                                                <span class="text-success">✓ @sub.Name</span>
-                                            }
-                                            else if (sub.IsLocked)
-                                            {
-                                                <span class="text-muted">🔒 @sub.Name</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-warning">○ @sub.Name</span>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            }
+                    <div class="profile-cat-card" style="--cat:@color">
+                        <div class="profile-cat-header">
+                            <span class="profile-cat-name">@category.Name</span>
+                            <span class="profile-cat-pct">@pct%</span>
                         </div>
+                        <div class="cat-progress-track" style="margin:.5rem 0 .85rem;">
+                            <div class="cat-progress-fill" style="width:@(pct)%"></div>
+                        </div>
+                        <div class="profile-cat-meta">@category.CompletedSubCategories of @category.TotalSubCategories modules complete</div>
+
+                        @if (category.SubCategories is { Count: > 0 })
+                        {
+                            <ul class="profile-sub-list">
+                                @foreach (var sub in category.SubCategories)
+                                {
+                                    <li class="profile-sub-item @(sub.IsCompleted ? "done" : sub.IsLocked ? "locked" : "active")">
+                                        @(sub.IsCompleted ? "✓" : sub.IsLocked ? "🔒" : "○") @sub.Name
+                                    </li>
+                                }
+                            </ul>
+                        }
                     </div>
                 }
-
-                <div class="alert alert-info mt-3">
-                    <strong>Total:</strong> @TotalCompleted klara, @TotalRemaining kvar
+            </div>
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-body text-center" style="padding:2rem;">
+                    <p class="text-muted mb-3">No progress yet. Start a quiz to begin!</p>
+                    <a href="/categories" class="btn btn-primary">Go to categories</a>
                 </div>
-            }
-            else
-            {
-                <p class="text-muted">Ingen progression än. Starta ett quiz för att börja!</p>
-                <p>
-                    <a href="/categories" class="btn btn-primary">Gå till kategorier</a>
-                </p>
-            }
-        </section>
+            </div>
+        }
     </div>
 </div>
+
 @code {
-    private ApplicationUser? user;
+    private static readonly string[] _catColors =
+        ["#1d4ed8", "#0f766e", "#7c3aed", "#b45309", "#be123c", "#0e7490"];
+
     private string? currentUsername;
-    private DateTime? memberSince;
     private bool isLoading = true;
-    private bool isSaving = false;
-    private string? successMessage;
-    private string? errorMessage;
     private List<CategoryDto>? categories;
     private bool aiLoading;
     private AiFeedbackDto? aiFeedback;
     private string? aiError;
-    private string? userName;
     private bool aiActive = true;
 
-    private UsernameInputModel UsernameInput { get; set; } = new();
-    private PasswordInputModel PasswordInput { get; set; } = new();
+    private bool deleteLoading;
+    private bool confirmDeleteAll;
+    private string? deleteMessage;
+    private bool deleteError;
+    private string? deleteAction;
 
-    private int TotalCompleted => categories?.Sum(c => c.CompletedSubCategories) ?? 0; //summerar completed subcats för alla kategorier
-    private int TotalRemaining => categories?.Sum(c => c.TotalSubCategories - c.CompletedSubCategories) ?? 0; //summerar kvarstående subcats för alla kategorier
+    private int TotalCompleted => categories?.Sum(c => c.CompletedSubCategories) ?? 0;
+    private int TotalRemaining => categories?.Sum(c => c.TotalSubCategories - c.CompletedSubCategories) ?? 0;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        userName = authState.User.Identity?.Name;
-
-
-        user = await UserManager.FindByNameAsync(userName ?? "");
-        if (user is null)
-        {
-            RedirectManager.RedirectTo("/login");
-            return;
-        }
-
-        currentUsername = await UserManager.GetUserNameAsync(user);
+        currentUsername = authState.User.Identity?.Name ?? TokenStore.Username;
 
         await LoadProgressAsync();
     }
-    private async Task LoadProgressAsync() //Hämta progression
+
+    private async Task LoadProgressAsync()
     {
         isLoading = true;
-        try
-        {
-            categories = await ApiService.GetCategoriesAsync();
-        }
-        catch (Exception e)
-        {
-            errorMessage = "Failed to load progression data.";
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        try { categories = await ApiService.GetCategoriesAsync(); }
+        catch { }
+        finally { isLoading = false; }
     }
 
-    private async Task OnValidSubmitUsernameAsync()
+    private async Task KeepRecent()
     {
-        if (user is null || string.IsNullOrEmpty(UsernameInput.NewUsername))
-            return;
-
-        if (UsernameInput.NewUsername == currentUsername)
-        {
-            errorMessage = "The new username is the same as the current username.";
-            return;
-        }
-
-        isSaving = true;
-        errorMessage = null;
-        successMessage = null;
-
+        deleteLoading = true;
+        deleteAction = "keep";
+        deleteMessage = null;
         try
         {
-            var result = await UserManager.SetUserNameAsync(user, UsernameInput.NewUsername);
-
-            if (result.Succeeded)
-            {
-                Logger.LogInformation("User {UserName} changed their username.", UsernameInput.NewUsername);
-                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-            }
-            else
-            {
-                errorMessage = $"Error: {string.Join(", ", result.Errors.Select(e => e.Description))}";
-            }
+            var ok = await ApiService.KeepRecentProgressAsync(3);
+            deleteMessage = ok ? "The 3 most recent sessions were kept. The rest were deleted." : "Something went wrong.";
+            deleteError = !ok;
+            if (ok) await LoadProgressAsync();
         }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error updating username");
-            errorMessage = "An error occurred while updating your username.";
-        }
-        finally
-        {
-            isSaving = false;
-        }
+        catch { deleteMessage = "Unexpected error."; deleteError = true; }
+        finally { deleteLoading = false; deleteAction = null; }
     }
 
-    private async Task OnValidSubmitPasswordAsync()
+    private async Task DeleteAll()
     {
-        if (user is null)
-            return;
-
-        isSaving = true;
-        errorMessage = null;
-        successMessage = null;
-
+        deleteLoading = true;
+        deleteAction = "all";
+        deleteMessage = null;
+        confirmDeleteAll = false;
         try
         {
-            var result = await UserManager.ChangePasswordAsync(
-            user,
-            PasswordInput.CurrentPassword,
-            PasswordInput.NewPassword);
-
-            if (result.Succeeded)
-            {
-                Logger.LogInformation("User {UserName} changed their password.", currentUsername);
-                NavigationManager.NavigateTo("/", forceLoad: true);
-            }
-            else
-            {
-                errorMessage = $"Error: {string.Join(", ", result.Errors.Select(e => e.Description))}";
-            }
+            var ok = await ApiService.DeleteAllProgressAsync();
+            deleteMessage = ok ? "All progress has been deleted." : "Something went wrong.";
+            deleteError = !ok;
+            if (ok) await LoadProgressAsync();
         }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error changing password");
-            errorMessage = "An error occurred while changing your password.";
-        }
-        finally
-        {
-            isSaving = false;
-        }
+        catch { deleteMessage = "Unexpected error."; deleteError = true; }
+        finally { deleteLoading = false; deleteAction = null; }
     }
-    private async Task AskAiCoach() //metod för att fråga AI om feedback
+
+    private async Task AskAiCoach()
     {
         aiLoading = true;
         aiError = null;
@@ -375,49 +277,17 @@
         try
         {
             aiFeedback = await AiCoachApiService.GetFeedback();
-
             if (aiFeedback is null || string.IsNullOrWhiteSpace(aiFeedback.Feedback))
-            {
-                aiError = "Kunde inte få feedback från AI.";
-            }
+                aiError = "Could not get feedback from AI.";
         }
         catch (Exception ex)
         {
-            aiError = $"Ett oväntat fel uppstod: {ex.Message}";
-            aiActive = false; 
-            
+            aiError = $"Unexpected error: {ex.Message}";
+            aiActive = false;
         }
         finally
         {
             aiLoading = false;
         }
-    }
-
-
-    private sealed class UsernameInputModel
-    {
-        [Required]
-        [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
-        [Display(Name = "New username")]
-        public string NewUsername { get; set; } = "";
-    }
-
-    private sealed class PasswordInputModel
-    {
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Current password")]
-        public string CurrentPassword { get; set; } = "";
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "New password")]
-        public string NewPassword { get; set; } = "";
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = "";
     }
 }

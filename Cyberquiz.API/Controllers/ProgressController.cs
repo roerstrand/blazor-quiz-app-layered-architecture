@@ -62,5 +62,25 @@ namespace Cyberquiz.API.Controllers
             return Ok(completed);
         }
 
+        // DELETE api/progress/all — raderar all progression för inloggad användare (GDPR)
+        [HttpDelete("all")]
+        public async Task<ActionResult> DeleteAllProgress()
+        {
+            var userName = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userName)) return Unauthorized();
+            await _progressService.DeleteAllProgressForUserAsync(userName);
+            return NoContent();
+        }
+
+        // DELETE api/progress/keep/{keepLatest} — behåller N senaste, raderar resten
+        [HttpDelete("keep/{keepLatest:int}")]
+        public async Task<ActionResult> DeleteOldProgress(int keepLatest)
+        {
+            var userName = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userName)) return Unauthorized();
+            await _progressService.KeepRecentProgressForUserAsync(userName, keepLatest);
+            return NoContent();
+        }
+
     }
 }

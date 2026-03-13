@@ -79,6 +79,7 @@ namespace Cyberquiz.BLL.Services
                 Id = model.Id,
                 Question = model.Question,
                 AnswerOptions = model.QuestionAnswerOptions?
+                    .OrderBy(_ => Guid.NewGuid())
                     .Select(qao => new AnswerOptionDto
                     {
                         Id = qao.AnswerOption.Id,

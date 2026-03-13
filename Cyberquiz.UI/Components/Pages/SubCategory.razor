@@ -1,129 +1,101 @@
-﻿@page "/categories/{CategoryId:int}/subcategories"
+@page "/categories/{CategoryId:int}/subcategories"
 @using Cyberquiz.Shared.DTOs
-@using Cyberquiz.UI.Services
 @using Microsoft.AspNetCore.Authorization
 @inject ApiService ApiService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
-
 @attribute [Authorize]
-<div class="mb-4">
-    <button class="btn btn-outline-secondary" @onclick="GoBack">
-        Tillbaka till kategorier
-    </button>
+
+<div class="mb-3">
+    <button class="btn btn-outline-secondary btn-sm" @onclick="GoBack">← Back to categories</button>
 </div>
-<h3>Subkategorier för @_categoryName</h3>
 
 @if (!string.IsNullOrWhiteSpace(_error))
 {
-    <div class="alert alert-danger">
-        <h5>Fel uppstod:</h5>
-        <pre style="white-space:pre-wrap;">@_error</pre>
-    </div>
+    <div class="alert alert-danger">@_error</div>
 }
 else if (_isLoading)
 {
-    <p>Laddar...</p>
-}
-else if (_filteredSubs.Count == 0)
-{
-    <p>Inga subkategorier hittades för denna kategori.</p>
-    <button class="btn btn-secondary" @onclick="GoBack">Tillbaka till kategorier</button>
+    <div class="d-flex align-items-center gap-2 text-muted">
+        <div class="spinner-border spinner-border-sm"></div>
+        <span>Loading...</span>
+    </div>
 }
 else
 {
-   
-    @foreach (var s in _filteredSubs.OrderBy(x => x.Order))
+    <div class="page-header">
+        <h1>@_categoryName</h1>
+        <p class="text-muted">Choose a module and start the quiz.</p>
+    </div>
+
+    @if (_filteredSubs.Count == 0)
     {
-        <div class="card p-3 mb-3">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h5 style="margin:0;">
-                        @(s.IsLocked ? "🔒" : "🔓") @s.Name
-                        @if (s.IsCompleted)
-                        {
-                            <span>✅</span>
-                        }
-                    </h5>
+        <div class="alert alert-info">No modules found.</div>
+    }
+    else
+    {
+        @foreach (var s in _filteredSubs.OrderBy(x => x.Order))
+        {
+            var subId = s.Id;
+            var isLocked = s.IsLocked;
 
-                    <div style="opacity:.8;">
-                        <span>Kategori: @s.CategoryName</span>
-                        <span style="margin-left:10px;">Nivå: @s.Order</span>
-                        <span style="margin-left:10px;">Frågor: @s.QuestionCount</span>
+            <div class="category-card mb-3">
+                <div class="category-card-header">
+                    <div>
+                        <h3>@(s.IsLocked ? "🔒" : s.IsCompleted ? "✅" : "🔓") @s.Name</h3>
+                        <small class="text-muted">Level @s.Order &bull; @s.QuestionCount questions</small>
                     </div>
+                    <button class="btn btn-sm @(isLocked ? "btn-secondary" : "btn-primary")"
+                            disabled="@isLocked"
+                            @onclick="() => StartQuiz(subId)">
+                        @(isLocked ? "Locked" : "Start quiz")
+                    </button>
                 </div>
-
-                <button class="btn btn-primary"
-                        disabled="@s.IsLocked"
-                        @onclick="() => StartQuiz(s.Id)">
-                    Starta quiz
-                </button>
+                @if (!string.IsNullOrWhiteSpace(s.Description) || s.IsLocked)
+                {
+                    <div class="category-card-body">
+                        @if (!string.IsNullOrWhiteSpace(s.Description))
+                        {
+                            <p class="text-muted fst-italic small mb-1">@s.Description</p>
+                        }
+                        @if (s.IsLocked)
+                        {
+                            <small class="text-danger">Requires 80% on the previous level.</small>
+                        }
+                    </div>
+                }
             </div>
-
-            @if (!string.IsNullOrWhiteSpace(s.Description))
-            {
-                <p style="margin-top:10px; font-style: italic;">@s.Description</p>
-            }
-        </div>
-
+        }
     }
 }
 
 @code {
     [Parameter] public int CategoryId { get; set; }
-    
+
     private List<SubCategoryDto>? _allSubs;
-    private List<CategoryDto>? _allCategories;
     private string? _categoryName;
     private string? _error;
     private bool _isLoading = true;
 
-    private List<SubCategoryDto> _filteredSubs // filtrera subkategorier efter kategori
-    {
-        get
-        {
-            if (_allSubs == null || string.IsNullOrEmpty(_categoryName))
-                return new List<SubCategoryDto>();
-
-            return _allSubs
-                .Where(s => s.CategoryName.Equals(_categoryName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-    }
+    private List<SubCategoryDto> _filteredSubs =>
+        _allSubs?.Where(s => s.CategoryName.Equals(_categoryName, StringComparison.OrdinalIgnoreCase)).ToList() ?? [];
 
     protected override async Task OnParametersSetAsync()
     {
         _isLoading = true;
         _error = null;
-
         try
         {
-            _allCategories = await ApiService.GetCategoriesAsync();
-            
-            var category = _allCategories.FirstOrDefault(c => c.Id == CategoryId);
-            if (category == null)
-            {
-                _error = $"Kategori med Id {CategoryId} hittades inte.";
-                return;
-            }
-            
-            _categoryName = category.Name;
+            var categories = await ApiService.GetCategoriesAsync();
+            var cat = categories.FirstOrDefault(c => c.Id == CategoryId);
+            if (cat is null) { _error = "Category not found."; return; }
+            _categoryName = cat.Name;
             _allSubs = await ApiService.GetSubCategoriesAsync();
         }
-        catch (Exception ex)
-        {
-            _error = ex.ToString();
-        }
-        finally
-        {
-            _isLoading = false;
-        }
+        catch (Exception ex) { _error = ex.Message; }
+        finally { _isLoading = false; }
     }
 
-    private void StartQuiz(int subCategoryId) // Starta quiz för vald subkategori
-        => Nav.NavigateTo($"/quiz/{subCategoryId}", forceLoad: true);
-
-    private void GoBack() // Navigera tillbaka till kategorisidan
-        => Nav.NavigateTo("/categories");
+    private void StartQuiz(int subId) => Nav.NavigateTo($"/quiz/{subId}");
+    private void GoBack() => Nav.NavigateTo("/categories");
 }
-

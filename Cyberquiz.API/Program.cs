@@ -2,21 +2,53 @@ using Cyberquiz.BLL.AI_coach;
 using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.BLL.Services;
 using Cyberquiz.DAL.Data;
+using Cyberquiz.DAL.Identity;
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("AppDbConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-// Endast quiz-databasen (kategorier, frågor, svar, progress)
+// Quiz-databas
+var appConnStr = builder.Configuration.GetConnectionString("AppDbConnection")
+    ?? throw new InvalidOperationException("Connection string 'AppDbConnection' not found.");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(appConnStr));
+
+// Auth-databas (Identity/användare)
+var authConnStr = builder.Configuration.GetConnectionString("AuthDbConnection")
+    ?? throw new InvalidOperationException("Connection string 'AuthDbConnection' not found.");
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(authConnStr, b => b.MigrationsAssembly("Cyberquiz.API")));
+
+// Identity
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+builder.Services.AddAuthorization();
 
 // DAL
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
@@ -35,22 +67,6 @@ builder.Services.AddHttpClient<IAiClient, AiClient>(client =>
     client.BaseAddress = new Uri("http://localhost:11434/");
     client.Timeout = TimeSpan.FromMinutes(4);
 });
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-        };
-    });
-builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -75,30 +91,32 @@ var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>
 {
-errorApp.Run(async context =>
-{
-context.Response.StatusCode = 500;
-context.Response.ContentType = "application/json";
-
-    await context.Response.WriteAsync("""
+    errorApp.Run(async context =>
     {
-        "message": "Internal server error"
-    }
-    """);
-});
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync("""
+        {
+            "message": "Internal server error"
+        }
+        """);
+    });
 });
 
 // Migrera och seed quiz-databasen vid uppstart
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    //if (app.Environment.IsDevelopment())
-    //{
-    //    // ⚠️ TA BORT EFTER TEST - Raderar allt vid varje start!
-    //    await db.Database.EnsureDeletedAsync();
-    //}
-    await db.Database.MigrateAsync();
-    await DbSeeder.SeedAsync(db);
+    var quizDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await quizDb.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(quizDb);
+
+    var authDb = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+    if (app.Environment.IsDevelopment())
+        await authDb.Database.EnsureDeletedAsync();
+    await authDb.Database.EnsureCreatedAsync();
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    await AuthSeeder.SeedAsync(userManager);
 }
 
 if (app.Environment.IsDevelopment())
@@ -110,8 +128,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ✅ CORS måste vara FÖRE MapControllers
-app.UseCors();
+// CORS måste vara FÖRE MapControllers
+app.UseCors("AllowUI");
 
 app.UseAuthentication();
 app.UseAuthorization();

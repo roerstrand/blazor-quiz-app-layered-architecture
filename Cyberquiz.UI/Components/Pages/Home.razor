@@ -1,49 +1,28 @@
-﻿@page "/"
-@using Cyberquiz.UI.Components.Account.Pages
+@page "/"
+@layout AuthLayout
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
-<div style="text-align:center; margin-top:100px;">
+<div class="auth-card" style="max-width:480px; text-align:center;">
+    <div class="brand-logo-lg" style="margin-bottom:1.75rem;"><span class="brand-hack">Hack</span><span class="brand-proof">Proof</span></div>
 
-    <img src="/image/CyberQuiz.png" alt="CyberQuiz Logo" style="max-width: 800px; height:300px"/>
+    <h1 class="auth-title" style="font-size:1.6rem;">Test your cybersecurity knowledge</h1>
+    <p class="auth-subtitle" style="margin-bottom:2rem;">
+        Learn about cybersecurity through interactive quizzes and get personal feedback from our AI coach.
+    </p>
 
-    <div style="margin-top:40px;">
-        <button class="btn btn-primary"
-                style="margin-right:15px;"
-                @onclick="GoToLogin">
-            Logga in
-        </button>
-
-        <button class="btn btn-outline-primary"
-                @onclick="GoToRegister">
-            Registrera konto
-        </button>
+    <div class="d-flex gap-3" style="justify-content:center;">
+        <a href="/Account/Login" class="btn btn-primary btn-lg">Log in</a>
+        <a href="/Account/Register" class="btn btn-outline-secondary btn-lg" style="background:#fff; border-color:#4f46e5; color:#4f46e5;">Create account</a>
     </div>
-
 </div>
 
 @code {
-    //Om användaren redan är inloggad, skicka dem direkt till kategorisidan
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user?.Identity?.IsAuthenticated == true)
-        {
+        if (authState.User?.Identity?.IsAuthenticated == true)
             Nav.NavigateTo("/categories");
-        }
     }
-
-    void GoToLogin()
-    {
-        Nav.NavigateTo("/login");
-    }
-
-    void GoToRegister()
-    {
-        Nav.NavigateTo("/register");
-    }
-
 }

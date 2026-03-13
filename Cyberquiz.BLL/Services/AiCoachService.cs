@@ -27,8 +27,11 @@ namespace Cyberquiz.BLL.Services
         private string BuildPrompt(IEnumerable<UserProgressDto> history)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Du är en coach för en cybersäkerhetsutbildning. En användare har genomfört följande quiz inom olika cybersäkerhetsämnen (resultat i procent rätt svar):");
+
+            sb.AppendLine("You are analysing cybersecurity quiz results.");
+            sb.AppendLine("Use only the provided results.");
             sb.AppendLine();
+
             foreach (var entry in history)
             {
                 var percent = entry.TotalQuestions > 0 ? (entry.Score * 100 / entry.TotalQuestions) : 0;
@@ -36,7 +39,14 @@ namespace Cyberquiz.BLL.Services
             }
 
             sb.AppendLine();
-            sb.AppendLine("Svara på svenska med tre korta stycken: Styrkor, Svagheter, Rekommendationer. Max 150 ord.");
+            sb.AppendLine("Respond in English only.");
+            sb.AppendLine("Max 300 characters total.");
+            sb.AppendLine();
+            sb.AppendLine("Format:");
+            sb.AppendLine("Strengths:");
+            sb.AppendLine("Weaknesses:");
+            sb.AppendLine("Recommendations:");
+
             return sb.ToString();
         }
     }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cyberquiz.UI.Data
+namespace Cyberquiz.DAL.Identity
 {
     public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -13,7 +13,6 @@ namespace Cyberquiz.UI.Data
         {
             base.OnModelCreating(builder);
 
-            // ✅ Konfigurera CreatedAt med default-värde
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.Property(e => e.CreatedAt)
