@@ -54,6 +54,7 @@ builder.Services.AddHttpClient<ApiService>(client =>
 builder.Services.AddHttpClient<AiCoachApiService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AiCoachApiBaseUrl"] ?? "https://localhost:7237");
+    client.Timeout = TimeSpan.FromMinutes(5);
 });
 
 var app = builder.Build();

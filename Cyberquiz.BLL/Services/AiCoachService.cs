@@ -1,59 +1,45 @@
-﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.AI_DTOs;
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
+using System.Text;
 
 namespace Cyberquiz.BLL.Services
 {
-    // Serviceklass som hanterar AI-coachning
     public class AiCoachService : IAiCoachService
     {
         private readonly IProgressService _progressService;
-        private readonly IAiPromptBuilder _promptBuilder;
-        private readonly IOpenAiClient _openAiClient;
-        public AiCoachService(IProgressService progressService, IAiPromptBuilder promptBuilder, IOpenAiClient openAiClient)
+        private readonly IAiClient _openAiClient;
+
+        public AiCoachService(IProgressService progressService, IAiClient openAiClient)
         {
             _progressService = progressService;
-            _promptBuilder = promptBuilder;
             _openAiClient = openAiClient;
         }
 
         public async Task<AiFeedbackDto> GetUserAnalysisAsync(string userName)
         {
-            // Hämtar användarens resultat
-            var results = await _progressService.GetAllByUserAsync(userName); // Vad är det vi vill anropa?
-            // Bygger en sammanfattning av användarens resultat
-            var summary = BuildSummary(new List<UserProgressDto>(results));
-            // Skapar en prompt för AI:n baserat på sammanfattningen
-            var prompt = _promptBuilder.BuildUserAnalysisPrompt(summary);
-            // Hämtar feedback från AI:n
+            var history = await _progressService.GetAllByUserAsync(userName);
+            var prompt = BuildPrompt(history);
             var aiResponse = await _openAiClient.GetFeedback(prompt);
-            // Returnerar feedbacken i en DTO
-            return new AiFeedbackDto
-            {
-                Feedback = aiResponse
-            };
+            return new AiFeedbackDto { Feedback = aiResponse };
         }
-        private AiUserSummaryDto BuildSummary(List<UserProgressDto> results)
+
+        private string BuildPrompt(IEnumerable<UserProgressDto> history)
         {
-            // Grupperar resultaten per underkategori och hämtar procent via IProgressService
-            var categoryStats = results
-                .GroupBy(r => r.SubCategoryName)
-                .Select(g => new AiCategoryResultDto
-                {
-                    CategoryName = g.Key,
-                    CorrectPercentage =
-                        (int)(g.Count(x => x.IsCorrect) * 100.0 / g.Count())
-                })
-                .ToList();
-
-            return new AiUserSummaryDto
+            var sb = new StringBuilder();
+            sb.AppendLine("Du är en coach för en cybersäkerhetsutbildning. En användare har genomfört följande quiz inom olika cybersäkerhetsämnen (resultat i procent rätt svar):");
+            sb.AppendLine();
+            foreach (var entry in history)
             {
-                CategoryResults = categoryStats
-            };
+                var percent = entry.TotalQuestions > 0 ? (entry.Score * 100 / entry.TotalQuestions) : 0;
+                sb.AppendLine($"- {entry.SubCategoryName}: {percent}% rätt ({entry.Score} av {entry.TotalQuestions})");
+            }
+            sb.AppendLine();
+            sb.AppendLine("Svara på svenska med exakt tre korta stycken. Nämn alltid ämnena vid namn:");
+            sb.AppendLine("Styrkor: Vad klarar användaren bra (över 70%) och varför är det viktigt inom cybersäkerhet?");
+            sb.AppendLine("Svagheter: Vilka specifika ämnen (under 70%) behöver förbättras och vad innebär bristerna i praktiken?");
+            sb.AppendLine("Rekommendationer: Ge konkreta studietips för de svaga ämnena — vad bör användaren läsa på, öva på eller vara extra uppmärksam på inom cybersäkerhet?");
+            return sb.ToString();
         }
-
     }
 }

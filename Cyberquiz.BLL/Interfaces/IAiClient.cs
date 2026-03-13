@@ -1,6 +1,6 @@
 ﻿namespace Cyberquiz.BLL.Interfaces
 {
-    public interface IOpenAiClient
+    public interface IAiClient
     {
         Task<string> GetFeedback(string prompt);
     }
