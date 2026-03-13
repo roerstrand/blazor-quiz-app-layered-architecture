@@ -214,12 +214,12 @@
 
             Logger.LogInformation("User {UserName} created a new account.", Input.UserName);
 
-            // ✅ FIX: Använd NavigationManager istället för SignInAsync
+            //  Använd NavigationManager istället för SignInAsync
             _registrationSuccess = true;
             
             await Task.Delay(1500); // Visa success-meddelande
             
-            // ✅ Redirect till login istället för att signa in direkt
+            // Redirect till login istället för att signa in direkt
             NavigationManager.NavigateTo($"/login?username={Input.UserName}", forceLoad: true);
         }
         finally

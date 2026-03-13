@@ -107,12 +107,12 @@
         <section>
             <h3>Din progression</h3>
             <hr />
-
+            
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">AI Coach Feedback</h5>
                     <p class="text-muted small mb-2">
-                        Få feedback från våran AI coach
+                        Få feedback från vår AI coach
                     </p>
 
                     <button type="button"
@@ -121,17 +121,26 @@
                             @onclick="AskAiCoach">
                         @(aiLoading ? "Analyserar..." : "Analysera min progression")
                     </button>
+                    
                     @if (!string.IsNullOrWhiteSpace(aiError))
                     {
                         <div class="alert alert-danger mt-3" role="alert">
                             @aiError
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(aiFeedback.Feedback))
+                    
+                    
+                    @if (aiFeedback != null && !string.IsNullOrWhiteSpace(aiFeedback.Feedback))
                     {
                         <div class="alert alert-info mt-3" role="alert">
                             <h6>AI Coach Feedback:</h6>
                             <p>@aiFeedback.Feedback</p>
+                        </div>
+                    }
+                    else if (!aiLoading && aiFeedback == null && string.IsNullOrWhiteSpace(aiError))
+                    {
+                        <div class="text-muted mt-3">
+                            <small>AI coach är inte tillgänglig just nu</small>
                         </div>
                     }
                 </div>
