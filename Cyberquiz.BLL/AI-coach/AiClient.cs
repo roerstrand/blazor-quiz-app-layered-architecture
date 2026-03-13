@@ -17,7 +17,7 @@ namespace Cyberquiz.BLL.AI_coach
         {
             using var cts = new CancellationTokenSource(Timeout);
 
-            var request = new { model = "llama3.1:8b", prompt = prompt, stream = false, num_predict = 200 };
+            var request = new { model = "llama3.2:1b", prompt = prompt, stream = false, num_predict = 300 };
 
             HttpResponseMessage response;
             try
