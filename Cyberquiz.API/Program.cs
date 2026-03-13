@@ -1,3 +1,4 @@
+using Cyberquiz.BLL.AI_coach;
 using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.BLL.Services;
 using Cyberquiz.DAL.Data;
@@ -23,6 +24,14 @@ builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAiCoachService, AiCoachService>();
+
+// AI
+builder.Services.AddHttpClient<IAiClient, AiClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:11434/");
+    client.Timeout = TimeSpan.FromMinutes(4);
+});
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
