@@ -41,7 +41,6 @@ namespace Cyberquiz.BLL.Services
 
             return result;
         }
-        // Metod som inte behövs?
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int categoryId)
         {
