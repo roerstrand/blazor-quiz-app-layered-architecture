@@ -117,7 +117,7 @@
 
                     <button type="button"
                             class="btn btn-primary"
-                            disabled="@aiLoading"
+                            disabled="@(!aiActive || aiLoading)" )
                             @onclick="AskAiCoach">
                         @(aiLoading ? "Analyserar..." : "Analysera min progression")
                     </button>
@@ -132,6 +132,7 @@
                     
                     @if (aiFeedback != null && !string.IsNullOrWhiteSpace(aiFeedback.Feedback))
                     {
+                        aiActive = true;
                         <div class="alert alert-info mt-3" role="alert">
                             <h6>AI Coach Feedback:</h6>
                             <p>@aiFeedback.Feedback</p>
@@ -139,7 +140,8 @@
                     }
                     else if (!aiLoading && aiFeedback == null && string.IsNullOrWhiteSpace(aiError))
                     {
-                        <div class="text-muted mt-3">
+                        aiActive = false;
+                        <div class="text-danger mt-3">
                             <small>AI coach är inte tillgänglig just nu</small>
                         </div>
                     }
@@ -223,6 +225,7 @@
     private AiFeedbackDto? aiFeedback;
     private string? aiError;
     private string? userName;
+    private bool aiActive = true;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
