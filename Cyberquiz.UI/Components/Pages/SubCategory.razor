@@ -72,7 +72,7 @@ else
     private string? _error;
     private bool _isLoading = true;
 
-    private List<SubCategoryDto> _filteredSubs
+    private List<SubCategoryDto> _filteredSubs // filtrera subkategorier efter kategori
     {
         get
         {
@@ -114,10 +114,10 @@ else
         }
     }
 
-    private void StartQuiz(int subCategoryId)
+    private void StartQuiz(int subCategoryId) // Starta quiz för vald subkategori
         => Nav.NavigateTo($"/quiz/{subCategoryId}", forceLoad: true);
 
-    private void GoBack()
+    private void GoBack() // Navigera tillbaka till kategorisidan
         => Nav.NavigateTo("/categories");
 }
 

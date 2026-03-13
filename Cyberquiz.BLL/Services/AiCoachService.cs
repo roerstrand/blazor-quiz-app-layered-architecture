@@ -1,8 +1,6 @@
-﻿using Cyberquiz.BLL.AI_coach;
-using Cyberquiz.BLL.Interfaces;
+﻿using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.Shared.DTOs;
 using Cyberquiz.Shared.DTOs.AI_DTOs;
-using Cyberquiz.UI.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;

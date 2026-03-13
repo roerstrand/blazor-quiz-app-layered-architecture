@@ -1,6 +1,5 @@
 ﻿@page "/categories"
 @using Cyberquiz.Shared.DTOs
-@using Cyberquiz.UI.Components.Pages.Components
 @using Cyberquiz.UI.Services
 @using Microsoft.AspNetCore.Authorization
 @inject NavigationManager Nav
@@ -107,15 +106,15 @@ else
         transition: transform .05s, border-color .15s;
     }
 
-        .sub-card:hover {
-            border-color: #7c3aed;
-            transform: translateY(-1px);
-        }
+    .sub-card:hover {
+    border-color: #7c3aed;
+    transform: translateY(-1px);
+    }
 
-        .sub-card.locked {
-            opacity: .85;
-            cursor: not-allowed;
-        }
+    .sub-card.locked {
+        opacity: .85;
+         cursor: not-allowed;
+    }
 </style>
 
 @code {
@@ -123,22 +122,21 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity?.Name;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync(); // Säkerställ att användaren är autentiserad
+        var userName = authState.User.Identity?.Name; // Hämta användarnamnet från autentiseringsstatet
         _categories = await ApiService.GetCategoriesAsync(userName);
     }
 
-    private void GoToSubCategories(int categoryId)
+    private void GoToSubCategories(int categoryId) // Navigera till subkategorier för vald kategori
         => Nav.NavigateTo($"/categories/{categoryId}/subcategories");
 
-    private void OpenSubCategory(SubCategoryDto s) //ta bort?
+    private void OpenSubCategory(SubCategoryDto s) // Starta quiz för vald subkategori
     {
         if (s.IsLocked) return;
 
-        //starta quiz direkt:
-        Nav.NavigateTo($"/quiz/{s.Id}");
+        //starta quiz direkt
+        Nav.NavigateTo($"/quiz/{s.Id}"); 
 
-        // Alternativ: gå till subcategories-sidan istället:
-        // Nav.NavigateTo($"/categories/{}/subcategories");
+        
     }
 }

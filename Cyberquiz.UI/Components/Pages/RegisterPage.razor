@@ -3,27 +3,26 @@
 @using Cyberquiz.UI.Components.Account
 @using Cyberquiz.UI.Data
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<RegisterPage> Logger
 @inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
 <PageTitle>Registrera - Cyberquiz</PageTitle>
 
 <div class="register-container">
     <div class="register-card">
-        <!-- Header -->
         <div class="register-header text-center mb-4">
             <i class="bi bi-person-plus-fill text-primary" style="font-size: 4rem;"></i>
             <h1 class="mt-3">Skapa konto</h1>
             <p class="text-muted">Börja din cybersäkerhetsresa</p>
         </div>
 
-        <!-- Error Message -->
         @if (!string.IsNullOrEmpty(Message))
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -33,86 +32,90 @@
             </div>
         }
 
-        <!-- Register Form -->
-        <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger mb-3" role="alert" />
+        @if (_registrationSuccess)
+        {
+            <div class="alert alert-success">
+                <h5>✅ Konto skapat!</h5>
+                <p>Omdirigerar till login...</p>
+            </div>
+        }
+        else
+        {
+            <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger mb-3" role="alert" />
 
-            <!-- Username -->
-            <div class="mb-3">
-                <label for="username" class="form-label">
-                    <i class="bi bi-person-fill me-2"></i>Användarnamn
-                </label>
-                <InputText @bind-Value="Input.UserName" 
-                           id="username" 
-                           class="form-control form-control-lg" 
-                           autocomplete="username" 
-                           placeholder="Välj ett användarnamn" />
-                <ValidationMessage For="() => Input.UserName" class="text-danger" />
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        <i class="bi bi-person-fill me-2"></i>Användarnamn
+                    </label>
+                    <InputText @bind-Value="Input.UserName" 
+                               id="username" 
+                               class="form-control form-control-lg" 
+                               autocomplete="username" 
+                               placeholder="Välj ett användarnamn" />
+                    <ValidationMessage For="() => Input.UserName" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="bi bi-lock-fill me-2"></i>Lösenord
+                    </label>
+                    <InputText type="password" 
+                               @bind-Value="Input.Password" 
+                               id="password" 
+                               class="form-control form-control-lg" 
+                               autocomplete="new-password" 
+                               placeholder="Välj ett säkert lösenord" />
+                    <small class="text-muted">Minst 6 tecken</small>
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">
+                        <i class="bi bi-lock-fill me-2"></i>Bekräfta lösenord
+                    </label>
+                    <InputText type="password"
+                               @bind-Value="Input.ConfirmPassword"
+                               id="confirmPassword"
+                               class="form-control form-control-lg"
+                               autocomplete="new-password"
+                               placeholder="Bekräfta ditt lösenord" />
+                    <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary btn-lg w-100 mb-3"
+                        disabled="@isRegistering">
+                    @if (isRegistering)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        <span>Skapar konto...</span>
+                    }
+                    else
+                    {
+                        <i class="bi bi-person-check-fill me-2"></i>
+                        <span>Skapa konto</span>
+                    }
+                </button>
+            </EditForm>
+
+            <div class="divider my-4">
+                <span>eller</span>
             </div>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label">
-                    <i class="bi bi-lock-fill me-2"></i>Lösenord
-                </label>
-                <InputText type="password" 
-                           @bind-Value="Input.Password" 
-                           id="password" 
-                           class="form-control form-control-lg" 
-                           autocomplete="new-password" 
-                           placeholder="Välj ett säkert lösenord" />
-                <small class="text-muted">Minst 6 tecken</small>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            <div class="text-center">
+                <p class="mb-0">
+                    Har du redan ett konto?
+                    <a href="/login" class="fw-bold text-decoration-none">
+                        Logga in här
+                    </a>
+                </p>
             </div>
-
-            <!-- Confirm Password -->
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">
-                    <i class="bi bi-lock-fill me-2"></i>Bekräfta lösenord
-                </label>
-                <InputText type="password"
-                           @bind-Value="Input.ConfirmPassword"
-                           id="confirmPassword"
-                           class="form-control form-control-lg"
-                           autocomplete="new-password"
-                           placeholder="Bekräfta ditt lösenord" />
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit"
-                    class="btn btn-primary btn-lg w-100 mb-3"
-                    disabled="@isRegistering">
-                @if (isRegistering)
-                {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    <span>Skapar konto...</span>
-                }
-                else
-                {
-                    <i class="bi bi-person-check-fill me-2"></i>
-                    <span>Skapa konto</span>
-                }
-            </button>
-        </EditForm>
-
-        <!-- Divider -->
-        <div class="divider my-4">
-            <span>eller</span>
-        </div>
-
-        <!-- Links -->
-        <div class="text-center">
-            <p class="mb-0">
-                Har du redan ett konto?
-                <a href="/login" class="fw-bold text-decoration-none">
-                    Logga in här
-                </a>
-            </p>
-        </div>
+        }
     </div>
 </div>
+
 <style>
     .register-container {
         min-height: 100vh;
@@ -140,7 +143,6 @@
         0%, 100% {
             transform: translateY(0);
         }
-
         50% {
             transform: translateY(-10px);
         }
@@ -169,6 +171,7 @@
 @code {
     private IEnumerable<IdentityError>? identityErrors;
     private bool isRegistering = false;
+    private bool _registrationSuccess = false;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
@@ -180,9 +183,17 @@
         ? null
         : $"Fel: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         Input ??= new();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            NavigationManager.NavigateTo("/categories");
+        }
     }
 
     public async Task RegisterUser(EditContext editContext)
@@ -203,8 +214,13 @@
 
             Logger.LogInformation("User {UserName} created a new account.", Input.UserName);
 
-            await SignInManager.SignInAsync(user, isPersistent: false);
-            RedirectManager.RedirectTo(ReturnUrl ?? "/categories");
+            // ✅ FIX: Använd NavigationManager istället för SignInAsync
+            _registrationSuccess = true;
+            
+            await Task.Delay(1500); // Visa success-meddelande
+            
+            // ✅ Redirect till login istället för att signa in direkt
+            NavigationManager.NavigateTo($"/login?username={Input.UserName}", forceLoad: true);
         }
         finally
         {

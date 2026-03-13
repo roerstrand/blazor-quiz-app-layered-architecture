@@ -1,4 +1,5 @@
-﻿using Cyberquiz.Shared.DTOs.AI_DTOs;
+﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.Shared.DTOs.AI_DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
