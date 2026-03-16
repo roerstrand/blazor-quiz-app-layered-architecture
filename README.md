@@ -9,7 +9,7 @@ This project was originally developed as a group project during academic studies
 ## Demo
 
 Video preview  
-YouTube: INSERT_VIDEO_LINK
+YouTube: 
 
 ---
 
