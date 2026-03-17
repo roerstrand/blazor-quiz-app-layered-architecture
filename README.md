@@ -32,4 +32,6 @@ The application follows a layered approach:
 This application was initially developed as part of a group project and has since been further developed and extended individually, focusing on improved structure, features, and overall design. This project was built to explore modern .NET development, component-based UI, and structured application design.
 
 ## 👥 Contributors
-Originally developed as a group project.Further developed and extended individually by Robin Erik Strandberg.
+Originally developed as a group project.
+
+Further developed and extended individually by Robin Erik Strandberg, focusing on structure, features, and overall design improvements.
