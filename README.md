@@ -7,7 +7,7 @@ See video demo here:
 https://youtube.com/shorts/55-sQUsT-DQ
 
 ## 🚀 Features
-- AI-generated quiz questions
+- AI-generated feedback
 - User answer handling
 - Progress tracking
 - Clean UI with component-based structure
@@ -15,8 +15,9 @@ https://youtube.com/shorts/55-sQUsT-DQ
 ## 🧠 Architecture
 The application follows a layered approach:
 - Presentation (Blazor UI)
-- Application logic
-- Data / services (API integration)
+- API-layer with JWT Auth generation.
+- Business logic layer
+- Data application layer.
 
 ## 🛠 Tech Stack
 - Blazor (.NET)
