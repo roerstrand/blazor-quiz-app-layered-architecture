@@ -1,4 +1,4 @@
-﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.Shared.DTOs;
@@ -44,9 +44,9 @@ namespace Cyberquiz.BLL.Services
 
         public async Task<CategoryDto?> GetCategoryByIdAsync(int categoryId)
         {
-            // Anropar repo med kategori-id som argument
+            // Calls repo with category id as argument
             var category = await _categoryRepo.GetCategoryByIdAsync(categoryId);
-            // Om category inte finns, returnera null, annars mappa till CategoryDto
+            // If category not found, return null, otherwise map to CategoryDto
             return category == null ? null : MapToCategoryDto(category);
         }
 
@@ -57,29 +57,29 @@ namespace Cyberquiz.BLL.Services
 
             if (string.IsNullOrEmpty(userName))
             {
-                // Om ingen användare, returnera utan låslogik
+                // If no user, return without lock logic
                 return subCategories.Select(scs => MapToSubCategoryDto(scs));
             }
 
-            // Gruppera 
+            // Group
             var groupedByCategory = subCategories
-                .Where(s => s.Category != null) // Filtrera bort subkategorier utan kategori
+                .Where(s => s.Category != null) // Filter out subcategories without a category
                 .GroupBy(s => s.Category!.Name)
                 .OrderBy(g => g.Key);
 
             foreach (var categoryGroup in groupedByCategory)
             {
-                // Sortera subkategorier inom kategorin efter Order
+                // Sort subcategories within the category by Order
                 var subs = categoryGroup.OrderBy(s => s.Order).ToList();
 
                 for (int i = 0; i < subs.Count; i++)
                 {
                     var dto = MapToSubCategoryDto(subs[i]);
 
-                    // Beräkna IsCompleted
+                    // Calculate IsCompleted
                     dto.IsCompleted = await _progressService.IsSubCategoryCompletedAsync(userName, dto.Id);
 
-                    //första i varje kategori är inte låst, resten är låsta om föregående inte är completed
+                    // First in each category is not locked; rest are locked if the previous is not completed
                     dto.IsLocked = i > 0 && !result[result.Count - 1].IsCompleted;
 
                     result.Add(dto);
@@ -91,13 +91,13 @@ namespace Cyberquiz.BLL.Services
 
         public async Task<SubCategoryDto?> GetSubCategoryByIdAsync(int subCategoryId)
         {
-            // Anropar repo med underkategori-id som argument
+            // Calls repo with subcategory id as argument
             var subCategory = await _categoryRepo.GetSubCategoryByIdAsync(subCategoryId);
-            // Om subCategory inte finns, returnera null, annars mappa till SubCategoryDto
+            // If subcategory not found, return null, otherwise map to SubCategoryDto
             return subCategory == null ? null : MapToSubCategoryDto(subCategory);
         }
 
-        // Mapping-metoder från Model till Dto
+        // Mapping methods from Model to Dto
         private CategoryDto MapToCategoryDto(CategoryModel model)
         {
             return new CategoryDto

@@ -1,16 +1,16 @@
-﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.Shared.DTOs;
 
 namespace Cyberquiz.BLL.Services
 {
-    // Reglerar åtkomst
-    // Använder QuestionService för att hämta information om användarens resultat - ELLER???
-    // Innehåller fem metoder för att samarbeta med Endpoints i ProgressController i API-lagret
-    // Innehåller två metoder med affärslogik för att beräkna användarens framgångsprocent och avgöra om en underkategori är godkänd
-    // Innehåller två metoder för att hantera GDPR och databasrensning, som inte är kopplade till några endpoints
-    // Innehåller just nu även mapping-metoder för att konvertera mellan Model och Dto (eventuellt flytta till egen Mapper-klass)
+    // Controls access
+    // Uses QuestionService to retrieve information about user results
+    // Contains five methods to cooperate with endpoints in ProgressController in the API layer
+    // Contains two business logic methods to calculate user success rate and determine if a subcategory is passed
+    // Contains two methods for GDPR and database cleanup, not tied to any endpoints
+    // Currently also contains mapping methods to convert between Model and Dto (consider moving to a dedicated Mapper class)
     public class ProgressService : IProgressService
     {
         private readonly IProgressRepository _progressRepo;
@@ -20,47 +20,47 @@ namespace Cyberquiz.BLL.Services
             _progressRepo = progressRepo;
         }
 
-        // Metod för ENDPOINT "progress/subcategory/{subCategoryId:int}" som hämtar användarens framsteg inom en underkategori
+        // Method for ENDPOINT "progress/subcategory/{subCategoryId:int}" — retrieves user progress within a subcategory
         public async Task<UserProgressDto?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
-            // Anropar metod i repo, användarnamn och underkategori-id som argument
+            // Calls repo method with username and subcategory id as arguments
             var progress = await _progressRepo.GetByUserAndSubCategoryAsync(userName, subCategoryId);
-            // Mappar Dto till Model
-            return progress == null ? null : MapToUserProgressDto(progress); 
+            // Maps Dto to Model
+            return progress == null ? null : MapToUserProgressDto(progress);
         }
 
-        // Metod för ENDPOINT "progress/user/{userName}" som hämtar alla framsteg för en användare
+        // Method for ENDPOINT "progress/user/{userName}" — retrieves all progress for a user
         public async Task<IEnumerable<UserProgressDto>> GetAllByUserAsync(string userName)
         {
-            // Anropar metod i repo, användarnamn som argument
+            // Calls repo method with username as argument
             var progressList = await _progressRepo.GetAllByUserAsync(userName);
-            // Mappar om hela listan av dto's till model
-            return progressList.Select(pl => MapToUserProgressDto(pl)); 
+            // Maps the entire list of dtos to model
+            return progressList.Select(pl => MapToUserProgressDto(pl));
         }
 
-        // Metod för ENDPOINT "progress" som sparar användarens framsteg
+        // Method for ENDPOINT "progress" — saves user progress
         public async Task SaveProgressAsync(UserProgressDto progress)
         {
-            // Mappar Dto till Model
+            // Maps Dto to Model
             var progressModel = MapToUserProgressModel(progress);
-            // Anropar metod i repo, modell som argument
-            await _progressRepo.SaveProgressAsync(progressModel); 
+            // Calls repo method with model as argument
+            await _progressRepo.SaveProgressAsync(progressModel);
         }
 
-        // Metod för ENDPOINT [HttpPost("answer")] som sparar användarens svar 
+        // Method for ENDPOINT [HttpPost("answer")] — saves user answer
 
-        // Metod för ENDPOINT [HttpGet("subcategory/{subCategoryId:int}/answers")]
-        // ...som hämtar alla svar som sparats för en användare inom en underkategori
-        // ...och filtrerar med LINQ-select för den aktuella användaren och underkategorin
+        // Method for ENDPOINT [HttpGet("subcategory/{subCategoryId:int}/answers")]
+        // — retrieves all answers saved for a user within a subcategory
+        // — filters with LINQ-select for the current user and subcategory
         public async Task<IEnumerable<SubmitAnswerRequestDto>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId)
         {
-            // Anropar metod i repo, användarnamn och underkategori-id som argument
+            // Calls repo method with username and subcategory id as arguments
             var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
-            // Mappar om hela listan av dto's till model
-            return answers.Select(ans => MapToSubmitAnswerRequestDto(ans)); 
+            // Maps the entire list of dtos to model
+            return answers.Select(ans => MapToSubmitAnswerRequestDto(ans));
         }
 
-        // Startar en ny session (nytt UserProgress-record) och returnerar dess id
+        // Starts a new session (new UserProgress record) and returns its id
         public async Task<int> StartSessionAsync(string userName, int subCategoryId)
         {
             var progress = new UserProgressModel
@@ -75,17 +75,17 @@ namespace Cyberquiz.BLL.Services
             return progress.Id;
         }
 
-        // Hämtar besvarade fråge-id:n för en specifik session
+        // Retrieves answered question ids for a specific session
         public async Task<HashSet<int>> GetAnsweredQuestionIdsAsync(int progressId)
         {
             return await _progressRepo.GetAnsweredQuestionIdsBySessionAsync(progressId);
         }
 
-        // Sparar svar och uppdaterar score för sessionen
+        // Saves answer and updates score for the session
         public async Task SaveUserAnswerAsync(SubmitAnswerRequestDto answer, string userName)
         {
             var progress = await _progressRepo.GetByIdAsync(answer.ProgressId);
-            if (progress == null) throw new Exception("Session hittades inte.");
+            if (progress == null) throw new Exception("Session not found.");
 
             var answerModel = MapToUserAnswerModel(answer);
             answerModel.UserName = userName;
@@ -99,45 +99,45 @@ namespace Cyberquiz.BLL.Services
             await _progressRepo.UpdateProgressAsync(progress);
         }
 
-        // Metod för att ta bort alla svar och framsteg för en användare (GDPR/admin)
+        // Method to delete all answers and progress for a user (GDPR/admin)
         public async Task DeleteAllProgressForUserAsync(string userName)
         {
-            // Anropar metod i repo med användarnamn som argument
+            // Calls repo method with username as argument
             await _progressRepo.DeleteByUserAsync(userName);
         }
 
-        // Metod för att behålla de X senaste resultaten och ta bort resten (DB-rensning)
+        // Method to keep the X most recent results and delete the rest (DB cleanup)
         public async Task KeepRecentProgressForUserAsync(string userName, int maxSavedInstances)
         {
-            // Anropar metod i repo för att hämta framsteg med användarnamn som argument
+            // Calls repo method to retrieve progress with username as argument
             var allProgress = await _progressRepo.GetAllByUserAsync(userName);
             var progressToDelete = allProgress
-                .OrderByDescending(p => p.CompletedAt) // sorterar efter datum 
-                .Skip(maxSavedInstances) // och tar bort de äldsta utifrån maxSavedInstances
-                .ToList(); // konverterar till lista för att kunna iterera (foreach) över den
+                .OrderByDescending(p => p.CompletedAt) // sort by date
+                .Skip(maxSavedInstances) // skip the newest, leaving the oldest
+                .ToList(); // convert to list to iterate (foreach) over it
             foreach (var progress in progressToDelete)
             {
-                // Anropar metod i repo för att ta bort framsteg med användarnamn och maxSavedInstances som argument
+                // Calls repo method to delete progress with username and maxSavedInstances as arguments
                 await _progressRepo.DeleteOldestByUserAsync(progress.UserName, maxSavedInstances);
             }
         }
 
-        // Metod för att beräkna användarens framgångsprocent inom en underkategori
+        // Method to calculate the user's success rate within a subcategory
         public async Task<double> CalculateSuccessRateAsync(string userName, int subCategoryId)
         {
-            // Anropar metod i repo, användarnamn och underkategori-id som argument
+            // Calls repo method with username and subcategory id as arguments
             var answers = await _progressRepo.GetAnswersByUserAndSubCategoryAsync(userName, subCategoryId);
-            // Om inga svar för användaren och underkategorin finns, returnera 0% framgång
+            // If no answers exist for the user and subcategory, return 0% success
             if (!answers.Any())
                 return 0;
 
-            double correct = answers.Count(a => a.IsCorrect); // Antal rätta svar 
-            double total = answers.Count(); // Totala antalet svar
+            double correct = answers.Count(a => a.IsCorrect); // Number of correct answers
+            double total = answers.Count(); // Total number of answers
 
-            return (correct / total) * 100; // Returnerar beräkning
+            return (correct / total) * 100; // Returns calculation
         }
 
-        // Avgör om en underkategori är godkänd — kollar om NÅGOT försök nådde ≥80%
+        // Determines if a subcategory is passed — checks if ANY attempt reached ≥80%
         public async Task<bool> IsSubCategoryCompletedAsync(string userName, int subCategoryId)
         {
             var allProgress = await _progressRepo.GetAllByUserAsync(userName);
@@ -147,7 +147,7 @@ namespace Cyberquiz.BLL.Services
                 (double)p.Score / p.TotalQuestions * 100 >= 80);
         }
 
-        // Mapping från Model till Dto
+        // Mapping from Model to Dto
         private UserProgressDto MapToUserProgressDto(UserProgressModel model)
         {
             return new UserProgressDto
@@ -162,7 +162,7 @@ namespace Cyberquiz.BLL.Services
             };
         }
 
-        // Mapping från Dto till Model
+        // Mapping from Dto to Model
         private UserProgressModel MapToUserProgressModel(UserProgressDto dto)
         {
             return new UserProgressModel

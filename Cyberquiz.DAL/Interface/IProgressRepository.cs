@@ -4,34 +4,34 @@ namespace Cyberquiz.DAL.Interface
 {
     public interface IProgressRepository
     {
-        // Hämtar progress för en användare i en specifik subkategori
+        // Retrieves progress for a user in a specific subcategory
         Task<UserProgressModel?> GetByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
-        // Hämtar all progress för en användare
+        // Retrieves all progress for a user
         Task<IEnumerable<UserProgressModel>> GetAllByUserAsync(string userName);
 
-        // Sparar eller uppdaterar progress (upsert)
+        // Saves or updates progress (upsert)
         Task SaveProgressAsync(UserProgressModel progress);
 
-        // Sparar ett enskilt användarsvar
+        // Saves a single user answer
         Task SaveUserAnswerAsync(UserAnswerModel answer);
 
-        // Hämtar alla svar en användare lämnat för en subkategori
+        // Retrieves all answers a user has submitted for a subcategory
         Task<IEnumerable<UserAnswerModel>> GetAnswersByUserAndSubCategoryAsync(string userName, int subCategoryId);
 
-        // Hämtar ett specifikt progress-record på id
+        // Retrieves a specific progress record by id
         Task<UserProgressModel?> GetByIdAsync(int id);
 
-        // Uppdaterar ett befintligt progress-record (score, totalquestions)
+        // Updates an existing progress record (score, totalquestions)
         Task UpdateProgressAsync(UserProgressModel progress);
 
-        // Hämtar besvarade fråge-id:n för en specifik session
+        // Retrieves answered question ids for a specific session
         Task<HashSet<int>> GetAnsweredQuestionIdsBySessionAsync(int progressId);
 
-        // Tar bort all data för en användare (GDPR/admin)
+        // Deletes all data for a user (GDPR/admin)
         Task DeleteByUserAsync(string userName);
 
-        // Behåller de X senaste resultaten och tar bort resten (DB-rensning)
+        // Keeps the X most recent results and deletes the rest (DB cleanup)
         Task DeleteOldestByUserAsync(string userName, int keepLatest);
     }
 }

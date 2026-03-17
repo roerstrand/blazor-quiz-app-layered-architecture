@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Cyberquiz.DAL.Models
 {
-    // Kopplingstabell: kopplar en fråga till ett svarsalternativ. På raden där questionId och AnswerOptionsid kopplas ihop markeras om det är rätt svar
+    // Junction table: links a question to an answer option. The row where questionId and AnswerOptionId are linked marks whether it is the correct answer.
     public class QuestionAnswerOptionModel
     {
         public int QuestionId { get; set; }

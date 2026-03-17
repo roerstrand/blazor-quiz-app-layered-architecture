@@ -1,15 +1,15 @@
-﻿using Cyberquiz.BLL.Interfaces;
+using Cyberquiz.BLL.Interfaces;
 using Cyberquiz.DAL.Models;
 using Cyberquiz.DAL.Interface;
 using Cyberquiz.Shared.DTOs;
 
 namespace Cyberquiz.BLL.Services
 {
-    // Hanterar logik för frågor och svarsalternativ
-    // Kontrollerar om användaren svarar rätt eller fel på en fråga
-    // Tar emot requests från API-lagret, anropar metoder i repo-lagret och returnerar DTOs till API-lagret
-    // Innehåller tre metoder för att samarbeta med Endpoints i QuestionController i API-lagret
-    // Innehåller just nu även en mapping-metod för att konvertera mellan Model och Dto (eventuellt flytta till egen Mapper-klass)
+    // Handles logic for questions and answer options
+    // Checks whether the user answers a question correctly or incorrectly
+    // Receives requests from the API layer, calls methods in the repo layer, and returns DTOs to the API layer
+    // Contains three methods to cooperate with endpoints in QuestionController in the API layer
+    // Currently also contains a mapping method to convert between Model and Dto (consider moving to a dedicated Mapper class)
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepo;
@@ -21,24 +21,24 @@ namespace Cyberquiz.BLL.Services
             _progressService = progressService;
         }
 
-        // Metod för ENDPOINT "questions/{id:int}" som hämtar en enskild fråga med svarsalternativ
+        // Method for ENDPOINT "questions/{id:int}" — retrieves a single question with answer options
         public async Task<QuestionDto?> GetQuestionByIdAsync(int questionId)
         {
-            // Anropar repo med frågans id som argument (repot packar varje fråga med fyra svaralternativ)
+            // Calls repo with the question's id as argument (repo packs each question with four answer options)
             var question = await _questionRepo.GetQuestionByIdAsync(questionId);
-            // Returnerar DTO för frågan eller null om frågan inte hittas
+            // Returns DTO for the question or null if the question is not found
             return question == null ? null : MapToQuestionDto(question);
         }
 
-        // METOD SOM INTE ANVÄNDS I NUVARANDE VERSION
-        //// Metod för ENDPOINT "subcategory/{subCategoryId:int}/questions" som hämtar alla frågor inom en underkategori
+        // METHOD NOT USED IN CURRENT VERSION
+        //// Method for ENDPOINT "subcategory/{subCategoryId:int}/questions" — retrieves all questions within a subcategory
         //public async Task<IEnumerable<QuestionDto>> GetQuestionBySubCategoryAsync(int subCategoryId)
         //{
         //    var questions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
         //    return questions.Select(qs => MapToQuestionDto(qs));
         //}
 
-        // Metod för ENDPOINT "subcategory/{subCategoryId:int}/next" som hämtar nästa fråga inom underkategori utifrån användarens tidigare svar och framsteg
+        // Method for ENDPOINT "subcategory/{subCategoryId:int}/next" — retrieves the next question in a subcategory based on the user's previous answers and progress
         public async Task<QuestionDto?> GetNextQuestionInSubCategoryAsync(int subCategoryId, int progressId)
         {
             var allQuestions = await _questionRepo.GetQuestionsBySubCategoryAsync(subCategoryId);
@@ -47,17 +47,17 @@ namespace Cyberquiz.BLL.Services
             return nextQuestion == null ? null : MapToQuestionDto(nextQuestion);
         }
 
-        // Metod för ENDPOINT "answer" som tar emot användarens svar och uppdaterar framsteg
+        // Method for ENDPOINT "answer" — receives the user's answer and updates progress
         public async Task<SubmitResponseDto> SaveUserAnswerAsync(SubmitAnswerRequestDto request, string userName)
         {
-            // Hämta frågan
+            // Get the question
             var question = await _questionRepo.GetQuestionByIdAsync(request.QuestionId);
-            // Om frågan inte hittas
-            if (question == null) throw new Exception("Frågan kunde inte hittas.");
-            // Hitta rätt svar
+            // If question not found
+            if (question == null) throw new Exception("Question could not be found.");
+            // Find the correct answer
             var correctAnswerOption = question.QuestionAnswerOptions?
                 .FirstOrDefault(qao => qao.IsCorrect);
-            if (correctAnswerOption == null) throw new Exception("Rätt svar kunde inte hittas.");
+            if (correctAnswerOption == null) throw new Exception("Correct answer could not be found.");
 
             bool isCorrect = request.AnswerOptionId == correctAnswerOption.AnswerOptionId;
             request.IsCorrect = isCorrect;
@@ -71,7 +71,7 @@ namespace Cyberquiz.BLL.Services
             };
         }
 
-        // Mapping-metod från Model till Dto
+        // Mapping method from Model to Dto
         private QuestionDto MapToQuestionDto(QuestionModel model)
         {
             return new QuestionDto

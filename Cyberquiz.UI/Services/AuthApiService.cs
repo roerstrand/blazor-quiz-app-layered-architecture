@@ -15,7 +15,7 @@ public class AuthApiService
             return (await res.Content.ReadFromJsonAsync<LoginResponseDto>(), null);
 
         var body = await res.Content.ReadFromJsonAsync<ApiErrorDto>();
-        return (null, body?.Message ?? "Inloggningen misslyckades.");
+        return (null, body?.Message ?? "Login failed.");
     }
 
     public async Task<(LoginResponseDto? Response, string? Error)> RegisterAsync(string username, string password)

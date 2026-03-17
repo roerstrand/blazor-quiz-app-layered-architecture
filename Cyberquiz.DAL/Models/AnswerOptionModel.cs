@@ -5,7 +5,7 @@ using System.Text;
 namespace Cyberquiz.DAL.Models
 {
 
-    // En modell (enskild entitet) som representerar ett svarsalternativ i databasen.
+    // A model (single entity) representing an answer option in the database.
     public class AnswerOptionModel
     {
         public int Id { get; set; }

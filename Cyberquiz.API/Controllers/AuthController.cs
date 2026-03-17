@@ -30,11 +30,11 @@ public class AuthController : ControllerBase
     {
         var user = await _userManager.FindByNameAsync(request.Username);
         if (user == null)
-            return Unauthorized(new { message = "Ogiltigt användarnamn eller lösenord." });
+            return Unauthorized(new { message = "Invalid username or password." });
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
         if (!result.Succeeded)
-            return Unauthorized(new { message = "Ogiltigt användarnamn eller lösenord." });
+            return Unauthorized(new { message = "Invalid username or password." });
 
         var token = GenerateJwt(user.UserName!);
         return Ok(new LoginResponseDto { Token = token, Username = user.UserName! });

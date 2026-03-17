@@ -103,7 +103,7 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-// Migrera och seed quiz-databasen vid uppstart
+// Migrate and seed the quiz database at startup
 using (var scope = app.Services.CreateScope())
 {
     var quizDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -128,7 +128,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// CORS måste vara FÖRE MapControllers
+// CORS must be placed BEFORE MapControllers
 app.UseCors("AllowUI");
 
 app.UseAuthentication();

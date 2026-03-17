@@ -30,7 +30,7 @@ namespace Cyberquiz.API.Controllers
             return Ok(data);
         }
 
-        // GET Endpoint som hämtar alla de svar en användare lämnat i en underkategori 
+        // GET endpoint that retrieves all answers a user has submitted in a subcategory
         [HttpGet("subcategory/{subCategoryId:int}/answers")]
         public async Task<ActionResult<IEnumerable<SubmitAnswerRequestDto>>> GetAnswersByUserAndSubCategory(int subCategoryId)
         {
@@ -42,7 +42,7 @@ namespace Cyberquiz.API.Controllers
             return Ok(answers);
         }
 
-        // POST api/progress/session — startar ett nytt quiz-försök och returnerar progressId
+        // POST api/progress/session — starts a new quiz attempt and returns progressId
         [HttpPost("session")]
         public async Task<ActionResult<int>> StartSession([FromQuery] int subCategoryId)
         {
@@ -62,7 +62,7 @@ namespace Cyberquiz.API.Controllers
             return Ok(completed);
         }
 
-        // DELETE api/progress/all — raderar all progression för inloggad användare (GDPR)
+        // DELETE api/progress/all — deletes all progress for the logged-in user (GDPR)
         [HttpDelete("all")]
         public async Task<ActionResult> DeleteAllProgress()
         {
@@ -72,7 +72,7 @@ namespace Cyberquiz.API.Controllers
             return NoContent();
         }
 
-        // DELETE api/progress/keep/{keepLatest} — behåller N senaste, raderar resten
+        // DELETE api/progress/keep/{keepLatest} — keeps N most recent, deletes the rest
         [HttpDelete("keep/{keepLatest:int}")]
         public async Task<ActionResult> DeleteOldProgress(int keepLatest)
         {

@@ -86,7 +86,7 @@ namespace Cyberquiz.UI.Services
         public async Task<List<UserProgressDto>> GetUserProgressAsync()
         { SetAuth(); return await _http.GetFromJsonAsync<List<UserProgressDto>>("api/progress/profile") ?? new(); }
 
-        // DELETE api/progress/all — raderar all progression (GDPR)
+        // DELETE api/progress/all — deletes all progress (GDPR)
         public async Task<bool> DeleteAllProgressAsync()
         {
             SetAuth();
@@ -94,7 +94,7 @@ namespace Cyberquiz.UI.Services
             return res.IsSuccessStatusCode;
         }
 
-        // DELETE api/progress/keep/{keepLatest} — behåller N senaste sessioner
+        // DELETE api/progress/keep/{keepLatest} — keeps N most recent sessions
         public async Task<bool> KeepRecentProgressAsync(int keepLatest)
         {
             SetAuth();
