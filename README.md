@@ -15,9 +15,9 @@ https://youtube.com/shorts/55-sQUsT-DQ
 ## 🧠 Architecture
 The application follows a layered approach:
 - Presentation (Blazor UI)
-- API-layer with JWT Auth generation.
+- API-layer with JWT Auth generation
 - Business logic layer
-- Data application layer.
+- Data application layer
 
 ## 🛠 Tech Stack
 - Blazor (.NET)
