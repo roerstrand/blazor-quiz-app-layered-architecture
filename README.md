@@ -4,10 +4,10 @@ A quiz application built with **Blazor (.NET)** using a layered architecture.
 
 ## 📸 Demo
 See video demo here:
-[https://youtube.com/shorts/eDkGMj3ZuoQ](https://youtube.com/shorts/in19g2l_5aY)
+https://youtube.com/shorts/55-sQUsT-DQ
 
 ## 🚀 Features
-- AI-generated quiz questions
+- AI-generated feedback
 - User answer handling
 - Progress tracking
 - Clean UI with component-based structure
@@ -15,8 +15,9 @@ See video demo here:
 ## 🧠 Architecture
 The application follows a layered approach:
 - Presentation (Blazor UI)
-- Application logic
-- Data / services (API integration)
+- API-layer with JWT Auth generation
+- Business logic layer
+- Data application layer
 
 ## 🛠 Tech Stack
 - Blazor (.NET)
@@ -29,7 +30,5 @@ The application follows a layered approach:
 3. Run the project
 
 ## 🎯 Purpose
-This project was built to explore modern .NET development, component-based UI, and structured application design.
+This application was initially developed as part of a group project and has since been further developed and extended individually, focusing on improved structure, features, and overall design. This project was built to explore modern .NET development, component-based UI, and structured application design.
 
-## 👤 Author
-© 2026 Robin Erik Strandberg
