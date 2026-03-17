@@ -2,6 +2,10 @@
 
 A quiz application built with **Blazor (.NET)** using a layered architecture.
 
+## 📸 Demo
+See video demo here:
+[https://youtube.com/shorts/eDkGMj3ZuoQ](https://youtube.com/shorts/in19g2l_5aY)
+
 ## 🚀 Features
 - AI-generated quiz questions
 - User answer handling
@@ -18,10 +22,6 @@ The application follows a layered approach:
 - Blazor (.NET)
 - C#
 - REST API (AI integration)
-
-## 📸 Demo
-See video demo here:
-[https://youtube.com/shorts/eDkGMj3ZuoQ](https://youtube.com/shorts/in19g2l_5aY)
 
 ## 📦 Setup
 1. Clone the repository
