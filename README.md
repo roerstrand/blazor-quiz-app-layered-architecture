@@ -4,7 +4,7 @@ A quiz application built with **Blazor (.NET)** using a layered architecture.
 
 ## 📸 Demo
 See video demo here:
-https://youtube.com/shorts/dODTLfN5ly4
+https://youtube.com/shorts/1ZMpSiP8zyI
 
 ## 🚀 Features
 - AI-generated feedback
